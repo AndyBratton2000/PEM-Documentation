@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05-INTEGRATION-WITH-PEM</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="integration-with-pem-episodes">Integration with PEM
+Episodes</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Planning</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document defines how repriced claims integrate with PEM episodes
+to enable bundle calculations, variance analysis, and contract
+modeling.</p>
+<hr />
+<h2 id="integration-architecture">Integration Architecture</h2>
+<pre><code>┌───────────────────────────┐
+│ EXTERNAL SOURCES          │
+│  ┌─────────────────────┐  │
+│  │ Claim Source (JSON) │──┼───────────────────┐
+│  └─────────────────────┘  │                   │
+└───────────────────────────┘                   ▼
+                              ┌───────────────────────────┐
+                              │ REPRICING LAYER           │
+                              │  ┌─────────────────────┐  │
+                              │  │ Pricing Worker      │  │
+                              │  └──────────┬──────────┘  │
+                              └─────────────┼─────────────┘
+                                            │ Priced Claim
+                                            ▼
+                              ┌───────────────────────────┐
+                              │ EVENT PROCESSING          │
+                              │  ┌─────────────────────┐  │
+                              │  │ Service Bus         │←─┼───┐
+                              │  └──────────┬──────────┘  │   │
+                              │             │ClaimPriced  │   │
+                              │             ▼             │   │
+                              │  ┌─────────────────────┐  │   │
+                              │  │ Azure Function      │  │   │
+                              │  │ Bundle Recalculator │  │   │
+                              │  └──────────┬──────────┘  │   │
+                              └─────────────┼─────────────┘   │
+                                            │                 │
+┌───────────────────────────────────────────┼─────────────────┼───────────────┐
+│ PEM CORE                                  │                 │               │
+│                                           ▼                 │               │
+│  ┌─────────────────┐    ┌─────────────────────────────┐     │               │
+│  │ Claim Ingestion │───→│ Bundle Calculator           │─────┘               │
+│  │ API             │    └───────────────┬─────────────┘                     │
+│  └────────┬────────┘                    │                                   │
+│           │                             ▼                                   │
+│           │         ┌───────────────────────────────┐                       │
+│           │         │ Episode API                   │                       │
+│           │         └───────────────┬───────────────┘                       │
+│           │                         │                                       │
+│           ▼                         ▼                                       │
+│  ┌─────────────────────────┐  ┌─────────────────────────┐                   │
+│  │ Cosmos DB               │  │ Azure SQL               │                   │
+│  │ (Claims, Results)       │  │ (Episodes)              │                   │
+│  └─────────────────────────┘  └─────────────────────────┘                   │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="data-model">Data Model</h2>
+<h3 id="entity-relationships">Entity Relationships</h3>
+<p><strong>Relationships:</strong> - Episode (1) → EpisodeClaim
+(0..<em>) - EpisodeClaim (1) → PricedClaim (1) - PricedClaim (1) →
+ClaimLine (0..</em>)</p>
+<p><strong>Episode</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | TenantId | GUID | Tenant
+identifier | | DefinitionVersionId | GUID | FK to Definition | |
+ContractProfileId | GUID | FK to Contract | | PatientId | string |
+Patient identifier | | Status | string | Episode status | | TriggerDate
+| date | Episode trigger date | | StartDate | date | Episode window
+start | | EndDate | date | Episode window end | | BundleAmount | decimal
+| Calculated bundle | | TargetPrice | decimal | Target price | |
+Variance | decimal | Bundle vs Target | | VariancePercent | decimal |
+Variance % | | IsModelingResult | boolean | Modeling flag | | CreatedAt
+| datetime | Creation timestamp | | ModifiedAt | datetime | Last
+modified |</p>
+<p><strong>EpisodeClaim</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | EpisodeId | GUID | FK to
+Episode | | PricedClaimId | GUID | FK to PricedClaim | | ClaimRole |
+string | Role in episode | | Sequence | int | Order in episode | |
+AllowedAmount | decimal | Allowed amount | | ExpectedPayment | decimal |
+Expected payment | | PaidAmount | decimal | Paid amount | |
+ClaimVariance | decimal | Claim variance | | AssociatedAt | datetime |
+Association timestamp |</p>
+<p><strong>PricedClaim</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | TenantId | GUID | Tenant
+identifier | | ExternalClaimId | string | External claim ID (UK) | |
+ClaimType | string | Inpatient/Outpatient | | ServiceDate | date | Date
+of service | | AdmitDate | date | Admission date | | DischargeDate |
+date | Discharge date | | DrgCode | string | Assigned DRG | | DrgWeight
+| decimal | DRG weight | | ApcAssignments | JSON | APC assignments | |
+TotalCharges | decimal | Total charges | | AllowedAmount | decimal |
+Allowed amount | | ExpectedPayment | decimal | Expected payment | |
+PricingResultJson | JSON | Pricing output | | OriginalClaimJson | JSON |
+Original claim data | | PricerUsed | string | Pricer used | | PricedAt |
+datetime | Pricing timestamp |</p>
+<p><strong>ClaimLine</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | PricedClaimId | GUID | FK
+to PricedClaim | | LineNumber | int | Line sequence | | RevenueCode |
+string | Revenue code | | Hcpcs | string | HCPCS code | | Charges |
+decimal | Line charges | | Units | decimal | Service units | |
+AllowedAmount | decimal | Line allowed | | ApcCode | string | APC
+assignment | | StatusIndicator | string | Status indicator |</p>
+<h3 id="cosmos-db-document-pricedclaim">Cosmos DB Document:
+PricedClaim</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;claim-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;tenantId&quot;</span><span class="fu">:</span> <span class="st">&quot;tenant-abc&quot;</span><span class="fu">,</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;externalClaimId&quot;</span><span class="fu">:</span> <span class="st">&quot;CLM-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;partitionKey&quot;</span><span class="fu">:</span> <span class="st">&quot;tenant-abc&quot;</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claimType&quot;</span><span class="fu">:</span> <span class="st">&quot;Inpatient&quot;</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;serviceDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-10&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;admitDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-10&quot;</span><span class="fu">,</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dischargeDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patient&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;PAT-987654&quot;</span><span class="fu">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;age&quot;</span><span class="fu">:</span> <span class="dv">65</span><span class="fu">,</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;sex&quot;</span><span class="fu">:</span> <span class="st">&quot;M&quot;</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;diagnoses&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;principal&quot;</span><span class="fu">:</span> <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;J18.9&quot;</span><span class="fu">,</span> <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">},</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;secondary&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;E11.65&quot;</span><span class="fu">,</span> <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;I10&quot;</span><span class="fu">,</span> <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">}</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;procedures&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;0BJ08ZZ&quot;</span><span class="fu">,</span> <span class="dt">&quot;date&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-11&quot;</span><span class="fu">,</span> <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;ICD10PCS&quot;</span><span class="fu">}</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pricingResult&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pricerUsed&quot;</span><span class="fu">:</span> <span class="st">&quot;MedicareInpatient&quot;</span><span class="fu">,</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;drgCode&quot;</span><span class="fu">:</span> <span class="st">&quot;193&quot;</span><span class="fu">,</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;drgDescription&quot;</span><span class="fu">:</span> <span class="st">&quot;Simple Pneumonia &amp; Pleurisy w CC&quot;</span><span class="fu">,</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;drgWeight&quot;</span><span class="fu">:</span> <span class="fl">0.9234</span><span class="fu">,</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;mdc&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;components&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;BasePayment&quot;</span><span class="fu">,</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="fl">5234.56</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;WageAdjustment&quot;</span><span class="fu">,</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="fl">678.90</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span><span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;OutlierPayment&quot;</span><span class="fu">,</span> <span class="dt">&quot;amount&quot;</span><span class="fu">:</span> <span class="fl">0.00</span><span class="fu">}</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">45000.00</span><span class="fu">,</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;allowedAmount&quot;</span><span class="fu">:</span> <span class="fl">5913.46</span><span class="fu">,</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;expectedPayment&quot;</span><span class="fu">:</span> <span class="fl">5913.46</span><span class="fu">,</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pricedAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-16T10:30:00Z&quot;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;episodeAssociation&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;episodeId&quot;</span><span class="fu">:</span> <span class="st">&quot;ep-xyz-789&quot;</span><span class="fu">,</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;claimRole&quot;</span><span class="fu">:</span> <span class="st">&quot;Anchor&quot;</span><span class="fu">,</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;associatedAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-16T10:35:00Z&quot;</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;_ts&quot;</span><span class="fu">:</span> <span class="dv">1737020100</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="claim-ingestion-flow">Claim Ingestion Flow</h2>
+<h3 id="sequence-diagram">Sequence Diagram</h3>
+<p><strong>Claim Ingestion Flow:</strong></p>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 15%" />
+<col style="width: 13%" />
+<col style="width: 21%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+<th>Queue/Topic</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>External Source</td>
+<td>Service Bus</td>
+<td>Submit Claim (JSON)</td>
+<td>claims-ingest</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Service Bus</td>
+<td>Pricing Worker</td>
+<td>Process for pricing</td>
+<td></td>
+</tr>
+<tr>
+<td>3</td>
+<td>Pricing Worker</td>
+<td>Pricing Worker</td>
+<td>Execute repricing</td>
+<td></td>
+</tr>
+<tr>
+<td>4</td>
+<td>Pricing Worker</td>
+<td>Service Bus</td>
+<td>Priced result</td>
+<td>claims-priced</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Service Bus</td>
+<td>Claim Ingestion API</td>
+<td>Store priced claim</td>
+<td></td>
+</tr>
+<tr>
+<td>6</td>
+<td>Claim Ingestion API</td>
+<td>Cosmos DB</td>
+<td>Save PricedClaim document</td>
+<td></td>
+</tr>
+<tr>
+<td>7</td>
+<td>Claim Ingestion API</td>
+<td>Service Bus</td>
+<td>Publish ClaimPriced event</td>
+<td>claim-events</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Service Bus</td>
+<td>Association Service</td>
+<td>Check for episode match</td>
+<td></td>
+</tr>
+<tr>
+<td>9</td>
+<td>Association Service</td>
+<td>Azure SQL</td>
+<td>Find matching episode</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>Azure SQL</td>
+<td>Association Service</td>
+<td>Episode found</td>
+<td></td>
+</tr>
+<tr>
+<td>11</td>
+<td>Association Service</td>
+<td>Azure SQL</td>
+<td>Create EpisodeClaim link</td>
+<td></td>
+</tr>
+<tr>
+<td>12</td>
+<td>Association Service</td>
+<td>Service Bus</td>
+<td>Publish ClaimAssociated event</td>
+<td></td>
+</tr>
+<tr>
+<td>13</td>
+<td>Service Bus</td>
+<td>Bundle Recalculator</td>
+<td>Trigger bundle recalc</td>
+<td></td>
+</tr>
+<tr>
+<td>14</td>
+<td>Bundle Recalculator</td>
+<td>Azure SQL</td>
+<td>Get all episode claims</td>
+<td></td>
+</tr>
+<tr>
+<td>15</td>
+<td>Bundle Recalculator</td>
+<td>Cosmos DB</td>
+<td>Get claim amounts</td>
+<td></td>
+</tr>
+<tr>
+<td>16</td>
+<td>Bundle Recalculator</td>
+<td>Bundle Recalculator</td>
+<td>Calculate bundle</td>
+<td></td>
+</tr>
+<tr>
+<td>17</td>
+<td>Bundle Recalculator</td>
+<td>Azure SQL</td>
+<td>Update Episode.BundleAmount</td>
+<td></td>
+</tr>
+<tr>
+<td>18</td>
+<td>Bundle Recalculator</td>
+<td>Service Bus</td>
+<td>Publish EpisodeBundleUpdated</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<pre><code>External → Service Bus → Pricing → Service Bus → Ingestion API → Cosmos DB
+                                                       ↓
+                                           Association Service → SQL
+                                                       ↓
+                                           Bundle Recalculator → SQL → Service Bus</code></pre>
+<hr />
+<h2 id="episode-association-rules">Episode Association Rules</h2>
+<h3 id="claim-role-assignment">Claim Role Assignment</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 34%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>Role</th>
+<th>Criteria</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Anchor</strong></td>
+<td>Matches episode trigger rules</td>
+<td>The claim that triggered the episode</td>
+</tr>
+<tr>
+<td><strong>Associated</strong></td>
+<td>Within episode window, matches definition</td>
+<td>Standard bundled claims</td>
+</tr>
+<tr>
+<td><strong>Carve-Out</strong></td>
+<td>Excluded by contract rules</td>
+<td>Not included in bundle calculation</td>
+</tr>
+<tr>
+<td><strong>Excluded</strong></td>
+<td>Fails association rules</td>
+<td>Documented but not bundled</td>
+</tr>
+</tbody>
+</table>
+<h3 id="association-logic">Association Logic</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ClaimAssociationService <span class="op">:</span> IClaimAssociationService</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>AssociationResult<span class="op">&gt;</span> <span class="fu">AssociateClaimAsync</span><span class="op">(</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>        PricedClaim claim<span class="op">,</span> </span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>        Episode episode<span class="op">)</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Check if claim is within episode window</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(!</span><span class="fu">IsWithinEpisodeWindow</span><span class="op">(</span>claim<span class="op">,</span> episode<span class="op">))</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> AssociationResult<span class="op">.</span><span class="fu">Excluded</span><span class="op">(</span><span class="st">&quot;Outside episode window&quot;</span><span class="op">);</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Check definition association rules</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> definition <span class="op">=</span> await _definitionRepo<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>episode<span class="op">.</span><span class="fu">DefinitionVersionId</span><span class="op">);</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> matchResult <span class="op">=</span> <span class="fu">EvaluateAssociationRules</span><span class="op">(</span>claim<span class="op">,</span> definition<span class="op">.</span><span class="fu">AssociationRules</span><span class="op">);</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(!</span>matchResult<span class="op">.</span><span class="fu">IsMatch</span><span class="op">)</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> AssociationResult<span class="op">.</span><span class="fu">Excluded</span><span class="op">(</span>matchResult<span class="op">.</span><span class="fu">Reason</span><span class="op">);</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Check for carve-outs</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> contract <span class="op">=</span> await _contractRepo<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>episode<span class="op">.</span><span class="fu">ContractProfileId</span><span class="op">);</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span><span class="fu">IsCarveOut</span><span class="op">(</span>claim<span class="op">,</span> contract<span class="op">.</span><span class="fu">CarveOutRules</span><span class="op">))</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> AssociationResult<span class="op">.</span><span class="fu">CarveOut</span><span class="op">(</span><span class="st">&quot;Contract carve-out&quot;</span><span class="op">);</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Determine claim role</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> role <span class="op">=</span> <span class="fu">DetermineClaimRole</span><span class="op">(</span>claim<span class="op">,</span> episode<span class="op">);</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Create association</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> episodeClaim <span class="op">=</span> <span class="kw">new</span> EpisodeClaim</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>            Id <span class="op">=</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">(),</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>            EpisodeId <span class="op">=</span> episode<span class="op">.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            PricedClaimId <span class="op">=</span> claim<span class="op">.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>            ClaimRole <span class="op">=</span> role<span class="op">,</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>            AllowedAmount <span class="op">=</span> claim<span class="op">.</span><span class="fu">PricingResult</span><span class="op">.</span><span class="fu">AllowedAmount</span><span class="op">,</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>            ExpectedPayment <span class="op">=</span> claim<span class="op">.</span><span class="fu">PricingResult</span><span class="op">.</span><span class="fu">ExpectedPayment</span><span class="op">,</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>            AssociatedAt <span class="op">=</span> DateTimeOffset<span class="op">.</span><span class="fu">UtcNow</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        await _episodeClaimRepo<span class="op">.</span><span class="fu">CreateAsync</span><span class="op">(</span>episodeClaim<span class="op">);</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Publish event for bundle recalculation</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        await _eventPublisher<span class="op">.</span><span class="fu">PublishAsync</span><span class="op">(</span><span class="kw">new</span> ClaimAssociatedEvent</span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>            EpisodeId <span class="op">=</span> episode<span class="op">.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>            ClaimId <span class="op">=</span> claim<span class="op">.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>            AllowedAmount <span class="op">=</span> claim<span class="op">.</span><span class="fu">PricingResult</span><span class="op">.</span><span class="fu">AllowedAmount</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> AssociationResult<span class="op">.</span><span class="fu">Success</span><span class="op">(</span>role<span class="op">);</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">bool</span> <span class="fu">IsWithinEpisodeWindow</span><span class="op">(</span>PricedClaim claim<span class="op">,</span> Episode episode<span class="op">)</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> claimDate <span class="op">=</span> claim<span class="op">.</span><span class="fu">ServiceDate</span> <span class="op">??</span> claim<span class="op">.</span><span class="fu">AdmitDate</span><span class="op">;</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> claimDate <span class="op">&gt;=</span> episode<span class="op">.</span><span class="fu">StartDate</span> <span class="op">&amp;&amp;</span> claimDate <span class="op">&lt;=</span> episode<span class="op">.</span><span class="fu">EndDate</span><span class="op">;</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="bundle-calculation">Bundle Calculation</h2>
+<h3 id="bundle-amount-formula">Bundle Amount Formula</h3>
+<pre><code>BundleAmount = Σ(AssociatedClaims.AllowedAmount) - Σ(CarveOuts.AllowedAmount)</code></pre>
+<h3 id="bundle-calculator">Bundle Calculator</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> BundleCalculator <span class="op">:</span> IBundleCalculator</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>BundleResult<span class="op">&gt;</span> <span class="fu">CalculateBundleAsync</span><span class="op">(</span>Guid episodeId<span class="op">)</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get all associated claims</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> episodeClaims <span class="op">=</span> await _episodeClaimRepo</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">GetByEpisodeAsync</span><span class="op">(</span>episodeId<span class="op">);</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Calculate bundle components</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> anchorAmount <span class="op">=</span> episodeClaims</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Where</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">ClaimRole</span> <span class="op">==</span> ClaimRole<span class="op">.</span><span class="fu">Anchor</span><span class="op">)</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Sum</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">AllowedAmount</span><span class="op">);</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> associatedAmount <span class="op">=</span> episodeClaims</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Where</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">ClaimRole</span> <span class="op">==</span> ClaimRole<span class="op">.</span><span class="fu">Associated</span><span class="op">)</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Sum</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">AllowedAmount</span><span class="op">);</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> carveOutAmount <span class="op">=</span> episodeClaims</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Where</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">ClaimRole</span> <span class="op">==</span> ClaimRole<span class="op">.</span><span class="fu">CarveOut</span><span class="op">)</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Sum</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">AllowedAmount</span><span class="op">);</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> bundleAmount <span class="op">=</span> anchorAmount <span class="op">+</span> associatedAmount<span class="op">;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get episode for target price</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> episode <span class="op">=</span> await _episodeRepo<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>episodeId<span class="op">);</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Calculate variance</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> variance <span class="op">=</span> bundleAmount <span class="op">-</span> episode<span class="op">.</span><span class="fu">TargetPrice</span><span class="op">;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> variancePercent <span class="op">=</span> episode<span class="op">.</span><span class="fu">TargetPrice</span> <span class="op">!=</span> <span class="dv">0</span> </span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>            <span class="op">?</span> <span class="op">(</span>variance <span class="op">/</span> episode<span class="op">.</span><span class="fu">TargetPrice</span><span class="op">)</span> <span class="op">*</span> <span class="dv">100</span> </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>            <span class="op">:</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">new</span> BundleResult</span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>            EpisodeId <span class="op">=</span> episodeId<span class="op">,</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>            AnchorAmount <span class="op">=</span> anchorAmount<span class="op">,</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>            AssociatedAmount <span class="op">=</span> associatedAmount<span class="op">,</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>            CarveOutAmount <span class="op">=</span> carveOutAmount<span class="op">,</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>            BundleAmount <span class="op">=</span> bundleAmount<span class="op">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>            TargetPrice <span class="op">=</span> episode<span class="op">.</span><span class="fu">TargetPrice</span><span class="op">,</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>            Variance <span class="op">=</span> variance<span class="op">,</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>            VariancePercent <span class="op">=</span> variancePercent<span class="op">,</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>            ClaimCount <span class="op">=</span> episodeClaims<span class="op">.</span><span class="fu">Count</span><span class="op">,</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>            CalculatedAt <span class="op">=</span> DateTimeOffset<span class="op">.</span><span class="fu">UtcNow</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="azure-function-bundle-recalculator">Azure Function: Bundle
+Recalculator</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> BundleRecalculatorFunction</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IBundleCalculator _calculator<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IEpisodeRepository _episodeRepo<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IEventPublisher _eventPublisher<span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="fu">Function</span><span class="op">(</span><span class="st">&quot;RecalculateBundle&quot;</span><span class="op">)]</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">Run</span><span class="op">(</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">[</span><span class="fu">ServiceBusTrigger</span><span class="op">(</span><span class="st">&quot;claim-events&quot;</span><span class="op">,</span> <span class="st">&quot;bundle-recalc-sub&quot;</span><span class="op">)]</span> ClaimAssociatedEvent evt<span class="op">)</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Recalculating bundle for episode {EpisodeId}&quot;</span><span class="op">,</span> evt<span class="op">.</span><span class="fu">EpisodeId</span><span class="op">);</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Calculate new bundle</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> result <span class="op">=</span> await _calculator<span class="op">.</span><span class="fu">CalculateBundleAsync</span><span class="op">(</span>evt<span class="op">.</span><span class="fu">EpisodeId</span><span class="op">);</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Update episode</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>        await _episodeRepo<span class="op">.</span><span class="fu">UpdateBundleAsync</span><span class="op">(</span>evt<span class="op">.</span><span class="fu">EpisodeId</span><span class="op">,</span> <span class="kw">new</span> BundleUpdate</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>            BundleAmount <span class="op">=</span> result<span class="op">.</span><span class="fu">BundleAmount</span><span class="op">,</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>            Variance <span class="op">=</span> result<span class="op">.</span><span class="fu">Variance</span><span class="op">,</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>            VariancePercent <span class="op">=</span> result<span class="op">.</span><span class="fu">VariancePercent</span><span class="op">,</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>            LastCalculatedAt <span class="op">=</span> result<span class="op">.</span><span class="fu">CalculatedAt</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Publish update event</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>        await _eventPublisher<span class="op">.</span><span class="fu">PublishAsync</span><span class="op">(</span><span class="kw">new</span> EpisodeBundleUpdatedEvent</span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            EpisodeId <span class="op">=</span> evt<span class="op">.</span><span class="fu">EpisodeId</span><span class="op">,</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>            BundleAmount <span class="op">=</span> result<span class="op">.</span><span class="fu">BundleAmount</span><span class="op">,</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>            Variance <span class="op">=</span> result<span class="op">.</span><span class="fu">Variance</span><span class="op">,</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>            ClaimCount <span class="op">=</span> result<span class="op">.</span><span class="fu">ClaimCount</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="api-endpoints">API Endpoints</h2>
+<h3 id="claim-ingestion-api">Claim Ingestion API</h3>
+<pre class="http"><code>POST /api/v1/claims
+Content-Type: application/json
+
+{
+  &quot;claimId&quot;: &quot;CLM-2026-001234&quot;,
+  &quot;facilityId&quot;: &quot;FAC-001&quot;,
+  ...
+}
+
+Response:
+{
+  &quot;id&quot;: &quot;claim-guid-123&quot;,
+  &quot;status&quot;: &quot;Queued&quot;,
+  &quot;estimatedProcessingTime&quot;: &quot;PT30S&quot;
+}</code></pre>
+<h3 id="get-priced-claim">Get Priced Claim</h3>
+<pre class="http"><code>GET /api/v1/claims/{claimId}
+
+Response:
+{
+  &quot;id&quot;: &quot;claim-guid-123&quot;,
+  &quot;externalClaimId&quot;: &quot;CLM-2026-001234&quot;,
+  &quot;status&quot;: &quot;Priced&quot;,
+  &quot;pricingResult&quot;: {
+    &quot;drgCode&quot;: &quot;193&quot;,
+    &quot;expectedPayment&quot;: 5913.46,
+    ...
+  },
+  &quot;episodeAssociation&quot;: {
+    &quot;episodeId&quot;: &quot;ep-xyz-789&quot;,
+    &quot;claimRole&quot;: &quot;Anchor&quot;
+  }
+}</code></pre>
+<h3 id="get-episode-with-claims">Get Episode with Claims</h3>
+<pre class="http"><code>GET /api/v1/episodes/{episodeId}?includeClaims=true
+
+Response:
+{
+  &quot;id&quot;: &quot;ep-xyz-789&quot;,
+  &quot;patientId&quot;: &quot;PAT-987654&quot;,
+  &quot;status&quot;: &quot;Active&quot;,
+  &quot;triggerDate&quot;: &quot;2026-01-10&quot;,
+  &quot;bundleAmount&quot;: 12456.78,
+  &quot;targetPrice&quot;: 11000.00,
+  &quot;variance&quot;: 1456.78,
+  &quot;variancePercent&quot;: 13.24,
+  &quot;claims&quot;: [
+    {
+      &quot;claimId&quot;: &quot;claim-guid-123&quot;,
+      &quot;claimRole&quot;: &quot;Anchor&quot;,
+      &quot;allowedAmount&quot;: 5913.46,
+      &quot;serviceDate&quot;: &quot;2026-01-10&quot;
+    },
+    {
+      &quot;claimId&quot;: &quot;claim-guid-456&quot;,
+      &quot;claimRole&quot;: &quot;Associated&quot;,
+      &quot;allowedAmount&quot;: 6543.32,
+      &quot;serviceDate&quot;: &quot;2026-01-12&quot;
+    }
+  ]
+}</code></pre>
+<hr />
+<h2 id="event-contracts">Event Contracts</h2>
+<h3 id="claimpriced-event">ClaimPriced Event</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> record ClaimPricedEvent</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid ClaimId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> TenantId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ExternalClaimId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> PatientId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateOnly ServiceDate <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> AllowedAmount <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> ExpectedPayment <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span><span class="op">?</span> DrgCode <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTimeOffset PricedAt <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="claimassociated-event">ClaimAssociated Event</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> record ClaimAssociatedEvent</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid EpisodeId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid ClaimId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ClaimRole <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> AllowedAmount <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTimeOffset AssociatedAt <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="episodebundleupdated-event">EpisodeBundleUpdated Event</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> record EpisodeBundleUpdatedEvent</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid EpisodeId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> BundleAmount <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> TargetPrice <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> Variance <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> VariancePercent <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span> ClaimCount <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTimeOffset CalculatedAt <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="service-bus-configuration">Service Bus Configuration</h2>
+<h3 id="queues">Queues</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 32%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Queue</th>
+<th>Purpose</th>
+<th>Processing</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>claims-ingest</code></td>
+<td>Raw claims from external sources</td>
+<td>Pricing Worker</td>
+</tr>
+<tr>
+<td><code>claims-priced</code></td>
+<td>Priced claims ready for storage</td>
+<td>Ingestion API</td>
+</tr>
+<tr>
+<td><code>claims-associate</code></td>
+<td>Claims to associate with episodes</td>
+<td>Association Service</td>
+</tr>
+</tbody>
+</table>
+<h3 id="topics-subscriptions">Topics &amp; Subscriptions</h3>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Subscription</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>claim-events</code></td>
+<td><code>bundle-recalc-sub</code></td>
+<td>Trigger bundle recalculation</td>
+</tr>
+<tr>
+<td><code>claim-events</code></td>
+<td><code>audit-sub</code></td>
+<td>Audit logging</td>
+</tr>
+<tr>
+<td><code>claim-events</code></td>
+<td><code>analytics-sub</code></td>
+<td>Analytics/reporting</td>
+</tr>
+<tr>
+<td><code>episode-events</code></td>
+<td><code>signalr-sub</code></td>
+<td>Real-time UI updates</td>
+</tr>
+<tr>
+<td><code>episode-events</code></td>
+<td><code>notification-sub</code></td>
+<td>User notifications</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="error-handling">Error Handling</h2>
+<h3 id="dead-letter-processing">Dead Letter Processing</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">Function</span><span class="op">(</span><span class="st">&quot;ProcessDeadLetterClaims&quot;</span><span class="op">)]</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task <span class="fu">ProcessDeadLetter</span><span class="op">(</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span><span class="fu">ServiceBusTrigger</span><span class="op">(</span><span class="st">&quot;claims-priced/$deadletterqueue&quot;</span><span class="op">)]</span> ServiceBusReceivedMessage message<span class="op">)</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> claim <span class="op">=</span> JsonSerializer<span class="op">.</span><span class="fu">Deserialize</span><span class="op">&lt;</span>ClaimInput<span class="op">&gt;(</span>message<span class="op">.</span><span class="fu">Body</span><span class="op">);</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    _logger<span class="op">.</span><span class="fu">LogError</span><span class="op">(</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;Claim {ClaimId} failed pricing. Reason: {Reason}&quot;</span><span class="op">,</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        claim<span class="op">.</span><span class="fu">ClaimId</span><span class="op">,</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        message<span class="op">.</span><span class="fu">DeadLetterReason</span><span class="op">);</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Store in error tracking</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    await _errorRepo<span class="op">.</span><span class="fu">CreateAsync</span><span class="op">(</span><span class="kw">new</span> PricingError</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>        ClaimId <span class="op">=</span> claim<span class="op">.</span><span class="fu">ClaimId</span><span class="op">,</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        Error <span class="op">=</span> message<span class="op">.</span><span class="fu">DeadLetterReason</span><span class="op">,</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        ErrorDescription <span class="op">=</span> message<span class="op">.</span><span class="fu">DeadLetterErrorDescription</span><span class="op">,</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        OriginalPayload <span class="op">=</span> message<span class="op">.</span><span class="fu">Body</span><span class="op">.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        OccurredAt <span class="op">=</span> DateTimeOffset<span class="op">.</span><span class="fu">UtcNow</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Notify operations</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>    await _alertService<span class="op">.</span><span class="fu">SendAlertAsync</span><span class="op">(</span><span class="kw">new</span> PricingFailureAlert</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>        ClaimId <span class="op">=</span> claim<span class="op">.</span><span class="fu">ClaimId</span><span class="op">,</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>        Severity <span class="op">=</span> AlertSeverity<span class="op">.</span><span class="fu">Warning</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="monitoring-observability">Monitoring &amp; Observability</h2>
+<h3 id="key-metrics">Key Metrics</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+<th>Alert Threshold</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>claims_priced_total</code></td>
+<td>Total claims priced</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><code>claims_priced_latency_ms</code></td>
+<td>Pricing latency p95</td>
+<td>&gt;500ms</td>
+</tr>
+<tr>
+<td><code>claims_association_success_rate</code></td>
+<td>% claims associated</td>
+<td>&lt;90%</td>
+</tr>
+<tr>
+<td><code>bundle_calculation_duration_ms</code></td>
+<td>Bundle calc time</td>
+<td>&gt;100ms</td>
+</tr>
+<tr>
+<td><code>episode_variance_percent</code></td>
+<td>Variance from target</td>
+<td>Configurable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-insights-queries">Application Insights Queries</h3>
+<pre class="kusto"><code>// Claims priced per hour
+customMetrics
+| where name == &quot;claims_priced_total&quot;
+| summarize count = sum(valueCount) by bin(timestamp, 1h)
+| render timechart
+
+// High variance episodes
+customEvents
+| where name == &quot;EpisodeBundleUpdated&quot;
+| extend variance = todouble(customDimensions.VariancePercent)
+| where variance &gt; 20
+| project timestamp, episodeId = customDimensions.EpisodeId, variance
+| order by variance desc</code></pre>
+<hr />
+<h2 id="testing-strategy">Testing Strategy</h2>
+<h3 id="integration-tests">Integration Tests</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task <span class="fu">ClaimPriced_TriggersEpisodeAssociation</span><span class="op">()</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Arrange</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> episode <span class="op">=</span> await <span class="fu">CreateTestEpisode</span><span class="op">();</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> claim <span class="op">=</span> <span class="fu">CreateTestClaim</span><span class="op">(</span>episode<span class="op">.</span><span class="fu">PatientId</span><span class="op">,</span> episode<span class="op">.</span><span class="fu">TriggerDate</span><span class="op">);</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Act</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    await _claimIngestionService<span class="op">.</span><span class="fu">IngestClaimAsync</span><span class="op">(</span>claim<span class="op">);</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    await <span class="fu">WaitForProcessingAsync</span><span class="op">();</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Assert</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> updatedEpisode <span class="op">=</span> await _episodeRepo<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>episode<span class="op">.</span><span class="fu">Id</span><span class="op">);</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">True</span><span class="op">(</span>updatedEpisode<span class="op">.</span><span class="fu">BundleAmount</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">var</span> episodeClaims <span class="op">=</span> await _episodeClaimRepo<span class="op">.</span><span class="fu">GetByEpisodeAsync</span><span class="op">(</span>episode<span class="op">.</span><span class="fu">Id</span><span class="op">);</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    Assert<span class="op">.</span><span class="fu">Single</span><span class="op">(</span>episodeClaims<span class="op">);</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="01-REPRICING-MASTER-PLAN.html">01-REPRICING-MASTER-PLAN.md</a> -
+Overall strategy</li>
+<li><a
+href="03-CONTAINERIZATION-STRATEGY.html">03-CONTAINERIZATION-STRATEGY.md</a>
+- Phase 1 implementation</li>
+<li><a href="../04-DATA-MODEL.html">04-DATA-MODEL.md</a> - Episode data model</li>
+<li><a href="../05-API-DESIGN.html">05-API-DESIGN.md</a> - API specifications</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete<br />
+<strong>Next Steps:</strong> Implement claim ingestion API, integrate
+with Episode service</p>
+</body>
+</html>

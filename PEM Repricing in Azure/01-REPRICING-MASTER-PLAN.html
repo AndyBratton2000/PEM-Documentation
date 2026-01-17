@@ -1,0 +1,1468 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>01-REPRICING-MASTER-PLAN</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="pem-repricing-master-plan">PEM Repricing Master Plan</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Evaluation Phase</p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>Claim repricing is a <strong>critical functionality</strong> in
+Contract Manager that calculates expected payment amounts based on payer
+contracts. This capability is essential for PEM’s episode management
+to:</p>
+<ol type="1">
+<li>Calculate bundle pricing for episodes</li>
+<li>Compare expected vs actual payments</li>
+<li>Identify variance and underpayment opportunities</li>
+<li>Support contract modeling scenarios</li>
+</ol>
+<p>Given the complexity of the existing repricing engine (native C++
+with multiple DLL dependencies) and the limited timeline, we propose a
+<strong>phased approach</strong>:</p>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Approach</th>
+<th>Timeline</th>
+<th>Risk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Phase 1</strong></td>
+<td>Containerize existing C++ pricing engine</td>
+<td>6-8 weeks</td>
+<td>Low - Proven technology</td>
+</tr>
+<tr>
+<td><strong>Phase 2</strong></td>
+<td>Rewrite as cloud-native .NET 10 services</td>
+<td>16-24 weeks</td>
+<td>Medium - Full rewrite</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="business-justification">Business Justification</h2>
+<h3 id="why-repricing-is-essential-for-pem">Why Repricing is Essential
+for PEM</h3>
+<p><strong>Without Repricing:</strong></p>
+<pre><code>Episode Created → Claims Attached → ❌ Cannot Calculate Bundle Amount</code></pre>
+<p><strong>With Repricing:</strong></p>
+<pre><code>Episode Created → Claims Attached → Claims Repriced → ✅ Bundle Amount Calculated → ✅ Variance Identified</code></pre>
+<h3 id="key-use-cases">Key Use Cases</h3>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 33%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Use Case</th>
+<th>Description</th>
+<th>Business Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Bundle Calculation</strong></td>
+<td>Sum of repriced claims = expected bundle payment</td>
+<td>Core PEM functionality</td>
+</tr>
+<tr>
+<td><strong>Variance Analysis</strong></td>
+<td>Compare expected vs actual payment</td>
+<td>Revenue recovery</td>
+</tr>
+<tr>
+<td><strong>Contract Modeling</strong></td>
+<td>“What-if” scenarios with different contract terms</td>
+<td>Contract negotiation</td>
+</tr>
+<tr>
+<td><strong>Outlier Detection</strong></td>
+<td>Identify claims priced outside expected range</td>
+<td>Quality control</td>
+</tr>
+<tr>
+<td><strong>Payer Comparison</strong></td>
+<td>Compare pricing across different payers</td>
+<td>Strategic planning</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="current-state-assessment">Current State Assessment</h2>
+<h3 id="repricing-engine-components">Repricing Engine Components</h3>
+<p>The Contract Manager repricing engine consists of:</p>
+<pre><code>┌─────────────────────────────────────────────────────────────────┐
+│                    CONTRACT MANAGER REPRICING                    │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ Entry Point: RunCBO.NET / AdHocRepriceExecutor            │  │
+│  │ (.NET Framework / C#)                                      │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ Orchestration: HDict Job Engine                            │  │
+│  │ - HJobCreateCarePricerWorkList                            │  │
+│  │ - HJobLookupTermsAndConditions                            │  │
+│  │ - HJobMatchServiceTypes                                    │  │
+│  │ - HJobReprice                                              │  │
+│  │ (Native C++ / MFC)                                         │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ Pricers &amp; Groupers                                         │  │
+│  │ - DRG Grouper (hadgrp.dll)                                │  │
+│  │ - APC Grouper (FinThrive.APCGrouper.*.dll)                │  │
+│  │ - Medicare IP/OP Pricers (nThrive.Medicare.*.dll)         │  │
+│  │ - State Medicaid Pricers (Arizona, SC, etc.)              │  │
+│  │ - TRICARE, EAPG, APR-DRG (3M GP Services)                 │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                              │                                   │
+│                              ▼                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │ Output: Debriefer                                          │  │
+│  │ - SQL Server (BILLMAST, TRBOBILL)                         │  │
+│  │ - JSON (RepriceOutputWriter)                               │  │
+│  │ - SQLite (SqliteDebriefer)                                 │  │
+│  └───────────────────────────────────────────────────────────┘  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="technical-constraints">Technical Constraints</h3>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 25%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Constraint</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Native C++ DLLs</strong></td>
+<td>Requires Windows runtime</td>
+<td>Windows containers</td>
+</tr>
+<tr>
+<td><strong>MFC Dependencies</strong></td>
+<td>Cannot run on Linux</td>
+<td>Phase 2 rewrite or Windows containers</td>
+</tr>
+<tr>
+<td><strong>Database Dependencies</strong></td>
+<td>Expects SQL Server schema</td>
+<td>Adapter layer</td>
+</tr>
+<tr>
+<td><strong>TAC Model Complexity</strong></td>
+<td>Thousands of pricing rules</td>
+<td>Careful extraction</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="phase-1-containerization-strategy">Phase 1: Containerization
+Strategy</h2>
+<h3 id="objective">Objective</h3>
+<p>Package the existing native pricing engine into a Windows container
+that can: 1. Receive claims as JSON via HTTP/Service Bus 2. Execute
+repricing using existing DLLs 3. Return priced results as JSON 4. Scale
+horizontally in Azure Container Apps</p>
+<h3 id="architecture">Architecture</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                                   AZURE                                      │
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ Azure Container Apps (Windows)                                          │ │
+│  │  ┌──────────────────────────────────────────────────────────────────┐  │ │
+│  │  │ Pricing Worker Container                                          │  │ │
+│  │  │  ┌────────────────┐  ┌─────────────────────────────────────────┐ │  │ │
+│  │  │  │ Pricing CLI    │  │ CboPricingBridge.dll (C++ P/Invoke)     │ │  │ │
+│  │  │  │ (.NET 10)      │→ │                                         │ │  │ │
+│  │  │  └────────────────┘  └───────────────┬─────────────────────────┘ │  │ │
+│  │  │                                      │                            │  │ │
+│  │  │               ┌──────────────────────┼──────────────────────┐    │  │ │
+│  │  │               ▼                      ▼                      │    │  │ │
+│  │  │  ┌────────────────────┐  ┌────────────────────────────────┐ │    │  │ │
+│  │  │  │ DRG/APC Groupers   │  │ Medicare/Medicaid Pricers      │ │    │  │ │
+│  │  │  │ (Native DLLs)      │  │                                │ │    │  │ │
+│  │  │  └────────────────────┘  └────────────────────────────────┘ │    │  │ │
+│  │  │               └──────────────────────┴──────────────────────┘    │  │ │
+│  │  └──────────────────────────────────────────────────────────────────┘  │ │
+│  └────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│  ┌────────────────────┐  ┌──────────────────┐  ┌──────────────────┐         │
+│  │ Azure Service Bus  │  │ Cosmos DB        │  │ Azure SQL        │         │
+│  └─────────┬──────────┘  └────────▲─────────┘  └──────────────────┘         │
+└────────────┼──────────────────────┼──────────────────────────────────────────┘
+             │                      │
+    ┌────────┴────────┐    (Priced JSON)
+    │ Claim Source    │
+    │ (External)      │
+    └─────────────────┘</code></pre>
+<p><strong>Data Flow:</strong> Claim Source → Service Bus → Pricing CLI
+→ Bridge → Groupers/Pricers → Service Bus → Cosmos DB</p>
+<h3 id="key-components">Key Components</h3>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 40%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pricing CLI</strong></td>
+<td>.NET 10 host that receives JSON, calls native bridge</td>
+<td>New development</td>
+</tr>
+<tr>
+<td><strong>CboPricingBridge.dll</strong></td>
+<td>C++ DLL exposing <code>PriceEpisodeFromJson()</code></td>
+<td>Extract from Cbo.Core</td>
+</tr>
+<tr>
+<td><strong>Episode Serializer</strong></td>
+<td>JSON ↔︎ HEpisode conversion</td>
+<td>Extract from AdHocRepriceEpisodeFactory</td>
+</tr>
+<tr>
+<td><strong>DRG Grouper</strong></td>
+<td>hadgrp.dll + version modules</td>
+<td>Copy from lib/DRG Grouper</td>
+</tr>
+<tr>
+<td><strong>APC Grouper</strong></td>
+<td>FinThrive.APCGrouper NuGet packages</td>
+<td>NuGet restore</td>
+</tr>
+<tr>
+<td><strong>Medicare Pricers</strong></td>
+<td>nThrive.Medicare.* NuGet packages</td>
+<td>NuGet restore</td>
+</tr>
+<tr>
+<td><strong>State Medicaid</strong></td>
+<td>Arizona, SC Medicaid DLLs</td>
+<td>Build from source</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-image">Container Image</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Windows Server Core for native DLL support</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> mcr.microsoft.com/windows/servercore:ltsc2022</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Install VC++ Runtime</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">powershell</span> <span class="at">-Command</span> <span class="dt">\</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    Invoke-WebRequest <span class="at">-Uri</span> https://aka.ms/vs/17/release/vc_redist.x86.exe <span class="dt">\</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">-OutFile</span> C:<span class="dt">\v</span>c_redist.exe<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Start-Process</span> <span class="at">-Wait</span> C:<span class="dt">\v</span>c_redist.exe <span class="at">-ArgumentList</span> <span class="st">&#39;/install /quiet&#39;</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Install .NET 10 Runtime</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">powershell</span> <span class="at">-Command</span> <span class="dt">\</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    Invoke-WebRequest <span class="at">-Uri</span> https://dot.net/v1/dotnet-install.ps1 <span class="at">-OutFile</span> install.ps1<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="ex">./install.ps1</span> <span class="at">-Version</span> 10.0.0 <span class="at">-Runtime</span> dotnet</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy pricing components</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> bin/CboPricingBridge.dll /app/</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> bin/grouper/ /app/grouper/</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> bin/pricers/ /app/pricers/</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> bin/PricingWorker/ /app/worker/</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> PATH=<span class="st">&quot;${PATH};C:\app;C:\app\grouper;C:\app\pricers&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a><span class="kw">ENTRYPOINT</span> [<span class="st">&quot;dotnet&quot;</span>, <span class="st">&quot;/app/worker/PricingWorker.dll&quot;</span>]</span></code></pre></div>
+<h3 id="phase-1-timeline">Phase 1 Timeline</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 35%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>Week</th>
+<th>Milestone</th>
+<th>Deliverables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1-2</td>
+<td>Environment Setup</td>
+<td>Windows container build pipeline, base image</td>
+</tr>
+<tr>
+<td>3-4</td>
+<td>Bridge Extraction</td>
+<td>CboPricingBridge.dll with JSON interface</td>
+</tr>
+<tr>
+<td>5-6</td>
+<td>Grouper Integration</td>
+<td>DRG/APC grouping working in container</td>
+</tr>
+<tr>
+<td>7-8</td>
+<td>Full Pricing</td>
+<td>Medicare/Medicaid pricers integrated</td>
+</tr>
+<tr>
+<td>9-10</td>
+<td>Azure Deployment</td>
+<td>Container Apps, Service Bus integration</td>
+</tr>
+<tr>
+<td>11-12</td>
+<td>PEM Integration</td>
+<td>Episode API integration, testing</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="phase-2-cloud-native-architecture-future">Phase 2: Cloud-Native
+Architecture (Future)</h2>
+<h3 id="objective-1">Objective</h3>
+<p>Rewrite the pricing engine as cloud-native .NET 10 microservices
+that: 1. Run on Linux containers (smaller, faster) 2. Scale
+independently by pricing type 3. Use modern patterns (event-driven,
+stateless) 4. Enable easier testing and maintenance</p>
+<h3 id="target-architecture">Target Architecture</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│                                   AZURE                                      │
+│                                                                              │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │                         API Management                                   ││
+│  └──────────────────────────────────┬──────────────────────────────────────┘│
+│                                     ▼                                        │
+│  ┌─────────────────────────────────────────────────────────────────────────┐│
+│  │ PRICING DOMAIN                                                           ││
+│  │  ┌──────────────────────────────────────────────────────────────────┐   ││
+│  │  │                    Pricing Router Service                         │   ││
+│  │  └──────────────────────────────────────────────────────────────────┘   ││
+│  │       │          │           │           │           │                   ││
+│  │       ▼          ▼           ▼           ▼           ▼                   ││
+│  │  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐            ││
+│  │  │Medicare │ │Medicare │ │Medicaid │ │Commerc. │ │TRICARE  │            ││
+│  │  │IP Pricer│ │OP Pricer│ │ Pricer  │ │ Pricer  │ │ Pricer  │            ││
+│  │  └────┬────┘ └────┬────┘ └─────────┘ └─────────┘ └─────────┘            ││
+│  └───────┼───────────┼─────────────────────────────────────────────────────┘│
+│          │           │                                                       │
+│  ┌───────┼───────────┼─────────────────────────────────────────────────────┐│
+│  │ GROUPING DOMAIN   │                                                      ││
+│  │       ▼           ▼                                                      ││
+│  │  ┌─────────┐ ┌─────────┐                                                ││
+│  │  │  DRG    │ │  APC    │                                                ││
+│  │  │ Grouper │ │ Grouper │                                                ││
+│  │  │ Service │ │ Service │                                                ││
+│  │  └────┬────┘ └────┬────┘                                                ││
+│  └───────┼───────────┼─────────────────────────────────────────────────────┘│
+│          │           │                                                       │
+│  ┌───────┼───────────┼─────────────────────────────────────────────────────┐│
+│  │ DATA LAYER        ▼                                                      ││
+│  │  ┌─────────────────────┐  ┌─────────────────┐  ┌─────────────────┐      ││
+│  │  │ Redis               │  │ Azure SQL       │  │ Cosmos DB       │      ││
+│  │  │ (Reference Data)    │  │ (Contracts/TAC) │  │ (Pricing Results│      ││
+│  │  └─────────────────────┘  └─────────────────┘  └─────────────────┘      ││
+│  └─────────────────────────────────────────────────────────────────────────┘│
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="service-breakdown">Service Breakdown</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 41%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Responsibility</th>
+<th>Technology</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pricing Router</strong></td>
+<td>Route claims to appropriate pricer</td>
+<td>.NET 10 Minimal API</td>
+</tr>
+<tr>
+<td><strong>Medicare IP Pricer</strong></td>
+<td>IPPS/DRG-based pricing</td>
+<td>.NET 10, lib-medicare-inpatient-core</td>
+</tr>
+<tr>
+<td><strong>Medicare OP Pricer</strong></td>
+<td>OPPS/APC-based pricing</td>
+<td>.NET 10, lib-medicare-outpatient-core</td>
+</tr>
+<tr>
+<td><strong>Medicaid Pricer</strong></td>
+<td>State-specific Medicaid pricing</td>
+<td>.NET 10 per-state modules</td>
+</tr>
+<tr>
+<td><strong>Commercial Pricer</strong></td>
+<td>TAC-based commercial pricing</td>
+<td>.NET 10</td>
+</tr>
+<tr>
+<td><strong>DRG Grouper Service</strong></td>
+<td>MS-DRG grouping</td>
+<td>.NET 10 (port from C++)</td>
+</tr>
+<tr>
+<td><strong>APC Grouper Service</strong></td>
+<td>APC/OPPS grouping</td>
+<td>.NET 10 (existing NuGet)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-2-timeline-estimate">Phase 2 Timeline Estimate</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 34%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>Activities</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Design</strong></td>
+<td>4 weeks</td>
+<td>API contracts, data models, service boundaries</td>
+</tr>
+<tr>
+<td><strong>Core Services</strong></td>
+<td>8 weeks</td>
+<td>Router, Medicare IP/OP pricers</td>
+</tr>
+<tr>
+<td><strong>Grouper Migration</strong></td>
+<td>4 weeks</td>
+<td>Port DRG/APC logic to .NET</td>
+</tr>
+<tr>
+<td><strong>Medicaid/Commercial</strong></td>
+<td>6 weeks</td>
+<td>State-specific and TAC-based pricing</td>
+</tr>
+<tr>
+<td><strong>Integration</strong></td>
+<td>4 weeks</td>
+<td>PEM integration, end-to-end testing</td>
+</tr>
+<tr>
+<td><strong>Parity Testing</strong></td>
+<td>4 weeks</td>
+<td>Validate against legacy CM results</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="external-claim-data-integration">External Claim Data
+Integration</h2>
+<h3 id="claim-input-format">Claim Input Format</h3>
+<p>Since claims will come from external sources (not ClaimShop), we
+define a canonical JSON schema:</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claimId&quot;</span><span class="fu">:</span> <span class="st">&quot;CLM-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;facilityId&quot;</span><span class="fu">:</span> <span class="st">&quot;FAC-001&quot;</span><span class="fu">,</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;PAT-987654&quot;</span><span class="fu">,</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claimType&quot;</span><span class="fu">:</span> <span class="st">&quot;Inpatient&quot;</span><span class="fu">,</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;billType&quot;</span><span class="fu">:</span> <span class="st">&quot;111&quot;</span><span class="fu">,</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;admitDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-10&quot;</span><span class="fu">,</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dischargeDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientStatus&quot;</span><span class="fu">:</span> <span class="st">&quot;01&quot;</span><span class="fu">,</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;principalDiagnosis&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;J18.9&quot;</span><span class="fu">,</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;secondaryDiagnoses&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;E11.65&quot;</span><span class="fu">,</span> <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span><span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;I10&quot;</span><span class="fu">,</span> <span class="dt">&quot;poa&quot;</span><span class="fu">:</span> <span class="st">&quot;Y&quot;</span><span class="fu">}</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;procedures&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;0BJ08ZZ&quot;</span><span class="fu">,</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;date&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-11&quot;</span><span class="fu">,</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;ICD10PCS&quot;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;revenueLines&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;lineNumber&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;revenueCode&quot;</span><span class="fu">:</span> <span class="st">&quot;0120&quot;</span><span class="fu">,</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;hcpcs&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;serviceDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-10&quot;</span><span class="fu">,</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;units&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;charges&quot;</span><span class="fu">:</span> <span class="fl">12500.00</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;payer&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payerId&quot;</span><span class="fu">:</span> <span class="st">&quot;BCBS-001&quot;</span><span class="fu">,</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;payerName&quot;</span><span class="fu">:</span> <span class="st">&quot;Blue Cross Blue Shield&quot;</span><span class="fu">,</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;planCode&quot;</span><span class="fu">:</span> <span class="st">&quot;PPO-500&quot;</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;provider&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;npi&quot;</span><span class="fu">:</span> <span class="st">&quot;1234567890&quot;</span><span class="fu">,</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;taxonomy&quot;</span><span class="fu">:</span> <span class="st">&quot;207R00000X&quot;</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">125000.00</span></span>
+<span id="cb7-45"><a href="#cb7-45" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="claim-ingestion-flow">Claim Ingestion Flow</h3>
+<p><strong>Sequence:</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 20%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>External Source</td>
+<td>Service Bus</td>
+<td>Submit Claim (JSON)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Service Bus</td>
+<td>Validation Service</td>
+<td>claims-ingest queue</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Validation Service</td>
+<td>Validation Service</td>
+<td>Validate structure &amp; codes</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Validation Service</td>
+<td>Service Bus</td>
+<td>claims-price queue</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Service Bus</td>
+<td>Pricing Service</td>
+<td>Route to pricer</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Pricing Service</td>
+<td>Pricing Service</td>
+<td>Execute repricing</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Pricing Service</td>
+<td>Service Bus</td>
+<td>claims-complete queue</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Service Bus</td>
+<td>PEM Episode API</td>
+<td>Associate with episode</td>
+</tr>
+<tr>
+<td>9</td>
+<td>PEM Episode API</td>
+<td>Cosmos DB</td>
+<td>Store priced claim</td>
+</tr>
+<tr>
+<td>10</td>
+<td>PEM Episode API</td>
+<td>PEM Episode API</td>
+<td>Recalculate bundle</td>
+</tr>
+</tbody>
+</table>
+<pre><code>External Source → Service Bus → Validation → Service Bus → Pricing → Service Bus → PEM Episode API → Cosmos DB</code></pre>
+<hr />
+<h2 id="integration-with-pem-episodes">Integration with PEM
+Episodes</h2>
+<h3 id="episode-claim-association">Episode-Claim Association</h3>
+<p>Repriced claims are associated with PEM episodes for bundle
+calculation:</p>
+<p><strong>Entity Relationships:</strong> - Episode (1) → EpisodeClaim
+(0..*) - EpisodeClaim (1) → PricedClaim (1)</p>
+<p><strong>Episode</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | DefinitionVersionId | GUID
+| FK to Definition | | ContractProfileId | GUID | FK to Contract | |
+PatientId | string | Patient identifier | | TriggerDate | date | Episode
+trigger date | | BundleAmount | decimal | Calculated bundle | |
+TargetPrice | decimal | Target price | | Variance | decimal | Bundle vs
+Target |</p>
+<p><strong>EpisodeClaim</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | EpisodeId | GUID | FK to
+Episode | | PricedClaimId | GUID | FK to PricedClaim | | ClaimRole |
+string | Role in episode | | AllowedAmount | decimal | Allowed amount |
+| PaidAmount | decimal | Paid amount |</p>
+<p><strong>PricedClaim</strong> | Field | Type | Description |
+|——-|——|————-| | Id | GUID | Primary Key | | ExternalClaimId | string |
+External claim ID | | OriginalClaimJson | JSON | Original claim data | |
+PricingResultJson | JSON | Pricing output | | ExpectedPayment | decimal
+| Expected payment | | DrgCode | string | Assigned DRG | | ApcCodes |
+string | Assigned APCs | | PricedAt | datetime | Pricing timestamp |</p>
+<h3 id="bundle-recalculation">Bundle Recalculation</h3>
+<p>When a claim is repriced and associated with an episode:</p>
+<ol type="1">
+<li><strong>Claim Priced Event</strong> triggers bundle
+recalculation</li>
+<li>Sum all <code>EpisodeClaim.AllowedAmount</code> values</li>
+<li>Update <code>Episode.BundleAmount</code></li>
+<li>Calculate
+<code>Episode.Variance = BundleAmount - TargetPrice</code></li>
+<li>Publish <code>EpisodeBundleUpdated</code> event</li>
+</ol>
+<hr />
+<h2 id="risk-assessment">Risk Assessment</h2>
+<table>
+<colgroup>
+<col style="width: 15%" />
+<col style="width: 33%" />
+<col style="width: 20%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Probability</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Container Size</strong></td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Multi-stage builds; remove unused DLL versions</td>
+</tr>
+<tr>
+<td><strong>Windows Container Scaling</strong></td>
+<td>Low</td>
+<td>Medium</td>
+<td>Azure Container Apps supports Windows; monitor performance</td>
+</tr>
+<tr>
+<td><strong>Parity Drift</strong></td>
+<td>Medium</td>
+<td>High</td>
+<td>Automated parity testing with 10K+ claim golden dataset</td>
+</tr>
+<tr>
+<td><strong>TAC Complexity</strong></td>
+<td>High</td>
+<td>High</td>
+<td>Phase 2 only; Phase 1 uses existing logic unchanged</td>
+</tr>
+<tr>
+<td><strong>Timeline Pressure</strong></td>
+<td>High</td>
+<td>High</td>
+<td>Focus on Phase 1 MVP; defer non-essential pricers</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="success-criteria">Success Criteria</h2>
+<h3 id="phase-1-success">Phase 1 Success</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Parity</strong></td>
+<td>99.9% match with legacy CM repricing results</td>
+</tr>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>100 claims/second minimum</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>&lt;500ms p95 for single claim</td>
+</tr>
+<tr>
+<td><strong>Availability</strong></td>
+<td>99.9% uptime</td>
+</tr>
+<tr>
+<td><strong>Container Startup</strong></td>
+<td>&lt;60 seconds cold start</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-2-success">Phase 2 Success</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Parity</strong></td>
+<td>100% match with Phase 1 results</td>
+</tr>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>1,000 claims/second</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>&lt;100ms p95 for single claim</td>
+</tr>
+<tr>
+<td><strong>Container Size</strong></td>
+<td>&lt;500MB (Linux)</td>
+</tr>
+<tr>
+<td><strong>Cost</strong></td>
+<td>50% reduction from Windows containers</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommendations">Recommendations</h2>
+<ol type="1">
+<li><strong>Start Phase 1 Immediately</strong> - Containerization is
+lower risk and provides quick value</li>
+<li><strong>Define JSON Schema Early</strong> - Agreement on claim
+format enables parallel development</li>
+<li><strong>Build Parity Test Suite</strong> - Essential for validating
+both phases</li>
+<li><strong>Scope Phase 1 MVP</strong> - Start with Medicare IP/OP only;
+add others incrementally</li>
+</ol>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="02-CURRENT-STATE-ANALYSIS.html">02-CURRENT-STATE-ANALYSIS.md</a> -
+Detailed component analysis</li>
+<li><a
+href="03-CONTAINERIZATION-STRATEGY.html">03-CONTAINERIZATION-STRATEGY.md</a>
+- Phase 1 technical details</li>
+<li><a
+href="04-CLOUD-NATIVE-ARCHITECTURE.html">04-CLOUD-NATIVE-ARCHITECTURE.md</a>
+- Phase 2 design</li>
+<li><a
+href="05-INTEGRATION-WITH-PEM.html">05-INTEGRATION-WITH-PEM.md</a> - PEM
+episode integration</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete<br />
+<strong>Next Steps:</strong> Begin Phase 1 development; finalize claim
+JSON schema</p>
+</body>
+</html>

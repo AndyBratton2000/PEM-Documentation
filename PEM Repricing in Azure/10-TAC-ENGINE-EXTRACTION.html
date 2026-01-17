@@ -1,0 +1,1722 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10-TAC-ENGINE-EXTRACTION</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="tac-engine-extraction-and-containerization">TAC Engine
+Extraction and Containerization</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Deep-Dive Technical Reference</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>The TAC (Terms and Conditions) Engine is the heart of commercial
+contract pricing in Contract Manager. This document analyzes the TAC
+engine’s architecture, the 59+ term types, and strategies for
+containerization.</p>
+<p><strong>Critical Decision Point:</strong> Phase 1 containerization
+can bypass the full TAC engine by using only government pricers
+(Medicare, Medicaid, TRICARE). Full TAC engine support requires Phase 2
+modernization effort.</p>
+<hr />
+<h2 id="tac-engine-architecture">1. TAC Engine Architecture</h2>
+<h3 id="design-pattern">Design Pattern</h3>
+<p>The TAC engine uses a combination of patterns: - <strong>Strategy
+Pattern</strong>: Each term type (<code>TacTerm*</code>) implements the
+<code>ITacTerm</code> interface - <strong>Composite Pattern</strong>:
+Sections contain terms, terms can contain sub-terms - <strong>Chain of
+Responsibility</strong>: Terms execute in sequence, each can pass/stop
+processing</p>
+<h3 id="execution-hierarchy">Execution Hierarchy</h3>
+<pre><code>CONTRACT DEFINITION
+        │
+        ▼
+Terms &amp; Conditions (TAC)
+        │
+        ├──→ Reimbursement Section ──→ TacTermDRG, TacTermPerDiem, TacTermPercent,
+        │                              TacTermFormula, TacTermFeeSchedule,
+        │                              TacTermMedicareIP, ...59+ Term Types
+        ├──→ Copay Section
+        ├──→ Exclusions Section
+        ├──→ Pass-Through Section
+        └──→ Stop-Loss Section</code></pre>
+<p><strong>Sections:</strong> - <strong>Reimbursement</strong> -
+Contains pricing terms (DRG, Per Diem, Percent, Formula, Fee Schedule,
+Medicare, etc.) - <strong>Copay</strong> - Patient cost-sharing terms -
+<strong>Exclusions</strong> - Services not covered -
+<strong>Pass-Through</strong> - Direct cost pass-through -
+<strong>Stop-Loss</strong> - High-cost protection</p>
+<h3 id="core-interface">Core Interface</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ITacTerm.h - Base interface for all pricing terms</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ITacTerm</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="op">~</span>ITacTerm<span class="op">()</span> <span class="op">=</span> <span class="cf">default</span><span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Execute the term against an episode</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> HRESULT Evaluate<span class="op">(</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        TacEvaluationContext<span class="op">&amp;</span> context<span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        TacTermResult<span class="op">&amp;</span> result<span class="op">)</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Load term definition from contract data</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> HRESULT LoadEx<span class="op">(</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> CXmlDocument<span class="op">&amp;</span> termDefinition<span class="op">,</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> ContractContext<span class="op">&amp;</span> contractContext<span class="op">)</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get summary for reporting</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> CString GetSummary<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Check if applicable to interim billing</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">bool</span> IsInterimTerm<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get term type identifier</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> <span class="dt">int</span> GetTermType<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get term description</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">virtual</span> CString GetDescription<span class="op">()</span> <span class="at">const</span> <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="evaluation-context">Evaluation Context</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// TacEvaluationContext - Shared state during pricing</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> TacEvaluationContext</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Running totals</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    DECIMAL CurrentReimbursement<span class="op">;</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    DECIMAL TotalCharges<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    DECIMAL ExcludedAmount<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    DECIMAL CopayAmount<span class="op">;</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    DECIMAL PassThroughAmount<span class="op">;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Section states</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> InReimbursementSection<span class="op">;</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> InCopaySection<span class="op">;</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> InExclusionSection<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> InPassThroughSection<span class="op">;</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> InStopLossSection<span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Processing control</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> ContinueProcessing<span class="op">;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> SkipToNextSection<span class="op">;</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Service type breakdowns</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>map<span class="op">&lt;</span>CString<span class="op">,</span> ServiceTypeAccumulator<span class="op">&gt;</span> ServiceTypeAmounts<span class="op">;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Line item tracking</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>map<span class="op">&lt;</span><span class="dt">int</span><span class="op">,</span> LineItemResult<span class="op">&gt;</span> LineItemResults<span class="op">;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Trace/audit</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>vector<span class="op">&lt;</span>TermTraceEntry<span class="op">&gt;</span> TraceEntries<span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> TraceEnabled<span class="op">;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<hr />
+<h2 id="term-type-catalog">2. Term Type Catalog</h2>
+<h3 id="base-payment-terms-1-6">Base Payment Terms (1-6)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Term Class</th>
+<th>Purpose</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><code>TacTermFlat</code></td>
+<td>Fixed dollar amount</td>
+<td>⭐ Low</td>
+</tr>
+<tr>
+<td>2</td>
+<td><code>TacTermPerDiem</code></td>
+<td>Per day payment</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>3</td>
+<td><code>TacTermPercent</code></td>
+<td>Percentage of charges</td>
+<td>⭐ Low</td>
+</tr>
+<tr>
+<td>4</td>
+<td><code>TacTermDRG</code></td>
+<td>DRG-based payment</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>5</td>
+<td><code>TacTermAPG</code></td>
+<td>APG grouper payment</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>6</td>
+<td><code>TacTermEAPG</code></td>
+<td>Enhanced APG payment</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+</tbody>
+</table>
+<h3 id="implementation-example-tactermdrg">Implementation Example:
+TacTermDRG</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// TacTermDRG.cpp - DRG payment term</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>HRESULT TacTermDRG<span class="op">::</span>Evaluate<span class="op">(</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    TacEvaluationContext<span class="op">&amp;</span> context<span class="op">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    TacTermResult<span class="op">&amp;</span> result<span class="op">)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. Get DRG from episode (already grouped)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    CString drgCode <span class="op">=</span> episode<span class="op">-&gt;</span>GetDRG<span class="op">();</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    DECIMAL drgWeight <span class="op">=</span> episode<span class="op">-&gt;</span>GetDRGWeight<span class="op">();</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. Look up weight from configured table (may override)</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>_TableName<span class="op">.</span>IsEmpty<span class="op">())</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        DECIMAL tableWeight<span class="op">;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>SUCCEEDED<span class="op">(</span>LookupDRGWeight<span class="op">(</span>drgCode<span class="op">,</span> _TableName<span class="op">,</span> tableWeight<span class="op">)))</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            drgWeight <span class="op">=</span> tableWeight<span class="op">;</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. Apply conversion factor</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>    DECIMAL payment <span class="op">=</span> drgWeight <span class="op">*</span> _ConversionFactor<span class="op">;</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 4. Apply any adjustments (wage index, outlier, etc.)</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>_ApplyWageIndex<span class="op">)</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>        payment <span class="op">=</span> ApplyWageIndexAdjustment<span class="op">(</span>episode<span class="op">,</span> payment<span class="op">);</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>_CalculateOutlier<span class="op">)</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        payment <span class="op">+=</span> CalculateOutlierPayment<span class="op">(</span>episode<span class="op">,</span> payment<span class="op">);</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 5. Update context</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    context<span class="op">.</span>CurrentReimbursement <span class="op">=</span> payment<span class="op">;</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span>CalculatedAmount <span class="op">=</span> payment<span class="op">;</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span>Message <span class="op">=</span> FormatMessage<span class="op">(</span><span class="st">&quot;DRG </span><span class="sc">%s</span><span class="st"> weighted at </span><span class="sc">%.4f</span><span class="st"> = $</span><span class="sc">%.2f</span><span class="st">&quot;</span><span class="op">,</span> </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        drgCode<span class="op">,</span> drgWeight<span class="op">,</span> payment<span class="op">);</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> S_OK<span class="op">;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="modifier-terms-7-12">Modifier Terms (7-12)</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 33%" />
+<col style="width: 25%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Term Class</th>
+<th>Purpose</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>7</td>
+<td><code>TacTermFormula</code></td>
+<td>Custom formula calculations</td>
+<td>⭐⭐⭐⭐ Very High</td>
+</tr>
+<tr>
+<td>8</td>
+<td><code>TacTermCopay</code></td>
+<td>Patient copay calculation</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>9</td>
+<td><code>TacTermExclusion</code></td>
+<td>Exclude specific services</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>10</td>
+<td><code>TacTermPassThrough</code></td>
+<td>Pass-through items</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>11</td>
+<td><code>TacTermStopLoss</code></td>
+<td>Stop-loss caps</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>12</td>
+<td><code>TacTermPatientLiability</code></td>
+<td>Patient responsibility</td>
+<td>⭐⭐ Medium</td>
+</tr>
+</tbody>
+</table>
+<h3 id="implementation-example-tactermformula">Implementation Example:
+TacTermFormula</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// TacTermFormula.cpp - Formula-based calculation</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">// This is the most complex term type with 100+ operand types</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>HRESULT TacTermFormula<span class="op">::</span>Evaluate<span class="op">(</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    TacEvaluationContext<span class="op">&amp;</span> context<span class="op">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    TacTermResult<span class="op">&amp;</span> result<span class="op">)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    DECIMAL runningResult <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Execute each formula line in sequence</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> line <span class="op">:</span> _FormulaLines<span class="op">)</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get left operand value</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>        DECIMAL leftValue <span class="op">=</span> GetOperandValue<span class="op">(</span>line<span class="op">.</span>LeftOperand<span class="op">,</span> episode<span class="op">,</span> context<span class="op">);</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Get right operand value</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>        DECIMAL rightValue <span class="op">=</span> GetOperandValue<span class="op">(</span>line<span class="op">.</span>RightOperand<span class="op">,</span> episode<span class="op">,</span> context<span class="op">);</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Apply operator</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        <span class="cf">switch</span> <span class="op">(</span>line<span class="op">.</span>Operator<span class="op">)</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_ADD<span class="op">:</span>      runningResult <span class="op">=</span> leftValue <span class="op">+</span> rightValue<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_SUBTRACT<span class="op">:</span> runningResult <span class="op">=</span> leftValue <span class="op">-</span> rightValue<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_MULTIPLY<span class="op">:</span> runningResult <span class="op">=</span> leftValue <span class="op">*</span> rightValue<span class="op">;</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_DIVIDE<span class="op">:</span>   </span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>rightValue <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>                    runningResult <span class="op">=</span> leftValue <span class="op">/</span> rightValue<span class="op">;</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>                <span class="cf">else</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>                    runningResult <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>                <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-32"><a href="#cb5-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_MIN<span class="op">:</span>      runningResult <span class="op">=</span> min<span class="op">(</span>leftValue<span class="op">,</span> rightValue<span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-33"><a href="#cb5-33" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_MAX<span class="op">:</span>      runningResult <span class="op">=</span> max<span class="op">(</span>leftValue<span class="op">,</span> rightValue<span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-34"><a href="#cb5-34" aria-hidden="true" tabindex="-1"></a>            <span class="cf">case</span> OP_ROUND<span class="op">:</span>    runningResult <span class="op">=</span> Round<span class="op">(</span>leftValue<span class="op">,</span> <span class="op">(</span><span class="dt">int</span><span class="op">)</span>rightValue<span class="op">);</span> <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb5-35"><a href="#cb5-35" aria-hidden="true" tabindex="-1"></a>            <span class="co">// ... many more operators</span></span>
+<span id="cb5-36"><a href="#cb5-36" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb5-37"><a href="#cb5-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-38"><a href="#cb5-38" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Store intermediate result for next line</span></span>
+<span id="cb5-39"><a href="#cb5-39" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>line<span class="op">.</span>StoreAsVariable<span class="op">)</span></span>
+<span id="cb5-40"><a href="#cb5-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb5-41"><a href="#cb5-41" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span>Variables<span class="op">[</span>line<span class="op">.</span>VariableName<span class="op">]</span> <span class="op">=</span> runningResult<span class="op">;</span></span>
+<span id="cb5-42"><a href="#cb5-42" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb5-43"><a href="#cb5-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-44"><a href="#cb5-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-45"><a href="#cb5-45" aria-hidden="true" tabindex="-1"></a>    context<span class="op">.</span>CurrentReimbursement <span class="op">=</span> runningResult<span class="op">;</span></span>
+<span id="cb5-46"><a href="#cb5-46" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span>CalculatedAmount <span class="op">=</span> runningResult<span class="op">;</span></span>
+<span id="cb5-47"><a href="#cb5-47" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-48"><a href="#cb5-48" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> S_OK<span class="op">;</span></span>
+<span id="cb5-49"><a href="#cb5-49" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb5-50"><a href="#cb5-50" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-51"><a href="#cb5-51" aria-hidden="true" tabindex="-1"></a>DECIMAL TacTermFormula<span class="op">::</span>GetOperandValue<span class="op">(</span></span>
+<span id="cb5-52"><a href="#cb5-52" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> FormulaOperand<span class="op">&amp;</span> operand<span class="op">,</span></span>
+<span id="cb5-53"><a href="#cb5-53" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb5-54"><a href="#cb5-54" aria-hidden="true" tabindex="-1"></a>    TacEvaluationContext<span class="op">&amp;</span> context<span class="op">)</span></span>
+<span id="cb5-55"><a href="#cb5-55" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-56"><a href="#cb5-56" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 100+ operand types - each implemented as a strategy</span></span>
+<span id="cb5-57"><a href="#cb5-57" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> strategy <span class="op">=</span> FormulaOperandStrategyFactory<span class="op">::</span>Create<span class="op">(</span>operand<span class="op">.</span>Type<span class="op">);</span></span>
+<span id="cb5-58"><a href="#cb5-58" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> strategy<span class="op">-&gt;</span>GetValue<span class="op">(</span>episode<span class="op">,</span> context<span class="op">,</span> operand<span class="op">.</span>Parameters<span class="op">);</span></span>
+<span id="cb5-59"><a href="#cb5-59" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="formula-operand-types-partial-list">Formula Operand Types
+(Partial List)</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// FormulaOperandTypes.h - 100+ operand types</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">enum</span> FormulaOperandType</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Episode data</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    OP_GROSS_CHARGES<span class="op">,</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    OP_TOTAL_CHARGES<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    OP_LENGTH_OF_STAY<span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    OP_PATIENT_AGE<span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    OP_ADMIT_DATE<span class="op">,</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    OP_DISCHARGE_DATE<span class="op">,</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Calculated values</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    OP_CURRENT_AMOUNT<span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    OP_COPAY_AMOUNT<span class="op">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    OP_EXCLUSION_AMOUNT<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    OP_STOP_LOSS_AMOUNT<span class="op">,</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// DRG/APC data</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    OP_DRG_WEIGHT<span class="op">,</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    OP_DRG_PAYMENT<span class="op">,</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    OP_APC_PAYMENT<span class="op">,</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Service type aggregations</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    OP_CHARGES_IN_SERVICE_TYPE<span class="op">,</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    OP_DAYS_IN_SERVICE_TYPE<span class="op">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    OP_UNITS_IN_SERVICE_TYPE<span class="op">,</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Database lookups</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    OP_FEE_SCHEDULE_LOOKUP<span class="op">,</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    OP_CUSTOM_TABLE_LOOKUP<span class="op">,</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    OP_DRG_WEIGHT_LOOKUP<span class="op">,</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Constants</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    OP_CONSTANT_VALUE<span class="op">,</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    OP_PERCENTAGE<span class="op">,</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Variables</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    OP_STORED_VARIABLE<span class="op">,</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    <span class="co">// ... 80+ more operand types</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="professional-fee-terms-13-19">Professional Fee Terms
+(13-19)</h3>
+<table>
+<colgroup>
+<col style="width: 8%" />
+<col style="width: 33%" />
+<col style="width: 25%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>#</th>
+<th>Term Class</th>
+<th>Purpose</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>13</td>
+<td><code>TacTermFeeSchedule</code></td>
+<td>Line item fee schedules</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>14</td>
+<td><code>TacTermRBRVS</code></td>
+<td>RBRVS-based pricing</td>
+<td>⭐⭐⭐⭐ Very High</td>
+</tr>
+<tr>
+<td>15</td>
+<td><code>TacTermMPFS</code></td>
+<td>Medicare Physician FS</td>
+<td>⭐⭐⭐⭐ Very High</td>
+</tr>
+<tr>
+<td>16</td>
+<td><code>TacTermCPTBundling</code></td>
+<td>CPT bundling/unbundling</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>17</td>
+<td><code>TacTermMultipleProcedure</code></td>
+<td>Multiple procedure reduction</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>18</td>
+<td><code>TacTermModifierAdjust</code></td>
+<td>Modifier-based adjustments</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>19</td>
+<td><code>TacTermAnesthesia</code></td>
+<td>Anesthesia time-based pricing</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+</tbody>
+</table>
+<h3 id="government-pricer-terms-20-24">Government Pricer Terms
+(20-24)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Term Class</th>
+<th>Purpose</th>
+<th>External Dependency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>20</td>
+<td><code>TacTermMedicareIP</code></td>
+<td>Medicare Inpatient</td>
+<td>Medicare IP DLL</td>
+</tr>
+<tr>
+<td>21</td>
+<td><code>TacTermMedicareOP</code></td>
+<td>Medicare Outpatient</td>
+<td>Medicare OP DLL</td>
+</tr>
+<tr>
+<td>22</td>
+<td><code>TacTermMedicaid*</code></td>
+<td>State Medicaid</td>
+<td>State-specific DLLs</td>
+</tr>
+<tr>
+<td>23</td>
+<td><code>TacTermTriCare</code></td>
+<td>TRICARE pricing</td>
+<td>3M GP Services</td>
+</tr>
+<tr>
+<td>24</td>
+<td><code>TacTermWorkersComp</code></td>
+<td>Workers Comp</td>
+<td>State-specific DLLs</td>
+</tr>
+</tbody>
+</table>
+<h3 id="conditional-specialized-terms-25-32">Conditional &amp;
+Specialized Terms (25-32)</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Term Class</th>
+<th>Purpose</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>25</td>
+<td><code>TacTermIfThen</code></td>
+<td>Conditional execution</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>26</td>
+<td><code>TacTermGroup</code></td>
+<td>Composite term group</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>27</td>
+<td><code>TacTermRange</code></td>
+<td>Range-based selection</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>28</td>
+<td><code>TacTermDailyGrouping</code></td>
+<td>Daily charge grouping</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>29</td>
+<td><code>TacTermSubContract</code></td>
+<td>Sub-contract reference</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>30</td>
+<td><code>TacTermCustomTable</code></td>
+<td>Custom table lookups</td>
+<td>⭐⭐ Medium</td>
+</tr>
+<tr>
+<td>31</td>
+<td><code>TacTermInterim</code></td>
+<td>Interim billing</td>
+<td>⭐⭐⭐ High</td>
+</tr>
+<tr>
+<td>32</td>
+<td><code>TacTermManualOverride</code></td>
+<td>Manual overrides</td>
+<td>⭐ Low</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="containerization-strategy">3. Containerization Strategy</h2>
+<h3 id="option-a-bypass-tac-engine-phase-1---recommended">Option A:
+Bypass TAC Engine (Phase 1 - Recommended)</h3>
+<p>For Phase 1, focus on <strong>government payers only</strong> which
+don’t need the full TAC engine:</p>
+<pre><code>Episode Input
+     │
+     ▼
+┌─────────────┐
+│ Payer Type? │
+└──────┬──────┘
+       │
+       ├── Medicare ──→ DRG/APC Grouper ──→ Medicare Pricer ──→ Payment Result
+       │
+       ├── Medicaid ──→ State Grouper ──→ State Medicaid Pricer ──→ Payment Result
+       │
+       ├── TRICARE ──→ TRICARE Grouper ──→ TRICARE Pricer ──→ Payment Result
+       │
+       └── Commercial ──→ ❌ REJECT (Phase 2)</code></pre>
+<p><strong>Advantages:</strong> - No TAC engine complexity - Uses
+standardized pricers - Faster implementation (6-8 weeks) - Lower
+risk</p>
+<p><strong>Limitations:</strong> - Cannot price commercial contracts -
+Limited to government payer programs</p>
+<h3 id="option-b-minimal-tac-engine-phase-1-extended">Option B: Minimal
+TAC Engine (Phase 1 Extended)</h3>
+<p>Include a subset of the most common TAC terms:</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MinimalTacEngine - Subset of terms for containerization</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MinimalTacEngine</span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    HRESULT Initialize<span class="op">()</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Register only supported term types</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermFlat<span class="op">&gt;(</span><span class="dv">1</span><span class="op">);</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermPerDiem<span class="op">&gt;(</span><span class="dv">2</span><span class="op">);</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermPercent<span class="op">&gt;(</span><span class="dv">3</span><span class="op">);</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermDRG<span class="op">&gt;(</span><span class="dv">4</span><span class="op">);</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermFormula<span class="op">&gt;(</span><span class="dv">7</span><span class="op">);</span>     <span class="co">// Limited operands</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermMedicareIP<span class="op">&gt;(</span><span class="dv">20</span><span class="op">);</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>        RegisterTerm<span class="op">&lt;</span>TacTermMedicareOP<span class="op">&gt;(</span><span class="dv">21</span><span class="op">);</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> S_OK<span class="op">;</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> IsTermSupported<span class="op">(</span><span class="dt">int</span> termType<span class="op">)</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> _SupportedTerms<span class="op">.</span>find<span class="op">(</span>termType<span class="op">)</span> <span class="op">!=</span> _SupportedTerms<span class="op">.</span>end<span class="op">();</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    HRESULT EvaluateContract<span class="op">(</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> ContractDefinition<span class="op">&amp;</span> contract<span class="op">,</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        TacEvaluationContext<span class="op">&amp;</span> context<span class="op">)</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> section <span class="op">:</span> contract<span class="op">.</span>Sections<span class="op">)</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="cf">for</span> <span class="op">(</span><span class="at">const</span> <span class="kw">auto</span><span class="op">&amp;</span> termDef <span class="op">:</span> section<span class="op">.</span>Terms<span class="op">)</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(!</span>IsTermSupported<span class="op">(</span>termDef<span class="op">.</span>Type<span class="op">))</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">return</span> E_NOTIMPL<span class="op">;</span>  <span class="co">// Unsupported term</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>                <span class="kw">auto</span> term <span class="op">=</span> CreateTerm<span class="op">(</span>termDef<span class="op">.</span>Type<span class="op">);</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>                term<span class="op">-&gt;</span>LoadEx<span class="op">(</span>termDef<span class="op">.</span>Definition<span class="op">,</span> contract<span class="op">.</span>Context<span class="op">);</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>                TacTermResult result<span class="op">;</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>                HRESULT hr <span class="op">=</span> term<span class="op">-&gt;</span>Evaluate<span class="op">(</span>episode<span class="op">,</span> context<span class="op">,</span> result<span class="op">);</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>                <span class="cf">if</span> <span class="op">(</span>FAILED<span class="op">(</span>hr<span class="op">)</span> <span class="op">||</span> <span class="op">!</span>context<span class="op">.</span>ContinueProcessing<span class="op">)</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>                    <span class="cf">break</span><span class="op">;</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> S_OK<span class="op">;</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="option-c-full-tac-engine-phase-2">Option C: Full TAC Engine
+(Phase 2)</h3>
+<p>Complete modernization of the TAC engine to .NET Core:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Phase 2: Cloud-native TAC Engine</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">interface</span> ITacTerm</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    Task<span class="op">&lt;</span>TacTermResult<span class="op">&gt;</span> <span class="fu">EvaluateAsync</span><span class="op">(</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        Episode episode<span class="op">,</span> </span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        TacEvaluationContext context<span class="op">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct<span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">void</span> <span class="fu">Load</span><span class="op">(</span>XElement termDefinition<span class="op">,</span> ContractContext contractContext<span class="op">);</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">string</span> <span class="fu">GetSummary</span><span class="op">();</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> IsInterimTerm <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> TermType <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> TacEngine</span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IServiceProvider _services<span class="op">;</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ITacTermFactory _termFactory<span class="op">;</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>PricingResult<span class="op">&gt;</span> <span class="fu">EvaluateAsync</span><span class="op">(</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>        Episode episode<span class="op">,</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>        Contract contract<span class="op">,</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct <span class="op">=</span> <span class="kw">default</span><span class="op">)</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> context <span class="op">=</span> <span class="kw">new</span> TacEvaluationContext</span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>            TotalCharges <span class="op">=</span> episode<span class="op">.</span><span class="fu">TotalCharges</span><span class="op">,</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>            ContinueProcessing <span class="op">=</span> <span class="kw">true</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> section <span class="kw">in</span> contract<span class="op">.</span><span class="fu">Sections</span><span class="op">)</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">CurrentSection</span> <span class="op">=</span> section<span class="op">.</span><span class="fu">Type</span><span class="op">;</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>            <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> termDef <span class="kw">in</span> section<span class="op">.</span><span class="fu">Terms</span><span class="op">)</span></span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>                <span class="dt">var</span> term <span class="op">=</span> _termFactory<span class="op">.</span><span class="fu">Create</span><span class="op">(</span>termDef<span class="op">.</span><span class="fu">Type</span><span class="op">);</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>                term<span class="op">.</span><span class="fu">Load</span><span class="op">(</span>termDef<span class="op">.</span><span class="fu">Definition</span><span class="op">,</span> contract<span class="op">.</span><span class="fu">Context</span><span class="op">);</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>                <span class="dt">var</span> result <span class="op">=</span> await term<span class="op">.</span><span class="fu">EvaluateAsync</span><span class="op">(</span>episode<span class="op">,</span> context<span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a>                context<span class="op">.</span><span class="fu">TraceEntries</span><span class="op">.</span><span class="fu">Add</span><span class="op">(</span><span class="kw">new</span> <span class="fu">TraceEntry</span><span class="op">(</span>term<span class="op">,</span> result<span class="op">));</span></span>
+<span id="cb9-45"><a href="#cb9-45" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb9-46"><a href="#cb9-46" aria-hidden="true" tabindex="-1"></a>                <span class="kw">if</span> <span class="op">(!</span>context<span class="op">.</span><span class="fu">ContinueProcessing</span><span class="op">)</span></span>
+<span id="cb9-47"><a href="#cb9-47" aria-hidden="true" tabindex="-1"></a>                    <span class="kw">break</span><span class="op">;</span></span>
+<span id="cb9-48"><a href="#cb9-48" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb9-49"><a href="#cb9-49" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb9-50"><a href="#cb9-50" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-51"><a href="#cb9-51" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">new</span> PricingResult</span>
+<span id="cb9-52"><a href="#cb9-52" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb9-53"><a href="#cb9-53" aria-hidden="true" tabindex="-1"></a>            TotalPayment <span class="op">=</span> context<span class="op">.</span><span class="fu">CurrentReimbursement</span><span class="op">,</span></span>
+<span id="cb9-54"><a href="#cb9-54" aria-hidden="true" tabindex="-1"></a>            Breakdown <span class="op">=</span> context<span class="op">.</span><span class="fu">CreateBreakdown</span><span class="op">(),</span></span>
+<span id="cb9-55"><a href="#cb9-55" aria-hidden="true" tabindex="-1"></a>            Trace <span class="op">=</span> context<span class="op">.</span><span class="fu">TraceEntries</span></span>
+<span id="cb9-56"><a href="#cb9-56" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb9-57"><a href="#cb9-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-58"><a href="#cb9-58" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="term-dependency-analysis">4. Term Dependency Analysis</h2>
+<h3 id="government-pricer-terms-containerizable">Government Pricer Terms
+(Containerizable)</h3>
+<p>These terms have external dependencies but are well-isolated:</p>
+<p><strong>Government Pricer Terms and Dependencies:</strong></p>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 70%" />
+</colgroup>
+<thead>
+<tr>
+<th>Term</th>
+<th>Dependencies</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TacTermMedicareIP</td>
+<td>DRG Grouper (hadgrp.dll), Medicare IP Pricer (NuGet)</td>
+</tr>
+<tr>
+<td>TacTermMedicareOP</td>
+<td>APC Grouper (NuGet), Medicare OP Pricer (NuGet)</td>
+</tr>
+<tr>
+<td>TacTermTriCare</td>
+<td>3M GP Services (HTTP)</td>
+</tr>
+<tr>
+<td>TacTermMedicaid*</td>
+<td>State Medicaid (DLLs), DRG Grouper</td>
+</tr>
+</tbody>
+</table>
+<h3 id="formula-term-high-complexity">Formula Term (High
+Complexity)</h3>
+<p>The formula term has the most dependencies:</p>
+<pre><code>TacTermFormula
+      │
+      ├──→ Episode Data Operands
+      ├──→ Calculated Value Operands
+      ├──→ Database Lookup Operands ──→ Fee Schedules, Custom Tables, DRG Weights, Rate Tables
+      ├──→ Service Type Operands
+      └──→ Fee Schedule Operands ──→ Fee Schedules</code></pre>
+<p><strong>100+ Operand Strategies</strong> requiring access to multiple
+database tables</p>
+<hr />
+<h2 id="source-file-inventory">5. Source File Inventory</h2>
+<h3 id="core-tac-engine-files">Core TAC Engine Files</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Lines</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TacTermBase.cpp/h</code></td>
+<td>~500</td>
+<td>Base class for all terms</td>
+</tr>
+<tr>
+<td><code>TacEvaluationContext.cpp/h</code></td>
+<td>~300</td>
+<td>Shared evaluation state</td>
+</tr>
+<tr>
+<td><code>TermsAndConditionsRepository.cpp/h</code></td>
+<td>~800</td>
+<td>Contract/TAC loading</td>
+</tr>
+<tr>
+<td><code>ContractValidationExecutor.cpp/h</code></td>
+<td>~400</td>
+<td>Contract validation</td>
+</tr>
+</tbody>
+</table>
+<h3 id="individual-term-files">Individual Term Files</h3>
+<table>
+<thead>
+<tr>
+<th>File Pattern</th>
+<th>Count</th>
+<th>Total Lines</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TacTerm*.cpp</code></td>
+<td>59</td>
+<td>~25,000</td>
+</tr>
+<tr>
+<td><code>TacTerm*.h</code></td>
+<td>59</td>
+<td>~5,000</td>
+</tr>
+<tr>
+<td><code>*FormulaOperandStrategy.cpp/h</code></td>
+<td>200+</td>
+<td>~15,000</td>
+</tr>
+<tr>
+<td><code>*Operator.cpp/h</code></td>
+<td>20+</td>
+<td>~2,000</td>
+</tr>
+</tbody>
+</table>
+<h3 id="total-tac-engine-size">Total TAC Engine Size</h3>
+<pre><code>Core Engine: ~1,000 lines
+Term Types: ~30,000 lines
+Formula System: ~17,000 lines
+Supporting Classes: ~5,000 lines
+---------------------------------
+Total: ~53,000 lines of C++ code</code></pre>
+<hr />
+<h2 id="extraction-approach">6. Extraction Approach</h2>
+<h3 id="phase-1-government-pricers-only">Phase 1: Government Pricers
+Only</h3>
+<p><strong>Files Needed:</strong></p>
+<pre><code>source/Cbo.Core/
+  ├── TacTermMedicareIP.cpp/h        (~800 lines)
+  ├── TacTermMedicareOP.cpp/h        (~600 lines)
+  ├── MedicareInpatientServiceInvoker.cpp/h
+  ├── MedicareOutpatientServiceInvoker.cpp/h
+  ├── HDRGGrouper.cpp/h
+  ├── ArizonaMedicaidServiceInvoker.cpp/h (if AZ supported)
+  └── [Other state Medicaid invokers as needed]</code></pre>
+<p><strong>Extraction Strategy:</strong> 1. Copy required files to new
+<code>CboPricingBridge</code> project 2. Remove dependencies on full TAC
+engine 3. Create simplified entry points 4. Test with sample
+episodes</p>
+<h3 id="phase-2-minimal-tac-engine">Phase 2: Minimal TAC Engine</h3>
+<p><strong>Additional Files:</strong></p>
+<pre><code>source/Cbo.Core/
+  ├── TacTermBase.cpp/h
+  ├── TacEvaluationContext.cpp/h
+  ├── TacTermFlat.cpp/h
+  ├── TacTermPerDiem.cpp/h
+  ├── TacTermPercent.cpp/h
+  ├── TacTermDRG.cpp/h
+  └── TacTermFormula.cpp/h (with limited operands)</code></pre>
+<h3 id="phase-3-full-modernization">Phase 3: Full Modernization</h3>
+<p>Rewrite TAC engine in .NET Core with: - Microservices architecture -
+Cloud-native design - Modern testing - Full operand support</p>
+<hr />
+<h2 id="contract-definition-format">7. Contract Definition Format</h2>
+<h3 id="current-xml-structure">Current XML Structure</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">Contract</span> <span class="ot">Syskey=</span><span class="st">&quot;CON-2025-001&quot;</span>&gt;</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Effective</span> <span class="ot">StartDate=</span><span class="st">&quot;2025-01-01&quot;</span> <span class="ot">EndDate=</span><span class="st">&quot;2025-12-31&quot;</span>&gt;</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">TermsAndConditions</span>&gt;</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">Section</span> <span class="ot">Type=</span><span class="st">&quot;Reimbursement&quot;</span>&gt;</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">Term</span> <span class="ot">Type=</span><span class="st">&quot;4&quot;</span> <span class="ot">Description=</span><span class="st">&quot;DRG Payment&quot;</span>&gt;</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">Conversion</span>&gt;6500.00&lt;/<span class="kw">Conversion</span>&gt;</span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">TableName</span>&gt;MCRFEDRG_2025&lt;/<span class="kw">TableName</span>&gt;</span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">ApplyWageIndex</span>&gt;Y&lt;/<span class="kw">ApplyWageIndex</span>&gt;</span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">CalculateOutlier</span>&gt;Y&lt;/<span class="kw">CalculateOutlier</span>&gt;</span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">Term</span>&gt;</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">Term</span> <span class="ot">Type=</span><span class="st">&quot;11&quot;</span> <span class="ot">Description=</span><span class="st">&quot;Stop Loss&quot;</span>&gt;</span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">Threshold</span>&gt;100000.00&lt;/<span class="kw">Threshold</span>&gt;</span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">Percentage</span>&gt;0.80&lt;/<span class="kw">Percentage</span>&gt;</span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">Term</span>&gt;</span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">Section</span>&gt;</span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>      &lt;<span class="kw">Section</span> <span class="ot">Type=</span><span class="st">&quot;Exclusions&quot;</span>&gt;</span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        &lt;<span class="kw">Term</span> <span class="ot">Type=</span><span class="st">&quot;9&quot;</span> <span class="ot">Description=</span><span class="st">&quot;Non-Covered Services&quot;</span>&gt;</span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">RevenueCodes</span>&gt;0280,0289&lt;/<span class="kw">RevenueCodes</span>&gt;</span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>          &lt;<span class="kw">Percentage</span>&gt;1.00&lt;/<span class="kw">Percentage</span>&gt;</span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>        &lt;/<span class="kw">Term</span>&gt;</span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>      &lt;/<span class="kw">Section</span>&gt;</span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    &lt;/<span class="kw">TermsAndConditions</span>&gt;</span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>  &lt;/<span class="kw">Effective</span>&gt;</span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">Contract</span>&gt;</span></code></pre></div>
+<h3 id="proposed-json-format-for-container">Proposed JSON Format (for
+Container)</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;contractId&quot;</span><span class="fu">:</span> <span class="st">&quot;CON-2025-001&quot;</span><span class="fu">,</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;effective&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;startDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-01-01&quot;</span><span class="fu">,</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;endDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-12-31&quot;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;termsAndConditions&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;sections&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;Reimbursement&quot;</span><span class="fu">,</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;terms&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">4</span><span class="fu">,</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;DRG Payment&quot;</span><span class="fu">,</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;parameters&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;conversion&quot;</span><span class="fu">:</span> <span class="fl">6500.00</span><span class="fu">,</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;tableName&quot;</span><span class="fu">:</span> <span class="st">&quot;MCRFEDRG_2025&quot;</span><span class="fu">,</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;applyWageIndex&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;calculateOutlier&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">11</span><span class="fu">,</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Stop Loss&quot;</span><span class="fu">,</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;parameters&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;threshold&quot;</span><span class="fu">:</span> <span class="fl">100000.00</span><span class="fu">,</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;percentage&quot;</span><span class="fu">:</span> <span class="fl">0.80</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;Exclusions&quot;</span><span class="fu">,</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;terms&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="dv">9</span><span class="fu">,</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Non-Covered Services&quot;</span><span class="fu">,</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>            <span class="dt">&quot;parameters&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;revenueCodes&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;0280&quot;</span><span class="ot">,</span> <span class="st">&quot;0289&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>              <span class="dt">&quot;percentage&quot;</span><span class="fu">:</span> <span class="fl">1.00</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>            <span class="fu">}</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="risk-assessment">8. Risk Assessment</h2>
+<h3 id="technical-risks">Technical Risks</h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 30%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>TAC engine too complex to extract</td>
+<td>High</td>
+<td>Start with government pricers only</td>
+</tr>
+<tr>
+<td>Formula operands require database</td>
+<td>Medium</td>
+<td>Cache reference data in container</td>
+</tr>
+<tr>
+<td>Contract definitions tightly coupled</td>
+<td>Medium</td>
+<td>Create JSON abstraction layer</td>
+</tr>
+<tr>
+<td>Performance regression</td>
+<td>Medium</td>
+<td>Benchmark against legacy</td>
+</tr>
+<tr>
+<td>Calculation parity issues</td>
+<td>High</td>
+<td>Automated parity testing suite</td>
+</tr>
+</tbody>
+</table>
+<h3 id="business-risks">Business Risks</h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 30%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Risk</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Cannot price commercial contracts</td>
+<td>High</td>
+<td>Clearly scope Phase 1 limitations</td>
+</tr>
+<tr>
+<td>Hospital-specific rules missing</td>
+<td>Medium</td>
+<td>Document and defer to Phase 2</td>
+</tr>
+<tr>
+<td>State Medicaid variations</td>
+<td>Medium</td>
+<td>Prioritize most common states</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommendations">9. Recommendations</h2>
+<h3 id="phase-1-containerization">Phase 1 (Containerization)</h3>
+<ol type="1">
+<li><strong>Focus on government payers only</strong>
+<ul>
+<li>Medicare (IP and OP)</li>
+<li>Medicaid (top 5 states)</li>
+<li>TRICARE</li>
+</ul></li>
+<li><strong>Bypass full TAC engine</strong>
+<ul>
+<li>Use direct pricer invocations</li>
+<li>No complex contract rules</li>
+</ul></li>
+<li><strong>Deliverables</strong>
+<ul>
+<li>Containerized pricing worker</li>
+<li>JSON episode schema</li>
+<li>Parity test suite</li>
+</ul></li>
+</ol>
+<h3 id="phase-2-minimal-tac">Phase 2 (Minimal TAC)</h3>
+<ol type="1">
+<li><strong>Add core TAC terms</strong>
+<ul>
+<li>Flat, Per Diem, Percent</li>
+<li>DRG term with conversion</li>
+<li>Basic formulas</li>
+</ul></li>
+<li><strong>Limited commercial support</strong>
+<ul>
+<li>Simple contract structures only</li>
+<li>Document unsupported scenarios</li>
+</ul></li>
+</ol>
+<h3 id="phase-3-full-modernization-1">Phase 3 (Full Modernization)</h3>
+<ol type="1">
+<li><strong>Complete .NET Core rewrite</strong>
+<ul>
+<li>All 59 term types</li>
+<li>Full formula support</li>
+<li>Cloud-native architecture</li>
+</ul></li>
+<li><strong>Microservices deployment</strong>
+<ul>
+<li>Pricing Rules Service</li>
+<li>Contract Service</li>
+<li>Fee Schedule Service</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ol type="1">
+<li><strong><a
+href="11-DATABASE-REQUIREMENTS.html">11-DATABASE-REQUIREMENTS.md</a></strong>
+- Reference data tables needed</li>
+<li>Begin Phase 1 extraction with government pricers</li>
+</ol>
+<hr />
+<p><strong>Document Version History:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-01-16</td>
+<td>Andy Bratton</td>
+<td>Initial TAC engine analysis</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

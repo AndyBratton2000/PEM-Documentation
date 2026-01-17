@@ -1,0 +1,1931 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>09-GROUPERS-AND-PRICERS</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="groupers-and-pricers-technical-reference">Groupers and Pricers
+Technical Reference</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Deep-Dive Technical Reference</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document provides detailed technical documentation for the
+groupers and pricers that must be containerized for the PEM repricing
+functionality. Understanding these components is critical because they
+perform the core claim classification and payment calculation logic.</p>
+<hr />
+<h2 id="drg-grouper-medicare-inpatient">1. DRG Grouper (Medicare
+Inpatient)</h2>
+<h3 id="purpose">Purpose</h3>
+<p>The DRG (Diagnosis Related Group) Grouper assigns inpatient claims to
+a DRG category based on: - Principal diagnosis - Secondary diagnoses -
+Procedures performed - Patient age, sex, discharge status - Length of
+stay</p>
+<p>The DRG assignment determines the base payment for Medicare inpatient
+claims.</p>
+<h3 id="source-files">Source Files</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 40%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HDRGGrouper.h</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>DRG Grouper wrapper class</td>
+</tr>
+<tr>
+<td><code>HDRGGrouper.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Implementation</td>
+</tr>
+<tr>
+<td><code>hadgrpcp.h</code></td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>Native interface header (13,000+ lines)</td>
+</tr>
+<tr>
+<td><code>hadsysdf.h</code></td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>System definitions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="native-interface">Native Interface</h3>
+<p>The native DRG grouper uses a single-structure interface:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// From hadgrpcp.h</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> HADGRP_DATA <span class="op">{</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Input fields</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_func_code<span class="op">[</span><span class="dv">1</span><span class="op">];</span>          <span class="co">// Function code (&#39;G&#39;=Group, &#39;F&#39;=Free)</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_version<span class="op">[</span><span class="dv">3</span><span class="op">];</span>            <span class="co">// Grouper version (e.g., &quot;430&quot;)</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_sex<span class="op">[</span><span class="dv">1</span><span class="op">];</span>                <span class="co">// Patient sex (&#39;M&#39;/&#39;F&#39;/&#39;U&#39;)</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_age<span class="op">[</span><span class="dv">3</span><span class="op">];</span>                <span class="co">// Patient age in years</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_admit_date<span class="op">[</span><span class="dv">8</span><span class="op">];</span>         <span class="co">// MMDDYYYY</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_discharge_date<span class="op">[</span><span class="dv">8</span><span class="op">];</span>     <span class="co">// MMDDYYYY</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_discharge_status<span class="op">[</span><span class="dv">2</span><span class="op">];</span>   <span class="co">// Discharge status code</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_admit_dx<span class="op">[</span><span class="dv">7</span><span class="op">];</span>           <span class="co">// Admitting diagnosis (ICD-10)</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_princ_dx<span class="op">[</span><span class="dv">7</span><span class="op">];</span>           <span class="co">// Principal diagnosis (ICD-10)</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_sec_dx<span class="op">[</span><span class="dv">24</span><span class="op">][</span><span class="dv">7</span><span class="op">];</span>         <span class="co">// Secondary diagnoses (up to 24)</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_princ_proc<span class="op">[</span><span class="dv">7</span><span class="op">];</span>         <span class="co">// Principal procedure (ICD-10-PCS)</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_sec_proc<span class="op">[</span><span class="dv">24</span><span class="op">][</span><span class="dv">7</span><span class="op">];</span>       <span class="co">// Secondary procedures</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_proc_date<span class="op">[</span><span class="dv">25</span><span class="op">][</span><span class="dv">8</span><span class="op">];</span>      <span class="co">// Procedure dates</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_poa<span class="op">[</span><span class="dv">25</span><span class="op">][</span><span class="dv">1</span><span class="op">];</span>            <span class="co">// Present on Admission indicators</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Output fields</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_drg<span class="op">[</span><span class="dv">4</span><span class="op">];</span>                <span class="co">// Assigned DRG code</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_mdc<span class="op">[</span><span class="dv">2</span><span class="op">];</span>                <span class="co">// Major Diagnostic Category</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_weight<span class="op">[</span><span class="dv">10</span><span class="op">];</span>            <span class="co">// DRG weight (decimal)</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_rtc<span class="op">[</span><span class="dv">2</span><span class="op">];</span>                <span class="co">// Return code</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_version_out<span class="op">[</span><span class="dv">6</span><span class="op">];</span>        <span class="co">// Actual version used</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_msg<span class="op">[</span><span class="dv">80</span><span class="op">];</span>               <span class="co">// Message/error text</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Additional output for APR-DRG</span></span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_soi<span class="op">[</span><span class="dv">1</span><span class="op">];</span>                <span class="co">// Severity of Illness (1-4)</span></span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_rom<span class="op">[</span><span class="dv">1</span><span class="op">];</span>                <span class="co">// Risk of Mortality (1-4)</span></span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">// HAC (Hospital Acquired Condition) output</span></span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_hac_applied<span class="op">[</span><span class="dv">1</span><span class="op">];</span>        <span class="co">// HAC reduction applied (&#39;Y&#39;/&#39;N&#39;)</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_hac_reduction<span class="op">[</span><span class="dv">10</span><span class="op">];</span>     <span class="co">// HAC reduction amount</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Filler for future use</span></span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="dt">char</span> drg_filler<span class="op">[</span><span class="dv">500</span><span class="op">];</span></span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a><span class="co">// Entry point</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">short</span> HADGRP02<span class="op">(</span><span class="kw">struct</span> HADGRP_DATA <span class="op">*</span>hadgrp_data_ptr<span class="op">);</span></span></code></pre></div>
+<h3 id="c-wrapper-implementation">C++ Wrapper Implementation</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">// HDRGGrouper.cpp - Key methods</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>HRESULT HDRGGrouper<span class="op">::</span>ProcessDRGGrouper<span class="op">(</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> pEpisode<span class="op">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> CString<span class="op">&amp;</span> hsConeffKey<span class="op">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HBillInvDRG<span class="op">&gt;&amp;</span> pBillInvDRG<span class="op">)</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. Retrieve grouper configuration for this contract</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">long</span> lResult <span class="op">=</span> RetrieveConfigData<span class="op">(</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        hsConeffKey<span class="op">,</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        pEpisode<span class="op">-&gt;</span>GetAdmitDate<span class="op">(),</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        pEpisode<span class="op">-&gt;</span>GetDischargeDate<span class="op">()</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>    <span class="op">);</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. Determine appropriate grouper version</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>    CString sTypeVer <span class="op">=</span> GetTypeVerFromContDRGGrouper<span class="op">(</span>pEpisode<span class="op">,</span> hsConeffKey<span class="op">);</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. Build the grouper input structure</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>    HADGRP_DATA hadData<span class="op">;</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>    memset<span class="op">(&amp;</span>hadData<span class="op">,</span> <span class="ch">&#39; &#39;</span><span class="op">,</span> <span class="kw">sizeof</span><span class="op">(</span>hadData<span class="op">));</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>    hadData<span class="op">.</span>drg_func_code<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> <span class="ch">&#39;G&#39;</span><span class="op">;</span>  <span class="co">// Group function</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Copy version (e.g., &quot;430&quot; for v43.0)</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    strncpy<span class="op">(</span>hadData<span class="op">.</span>drg_version<span class="op">,</span> sTypeVer<span class="op">.</span>Left<span class="op">(</span><span class="dv">3</span><span class="op">),</span> <span class="dv">3</span><span class="op">);</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Patient demographics</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    hadData<span class="op">.</span>drg_sex<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> pEpisode<span class="op">-&gt;</span>GetSex<span class="op">()[</span><span class="dv">0</span><span class="op">];</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    FormatAge<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetAge<span class="op">(),</span> hadData<span class="op">.</span>drg_age<span class="op">);</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>    FormatDate<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetAdmitDate<span class="op">(),</span> hadData<span class="op">.</span>drg_admit_date<span class="op">);</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>    FormatDate<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetDischargeDate<span class="op">(),</span> hadData<span class="op">.</span>drg_discharge_date<span class="op">);</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>    strncpy<span class="op">(</span>hadData<span class="op">.</span>drg_discharge_status<span class="op">,</span> pEpisode<span class="op">-&gt;</span>GetDischargeStatus<span class="op">(),</span> <span class="dv">2</span><span class="op">);</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Diagnoses</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>    FormatDiagnosis<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetPrincipalDiagnosis<span class="op">(),</span> hadData<span class="op">.</span>drg_princ_dx<span class="op">);</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> min<span class="op">(</span><span class="dv">24</span><span class="op">,</span> pEpisode<span class="op">-&gt;</span>GetSecondaryDiagnosisCount<span class="op">());</span> i<span class="op">++)</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        FormatDiagnosis<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetSecondaryDiagnosis<span class="op">(</span>i<span class="op">),</span> hadData<span class="op">.</span>drg_sec_dx<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        hadData<span class="op">.</span>drg_poa<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">][</span><span class="dv">0</span><span class="op">]</span> <span class="op">=</span> pEpisode<span class="op">-&gt;</span>GetPOA<span class="op">(</span>i<span class="op">)</span> <span class="op">?</span> <span class="ch">&#39;Y&#39;</span> <span class="op">:</span> <span class="ch">&#39;N&#39;</span><span class="op">;</span></span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Procedures</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a>    FormatProcedure<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetPrincipalProcedure<span class="op">(),</span> hadData<span class="op">.</span>drg_princ_proc<span class="op">);</span></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> min<span class="op">(</span><span class="dv">24</span><span class="op">,</span> pEpisode<span class="op">-&gt;</span>GetSecondaryProcedureCount<span class="op">());</span> i<span class="op">++)</span></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>        FormatProcedure<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetSecondaryProcedure<span class="op">(</span>i<span class="op">),</span> hadData<span class="op">.</span>drg_sec_proc<span class="op">[</span>i<span class="op">]);</span></span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a>        FormatDate<span class="op">(</span>pEpisode<span class="op">-&gt;</span>GetProcedureDate<span class="op">(</span>i<span class="op">),</span> hadData<span class="op">.</span>drg_proc_date<span class="op">[</span>i<span class="op">+</span><span class="dv">1</span><span class="op">]);</span></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 4. Load the grouper DLL dynamically</span></span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>    HMODULE hModule <span class="op">=</span> LoadLibrary<span class="op">(</span>HADGRPDLL<span class="op">);</span></span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(!</span>hModule<span class="op">)</span></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a>        _Logger<span class="op">-&gt;</span>Error<span class="op">(</span><span class="st">&quot;Failed to load DRG Grouper DLL&quot;</span><span class="op">);</span></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> E_FAIL<span class="op">;</span></span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 5. Get the entry point</span></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>    <span class="kw">typedef</span> <span class="dt">short</span> <span class="op">(*</span>HADGRP02Func<span class="op">)(</span>HADGRP_DATA<span class="op">*);</span></span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a>    HADGRP02Func pHADGRP02 <span class="op">=</span> <span class="op">(</span>HADGRP02Func<span class="op">)</span>GetProcAddress<span class="op">(</span>hModule<span class="op">,</span> HADGRPFUNC<span class="op">);</span></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 6. Call the grouper</span></span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>    <span class="dt">short</span> nResult <span class="op">=</span> pHADGRP02<span class="op">(&amp;</span>hadData<span class="op">);</span></span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 7. Parse results into HBillInvDRG</span></span>
+<span id="cb2-66"><a href="#cb2-66" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG <span class="op">=</span> <span class="bu">std::</span>make_shared<span class="op">&lt;</span>HBillInvDRG<span class="op">&gt;();</span></span>
+<span id="cb2-67"><a href="#cb2-67" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG<span class="op">-&gt;</span>SetDRGCode<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_drg<span class="op">,</span> <span class="dv">4</span><span class="op">).</span>Trim<span class="op">());</span></span>
+<span id="cb2-68"><a href="#cb2-68" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG<span class="op">-&gt;</span>SetMDC<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_mdc<span class="op">,</span> <span class="dv">2</span><span class="op">).</span>Trim<span class="op">());</span></span>
+<span id="cb2-69"><a href="#cb2-69" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG<span class="op">-&gt;</span>SetDRGWeight<span class="op">(</span>_tstof<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_weight<span class="op">,</span> <span class="dv">10</span><span class="op">)));</span></span>
+<span id="cb2-70"><a href="#cb2-70" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG<span class="op">-&gt;</span>SetReturnCode<span class="op">(</span>atoi<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_rtc<span class="op">,</span> <span class="dv">2</span><span class="op">)));</span></span>
+<span id="cb2-71"><a href="#cb2-71" aria-hidden="true" tabindex="-1"></a>    pBillInvDRG<span class="op">-&gt;</span>SetGrouperVersion<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_version_out<span class="op">,</span> <span class="dv">6</span><span class="op">).</span>Trim<span class="op">());</span></span>
+<span id="cb2-72"><a href="#cb2-72" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-73"><a href="#cb2-73" aria-hidden="true" tabindex="-1"></a>    <span class="co">// HAC processing</span></span>
+<span id="cb2-74"><a href="#cb2-74" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>hadData<span class="op">.</span>drg_hac_applied<span class="op">[</span><span class="dv">0</span><span class="op">]</span> <span class="op">==</span> <span class="ch">&#39;Y&#39;</span><span class="op">)</span></span>
+<span id="cb2-75"><a href="#cb2-75" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-76"><a href="#cb2-76" aria-hidden="true" tabindex="-1"></a>        pBillInvDRG<span class="op">-&gt;</span>SetHACApplied<span class="op">(</span><span class="kw">true</span><span class="op">);</span></span>
+<span id="cb2-77"><a href="#cb2-77" aria-hidden="true" tabindex="-1"></a>        pBillInvDRG<span class="op">-&gt;</span>SetHACReduction<span class="op">(</span>_tstof<span class="op">(</span>CString<span class="op">(</span>hadData<span class="op">.</span>drg_hac_reduction<span class="op">,</span> <span class="dv">10</span><span class="op">)));</span></span>
+<span id="cb2-78"><a href="#cb2-78" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-79"><a href="#cb2-79" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-80"><a href="#cb2-80" aria-hidden="true" tabindex="-1"></a>    FreeLibrary<span class="op">(</span>hModule<span class="op">);</span></span>
+<span id="cb2-81"><a href="#cb2-81" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> S_OK<span class="op">;</span></span>
+<span id="cb2-82"><a href="#cb2-82" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="drg-grouper-versions">DRG Grouper Versions</h3>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>CMS Fiscal Year</th>
+<th>ICD Version</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v40.0</td>
+<td>FY2023 (Oct 2022 - Sep 2023)</td>
+<td>ICD-10</td>
+<td>Historical</td>
+</tr>
+<tr>
+<td>v41.0</td>
+<td>FY2024 (Oct 2023 - Sep 2024)</td>
+<td>ICD-10</td>
+<td>Historical</td>
+</tr>
+<tr>
+<td>v42.0</td>
+<td>FY2025 (Oct 2024 - Sep 2025)</td>
+<td>ICD-10</td>
+<td>Current</td>
+</tr>
+<tr>
+<td>v43.0</td>
+<td>FY2026 (Oct 2025 - Sep 2026)</td>
+<td>ICD-10</td>
+<td>Current</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-integration">Container Integration</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CboPricingBridge - DRG Grouper integration</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>HRESULT GroupEpisodeDRG<span class="op">(</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HBillInvDRG<span class="op">&gt;&amp;</span> drgResult<span class="op">)</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Ensure grouper DLLs are accessible</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    CString grouperPath <span class="op">=</span> GetEnvironmentVariableValue<span class="op">(</span><span class="st">&quot;DRG_GROUPER_PATH&quot;</span><span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    SetDllDirectory<span class="op">(</span>grouperPath<span class="op">);</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    HDRGGrouper grouper<span class="op">(</span><span class="va">g_Logger</span><span class="op">);</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> grouper<span class="op">.</span>ProcessDRGGrouper<span class="op">(</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        episode<span class="op">,</span> </span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>        episode<span class="op">-&gt;</span>GetConeffKey<span class="op">(),</span> </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>        drgResult<span class="op">);</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="apc-grouper-medicare-outpatient">2. APC Grouper (Medicare
+Outpatient)</h2>
+<h3 id="purpose-1">Purpose</h3>
+<p>The APC (Ambulatory Payment Classification) Grouper assigns
+outpatient claims to payment groups based on: - CPT/HCPCS procedure
+codes - Revenue codes - Patient status - Service date</p>
+<h3 id="source-files-1">Source Files</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 40%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TacTermMedicareOP.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Medicare outpatient term</td>
+</tr>
+<tr>
+<td><code>APCClassMap.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>APC mapping</td>
+</tr>
+<tr>
+<td><code>ApcDetailClassMap.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Detailed APC info</td>
+</tr>
+</tbody>
+</table>
+<h3 id="apc-processing-flow">APC Processing Flow</h3>
+<p><strong>Sequence:</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 24%" />
+<col style="width: 20%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>HEpisode</td>
+<td>TacTermMedicareOP</td>
+<td>Execute pricing term</td>
+</tr>
+<tr>
+<td>2</td>
+<td>TacTermMedicareOP</td>
+<td>TacTermMedicareOP</td>
+<td>Extract procedure codes &amp; revenue codes</td>
+</tr>
+<tr>
+<td>3</td>
+<td>TacTermMedicareOP</td>
+<td>APC Grouper</td>
+<td>Group claim (CPT → APC)</td>
+</tr>
+<tr>
+<td>4</td>
+<td>APC Grouper</td>
+<td>TacTermMedicareOP</td>
+<td>APC assignments with status indicators</td>
+</tr>
+<tr>
+<td>5</td>
+<td>TacTermMedicareOP</td>
+<td>TacTermMedicareOP</td>
+<td>Apply consolidation/discounting rules</td>
+</tr>
+<tr>
+<td>6</td>
+<td>TacTermMedicareOP</td>
+<td>OPPS Pricer</td>
+<td>Calculate payments</td>
+</tr>
+<tr>
+<td>7</td>
+<td>OPPS Pricer</td>
+<td>TacTermMedicareOP</td>
+<td>Payment amounts per APC</td>
+</tr>
+<tr>
+<td>8</td>
+<td>TacTermMedicareOP</td>
+<td>HEpisode</td>
+<td>Store results</td>
+</tr>
+</tbody>
+</table>
+<h3 id="apc-status-indicators">APC Status Indicators</h3>
+<table>
+<thead>
+<tr>
+<th>Indicator</th>
+<th>Description</th>
+<th>Payment Impact</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>S</td>
+<td>Significant procedure</td>
+<td>Full APC payment</td>
+</tr>
+<tr>
+<td>T</td>
+<td>Significant procedure, multiple reduction</td>
+<td>50% for additional</td>
+</tr>
+<tr>
+<td>V</td>
+<td>Clinic/ER visit</td>
+<td>Visit payment</td>
+</tr>
+<tr>
+<td>X</td>
+<td>Ancillary service</td>
+<td>Separate payment</td>
+</tr>
+<tr>
+<td>N</td>
+<td>Packaged into other APCs</td>
+<td>No separate payment</td>
+</tr>
+<tr>
+<td>Q1-Q3</td>
+<td>Packaging tiers</td>
+<td>Conditional packaging</td>
+</tr>
+</tbody>
+</table>
+<h3 id="nuget-package-interface">NuGet Package Interface</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// FinThrive.APCGrouper.Core</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ApcGrouperRequest</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ClaimId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTime ServiceDate <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> List<span class="op">&lt;</span>ServiceLine<span class="op">&gt;</span> ServiceLines <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> BillType <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> PatientStatus <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ServiceLine</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> RevenueCode <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> HcpcsCode <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> Modifier1 <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> Modifier2 <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> Units <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> Charges <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTime ServiceDate <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ApcGrouperResponse</span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> List<span class="op">&lt;</span>ApcAssignment<span class="op">&gt;</span> Assignments <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> List<span class="op">&lt;</span><span class="dt">string</span><span class="op">&gt;</span> Messages <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ApcAssignment</span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">int</span> LineNumber <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ApcCode <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> StatusIndicator <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> RelativeWeight <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> PaymentRate <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">bool</span> IsPackaged <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">decimal</span> DiscountFactor <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="kw">set</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="medicare-inpatient-pricer-ipps">3. Medicare Inpatient Pricer
+(IPPS)</h2>
+<h3 id="purpose-2">Purpose</h3>
+<p>After DRG grouping, the Medicare Inpatient Pricer calculates the
+actual payment using: - DRG weight - Hospital-specific rates (operating
+&amp; capital) - Wage index adjustments - Outlier payments - Add-on
+payments (IME, DSH)</p>
+<h3 id="source-files-2">Source Files</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 40%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MedicareInpatientServiceInvoker.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Pricer invocation</td>
+</tr>
+<tr>
+<td><code>MedicareInpatientServiceInvoker.h</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Header</td>
+</tr>
+<tr>
+<td><code>TacTermMedicareIP.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Medicare IP pricing term</td>
+</tr>
+<tr>
+<td><code>BILLMCRProc.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Medicare billing procedures</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pricing-formula">Pricing Formula</h3>
+<pre><code>Base Payment = DRG Weight × (Operating Base Rate + Capital Base Rate)
+
+Operating Payment = DRG Weight × Operating Base Rate × Labor Share × Wage Index
+                  + DRG Weight × Operating Base Rate × Non-Labor Share
+
+Capital Payment = DRG Weight × Federal Capital Rate × Geographic Adjustment
+
+Outlier Payment = (Cost - Outlier Threshold) × Marginal Cost Factor
+                  where Cost = Charges × Cost-to-Charge Ratio
+                  and Outlier Threshold = Base Payment + Fixed Loss Amount
+
+Add-On Payments:
+  IME (Indirect Medical Education) = Base Payment × IME Adjustment Factor
+  DSH (Disproportionate Share) = Base Payment × DSH Adjustment Factor
+  New Technology = Per-case add-on for qualifying technologies
+
+Total Payment = Operating + Capital + Outlier + IME + DSH + New Technology - Transfer Adjustment</code></pre>
+<h3 id="c-interface">C++ Interface</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MedicareInpatientServiceInvoker.cpp</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MedicareInpatientServiceInvoker</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    HRESULT PriceEpisode<span class="op">(</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HBillInvDRG<span class="op">&gt;&amp;</span> drgResult<span class="op">,</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        MedicareIpPricingResult<span class="op">&amp;</span> result<span class="op">);</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get hospital-specific rates from database</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    HRESULT GetProviderRates<span class="op">(</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> CString<span class="op">&amp;</span> providerId<span class="op">,</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> CTime<span class="op">&amp;</span> serviceDate<span class="op">,</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>        ProviderRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Calculate wage-adjusted payment</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    DECIMAL CalculateOperatingPayment<span class="op">(</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>        DECIMAL drgWeight<span class="op">,</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> ProviderRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Calculate outlier payment</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    DECIMAL CalculateOutlierPayment<span class="op">(</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        DECIMAL basePayment<span class="op">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> ProviderRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Calculate IME/DSH add-ons</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>    DECIMAL CalculateIMEPayment<span class="op">(</span>DECIMAL basePayment<span class="op">,</span> <span class="at">const</span> ProviderRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>    DECIMAL CalculateDSHPayment<span class="op">(</span>DECIMAL basePayment<span class="op">,</span> <span class="at">const</span> ProviderRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> MedicareIpPricingResult</span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    DECIMAL TotalPayment<span class="op">;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    DECIMAL OperatingPayment<span class="op">;</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    DECIMAL CapitalPayment<span class="op">;</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    DECIMAL OutlierPayment<span class="op">;</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    DECIMAL IMEPayment<span class="op">;</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    DECIMAL DSHPayment<span class="op">;</span></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    DECIMAL NewTechnologyPayment<span class="op">;</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    DECIMAL TransferAdjustment<span class="op">;</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>    CString DRGCode<span class="op">;</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>    DECIMAL DRGWeight<span class="op">;</span></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a>    CString MDC<span class="op">;</span></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> IsOutlier<span class="op">;</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>    <span class="dt">bool</span> IsTransfer<span class="op">;</span></span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a>    <span class="bu">std::</span>vector<span class="op">&lt;</span>CString<span class="op">&gt;</span> Messages<span class="op">;</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="provider-rate-tables">Provider Rate Tables</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Database</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCRIPLVA</code></td>
+<td>CBO_Global</td>
+<td>Labor value areas</td>
+</tr>
+<tr>
+<td><code>MCRIPWIACUTE</code></td>
+<td>CBO_Global</td>
+<td>Wage indexes (acute care)</td>
+</tr>
+<tr>
+<td><code>MCRIPHSPRATES</code></td>
+<td>CBO_Global</td>
+<td>Hospital-specific rates</td>
+</tr>
+<tr>
+<td><code>MCRIPFEDRATES</code></td>
+<td>CBO_Global</td>
+<td>Federal base rates</td>
+</tr>
+<tr>
+<td><code>MCRIPIME</code></td>
+<td>CBO_Global</td>
+<td>IME adjustment factors</td>
+</tr>
+<tr>
+<td><code>MCRIPDSH</code></td>
+<td>CBO_Global</td>
+<td>DSH adjustment factors</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="medicare-outpatient-pricer-opps">4. Medicare Outpatient Pricer
+(OPPS)</h2>
+<h3 id="purpose-3">Purpose</h3>
+<p>After APC grouping, the OPPS Pricer calculates payment using: - APC
+relative weights - Payment rates by year - Multiple procedure
+discounting - Packaging rules - Device-intensive discounts</p>
+<h3 id="source-files-3">Source Files</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 40%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MedicareOutpatientServiceInvoker.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>OPPS pricer invocation</td>
+</tr>
+<tr>
+<td><code>TacTermMedicareOP.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Medicare OP pricing term</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pricing-rules">Pricing Rules</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Key OPPS pricing rules</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="co">// 1. Base payment per APC</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>DECIMAL CalculateApcPayment<span class="op">(</span><span class="at">const</span> ApcAssignment<span class="op">&amp;</span> apc<span class="op">,</span> DECIMAL wageIndex<span class="op">)</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    DECIMAL laborShare <span class="op">=</span> <span class="fl">0.60</span><span class="op">;</span>  <span class="co">// 60% subject to wage adjustment</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    DECIMAL nonLaborShare <span class="op">=</span> <span class="fl">0.40</span><span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> apc<span class="op">.</span>PaymentRate <span class="op">*</span> </span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>           <span class="op">((</span>laborShare <span class="op">*</span> wageIndex<span class="op">)</span> <span class="op">+</span> nonLaborShare<span class="op">);</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co">// 2. Multiple procedure discounting</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>DECIMAL ApplyMultipleProcedureDiscount<span class="op">(</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>vector<span class="op">&lt;</span>ApcAssignment<span class="op">&gt;&amp;</span> assignments<span class="op">)</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Sort by payment (highest first)</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">auto</span> sorted <span class="op">=</span> SortByPaymentDescending<span class="op">(</span>assignments<span class="op">);</span></span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    DECIMAL total <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> <span class="op">(</span><span class="dt">int</span> i <span class="op">=</span> <span class="dv">0</span><span class="op">;</span> i <span class="op">&lt;</span> sorted<span class="op">.</span>size<span class="op">();</span> i<span class="op">++)</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>sorted<span class="op">[</span>i<span class="op">].</span>StatusIndicator <span class="op">==</span> <span class="st">&quot;T&quot;</span><span class="op">)</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>            <span class="co">// First significant procedure = 100%</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Subsequent = 50%</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>            DECIMAL factor <span class="op">=</span> <span class="op">(</span>i <span class="op">==</span> <span class="dv">0</span><span class="op">)</span> <span class="op">?</span> <span class="fl">1.0</span> <span class="op">:</span> <span class="fl">0.5</span><span class="op">;</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> sorted<span class="op">[</span>i<span class="op">].</span>Payment <span class="op">*</span> factor<span class="op">;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>            total <span class="op">+=</span> sorted<span class="op">[</span>i<span class="op">].</span>Payment<span class="op">;</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> total<span class="op">;</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co">// 3. Packaging</span></span>
+<span id="cb7-39"><a href="#cb7-39" aria-hidden="true" tabindex="-1"></a><span class="dt">bool</span> IsPackaged<span class="op">(</span><span class="at">const</span> ApcAssignment<span class="op">&amp;</span> apc<span class="op">)</span></span>
+<span id="cb7-40"><a href="#cb7-40" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-41"><a href="#cb7-41" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Status indicators N, Q1, Q2, Q3 are packaged</span></span>
+<span id="cb7-42"><a href="#cb7-42" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> apc<span class="op">.</span>StatusIndicator <span class="op">==</span> <span class="st">&quot;N&quot;</span> <span class="op">||</span></span>
+<span id="cb7-43"><a href="#cb7-43" aria-hidden="true" tabindex="-1"></a>           apc<span class="op">.</span>StatusIndicator<span class="op">.</span>Left<span class="op">(</span><span class="dv">1</span><span class="op">)</span> <span class="op">==</span> <span class="st">&quot;Q&quot;</span><span class="op">;</span></span>
+<span id="cb7-44"><a href="#cb7-44" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="medicare-physician-fee-schedule-mpfs">5. Medicare Physician Fee
+Schedule (MPFS)</h2>
+<h3 id="purpose-4">Purpose</h3>
+<p>Prices professional (physician) claims using: - CPT/HCPCS codes -
+RBRVS (Resource-Based Relative Value Scale) - Geographic Practice Cost
+Index (GPCI) - Conversion factor</p>
+<h3 id="formula">Formula</h3>
+<pre><code>Payment = [(Work RVU × Work GPCI) + 
+           (PE RVU × PE GPCI) + 
+           (MP RVU × MP GPCI)] × Conversion Factor × Modifier Adjustments
+
+Where:
+  Work RVU = Work component relative value
+  PE RVU = Practice Expense relative value (Facility or Non-Facility)
+  MP RVU = Malpractice relative value
+  GPCI = Geographic Practice Cost Index (by locality)
+  Conversion Factor = Dollar multiplier (updated annually)</code></pre>
+<h3 id="source-files-4">Source Files</h3>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 40%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TacTermMPFS.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>MPFS pricing term</td>
+</tr>
+<tr>
+<td><code>MedicarePhysiciansFeeScheduleServiceInvoker.cpp</code></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Service invoker</td>
+</tr>
+</tbody>
+</table>
+<h3 id="database-tables">Database Tables</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RBRVS_RVU</code></td>
+<td>Work, PE, MP RVU values by CPT</td>
+</tr>
+<tr>
+<td><code>MCRGPCI</code></td>
+<td>GPCI values by carrier/locality</td>
+</tr>
+<tr>
+<td><code>MPFSCONVFACTORS</code></td>
+<td>Annual conversion factors</td>
+</tr>
+<tr>
+<td><code>MCRPROV</code></td>
+<td>Provider/carrier assignments</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modifier-adjustments">Modifier Adjustments</h3>
+<table>
+<thead>
+<tr>
+<th>Modifier</th>
+<th>Description</th>
+<th>Adjustment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>26</td>
+<td>Professional component only</td>
+<td>Reduced PE RVU</td>
+</tr>
+<tr>
+<td>TC</td>
+<td>Technical component only</td>
+<td>Reduced Work RVU</td>
+</tr>
+<tr>
+<td>50</td>
+<td>Bilateral procedure</td>
+<td>150% of base</td>
+</tr>
+<tr>
+<td>51</td>
+<td>Multiple procedures</td>
+<td>100%, 50%, 50%, etc.</td>
+</tr>
+<tr>
+<td>52</td>
+<td>Reduced services</td>
+<td>Percentage reduction</td>
+</tr>
+<tr>
+<td>59</td>
+<td>Distinct procedure</td>
+<td>Bypass bundling</td>
+</tr>
+<tr>
+<td>80</td>
+<td>Assistant surgeon</td>
+<td>16% of primary</td>
+</tr>
+<tr>
+<td>AS</td>
+<td>Physician assistant</td>
+<td>85% of physician rate</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="state-medicaid-pricers">6. State Medicaid Pricers</h2>
+<h3 id="overview-1">Overview</h3>
+<p>Each state has unique Medicaid pricing rules. The system
+supports:</p>
+<p><strong>State Medicaid Pricers:</strong></p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>TAC Term</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arizona</td>
+<td>TacTermAZMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>Illinois</td>
+<td>TacTermILMedicaid</td>
+<td>APR-DRG based</td>
+</tr>
+<tr>
+<td>Indiana</td>
+<td>TacTermINMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>New York</td>
+<td>TacTermNYMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>Ohio</td>
+<td>TacTermOHMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>Pennsylvania</td>
+<td>TacTermPAMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>South Carolina</td>
+<td>TacTermSCMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>Texas</td>
+<td>TacTermTXMedicaid</td>
+<td></td>
+</tr>
+<tr>
+<td>Florida</td>
+<td>TacTermFLMedicaid</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="arizona-medicaid">Arizona Medicaid</h3>
+<p><strong>Implementation:</strong>
+<code>ArizonaMedicaidServiceInvoker.cpp</code></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ArizonaMedicaidServiceInvoker</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    HRESULT PriceEpisode<span class="op">(</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        ArizonaMedicaidResult<span class="op">&amp;</span> result<span class="op">);</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Arizona uses AHCCCS (Arizona Health Care Cost Containment System)</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Custom fee schedules and per diem rates</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    HRESULT GetAHCCCSRates<span class="op">(</span><span class="at">const</span> CString<span class="op">&amp;</span> providerId<span class="op">,</span> AHCCCSRates<span class="op">&amp;</span> rates<span class="op">);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="illinois-medicaid-apr-drg">Illinois Medicaid (APR-DRG)</h3>
+<p><strong>Key Feature:</strong> Uses APR-DRG grouper instead of
+MS-DRG</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Illinois uses 3M APR-DRG grouper</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>HRESULT PriceIllinoisMedicaid<span class="op">(</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    IllinoisMedicaidResult<span class="op">&amp;</span> result<span class="op">)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 1. Group using APR-DRG (via 3M service)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    AprDrgResult aprResult<span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    HRESULT hr <span class="op">=</span> <span class="va">m_AprDrgGrouper</span><span class="op">.</span>Group<span class="op">(</span>episode<span class="op">,</span> aprResult<span class="op">);</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 2. Get state-specific base rates</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    ILMedicaidRates rates<span class="op">;</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    GetILMedicaidRates<span class="op">(</span>episode<span class="op">-&gt;</span>GetProviderId<span class="op">(),</span> rates<span class="op">);</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>    <span class="co">// 3. Calculate payment with SOI/ROM adjustments</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>    result<span class="op">.</span>Payment <span class="op">=</span> aprResult<span class="op">.</span>Weight <span class="op">*</span> rates<span class="op">.</span>BaseRate <span class="op">*</span> </span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>                     GetSOIMultiplier<span class="op">(</span>aprResult<span class="op">.</span>SOI<span class="op">)</span> <span class="op">*</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>                     GetROMMultiplier<span class="op">(</span>aprResult<span class="op">.</span>ROM<span class="op">);</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="container-integration-pattern">Container Integration
+Pattern</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// MedicaidPricerFactory - Creates appropriate pricer by state</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MedicaidPricerFactory</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="bu">std::</span>unique_ptr<span class="op">&lt;</span>IMedicaidPricer<span class="op">&gt;</span> Create<span class="op">(</span><span class="at">const</span> CString<span class="op">&amp;</span> stateCode<span class="op">)</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;AZ&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>ArizonaMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;IL&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>IllinoisMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;IN&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>IndianaMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;NY&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>NewYorkMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;OH&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>OhioMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;PA&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>PennsylvaniaMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;SC&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>SouthCarolinaMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;TX&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>TexasMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>stateCode <span class="op">==</span> <span class="st">&quot;FL&quot;</span><span class="op">)</span> <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>FloridaMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Default to generic Medicaid pricing</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>GenericMedicaidPricer<span class="op">&gt;();</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<hr />
+<h2 id="tricare-pricers">7. TRICARE Pricers</h2>
+<h3 id="overview-2">Overview</h3>
+<p>TRICARE (military healthcare) uses modified Medicare rules:</p>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 30%" />
+<col style="width: 26%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th>Type</th>
+<th>Grouper</th>
+<th>Pricer</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Inpatient</td>
+<td>TRICARE IP (3M)</td>
+<td>TRICARE DRG</td>
+<td>Modified MS-DRG weights</td>
+</tr>
+<tr>
+<td>Outpatient</td>
+<td>TRICARE OPPS (3M)</td>
+<td>TRICARE OPPS</td>
+<td>Modified APC rates</td>
+</tr>
+<tr>
+<td>Professional</td>
+<td>MPFS-based</td>
+<td>TRICARE Fee Schedule</td>
+<td>80-85% of Medicare rates</td>
+</tr>
+</tbody>
+</table>
+<h3 id="source-files-5">Source Files</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TacTermTriCare.cpp</code></td>
+<td>TRICARE pricing term</td>
+</tr>
+<tr>
+<td><code>TacTermTriCareSNF.cpp</code></td>
+<td>Skilled Nursing Facility</td>
+</tr>
+<tr>
+<td><code>TacTermTriCarePsych.cpp</code></td>
+<td>Psychiatric facilities</td>
+</tr>
+</tbody>
+</table>
+<h3 id="tricare-drg-processing">TRICARE DRG Processing</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">// TRICARE uses special grouper version</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>CString HDRGGrouper<span class="op">::</span>GetTRIGrouperVersion<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> pEpisode<span class="op">)</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    CTime dischargeDate <span class="op">=</span> pEpisode<span class="op">-&gt;</span>GetDischargeDateTime<span class="op">();</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="co">// TRICARE versions align with CMS fiscal years</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>dischargeDate <span class="op">&gt;=</span> CTime<span class="op">(</span><span class="dv">2025</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">))</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;T43&quot;</span><span class="op">;</span>  <span class="co">// TRICARE v43</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="op">(</span>dischargeDate <span class="op">&gt;=</span> CTime<span class="op">(</span><span class="dv">2024</span><span class="op">,</span> <span class="dv">10</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">,</span> <span class="dv">0</span><span class="op">))</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> <span class="st">&quot;T42&quot;</span><span class="op">;</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// etc.</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="m-gp-services-integration">8. 3M GP Services Integration</h2>
+<h3 id="service-architecture">Service Architecture</h3>
+<p>The 3M GP (Grouper/Pricer) services are accessed via HTTP:</p>
+<p><strong>Sequence:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pricing Bridge</td>
+<td>HTTP Client</td>
+<td>Create request JSON</td>
+</tr>
+<tr>
+<td>2</td>
+<td>HTTP Client</td>
+<td>3M GP Service</td>
+<td>POST /api/group</td>
+</tr>
+<tr>
+<td>3</td>
+<td>3M GP Service</td>
+<td>HTTP Client</td>
+<td>Grouper response JSON</td>
+</tr>
+<tr>
+<td>4</td>
+<td>HTTP Client</td>
+<td>Pricing Bridge</td>
+<td>Parse response</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Services run as internal microservices or
+Azure Container Apps</p>
+<h3 id="requestresponse-format">Request/Response Format</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">APR-DRG</span> <span class="er">Grouper</span> <span class="er">Request</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claimId&quot;</span><span class="fu">:</span> <span class="st">&quot;CLM-2025-001&quot;</span><span class="fu">,</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientAge&quot;</span><span class="fu">:</span> <span class="dv">65</span><span class="fu">,</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientSex&quot;</span><span class="fu">:</span> <span class="st">&quot;M&quot;</span><span class="fu">,</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;admitDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-01-10&quot;</span><span class="fu">,</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dischargeDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dischargeStatus&quot;</span><span class="fu">:</span> <span class="st">&quot;01&quot;</span><span class="fu">,</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;principalDiagnosis&quot;</span><span class="fu">:</span> <span class="st">&quot;I2101&quot;</span><span class="fu">,</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;secondaryDiagnoses&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;I10&quot;</span><span class="ot">,</span> <span class="st">&quot;E119&quot;</span><span class="ot">,</span> <span class="st">&quot;Z87891&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;procedures&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">&quot;code&quot;</span><span class="fu">:</span> <span class="st">&quot;0270346&quot;</span><span class="fu">,</span> <span class="dt">&quot;date&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-01-11&quot;</span> <span class="fu">}</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;grouperVersion&quot;</span><span class="fu">:</span> <span class="st">&quot;v410&quot;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">APR-DRG</span> <span class="er">Grouper</span> <span class="er">Response</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claimId&quot;</span><span class="fu">:</span> <span class="st">&quot;CLM-2025-001&quot;</span><span class="fu">,</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;aprDrg&quot;</span><span class="fu">:</span> <span class="st">&quot;194&quot;</span><span class="fu">,</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mdc&quot;</span><span class="fu">:</span> <span class="st">&quot;05&quot;</span><span class="fu">,</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;soi&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;rom&quot;</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;weight&quot;</span><span class="fu">:</span> <span class="fl">1.2345</span><span class="fu">,</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Heart failure&quot;</span><span class="fu">,</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;returnCode&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;messages&quot;</span><span class="fu">:</span> <span class="ot">[]</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="c-http-client">C++ HTTP Client</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Using cpprestsdk for HTTP calls</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;cpprest/http_client.h&gt;</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> GpServiceClient</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    pplx<span class="op">::</span>task<span class="op">&lt;</span>json<span class="op">::</span>value<span class="op">&gt;</span> GroupAprDrg<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">)</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        http_client client<span class="op">(</span>GetAprDrgEndpoint<span class="op">());</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        json<span class="op">::</span>value request <span class="op">=</span> HDRGGrouper<span class="op">::</span>CreateRequestJson<span class="op">(</span>episode<span class="op">);</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> client<span class="op">.</span>request<span class="op">(</span>methods<span class="op">::</span>POST<span class="op">,</span> U<span class="op">(</span><span class="st">&quot;/api/group&quot;</span><span class="op">),</span> request<span class="op">)</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span>then<span class="op">([](</span>http_response response<span class="op">)</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>                <span class="cf">return</span> response<span class="op">.</span>extract_json<span class="op">();</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a><span class="kw">private</span><span class="op">:</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    utility<span class="op">::</span><span class="dt">string_t</span> GetAprDrgEndpoint<span class="op">()</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// From environment variable</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> GetEnvironmentVariableValue<span class="op">(</span><span class="st">&quot;GP_APR_DRG_ENDPOINT&quot;</span><span class="op">);</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<hr />
+<h2 id="container-pricer-selection-logic">9. Container Pricer Selection
+Logic</h2>
+<h3 id="program-detection">Program Detection</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ProgramIdentifier - Determines which pricer to use</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ProgramIdentifier</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> PayerProgram Identify<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">)</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>        PayerProgram program<span class="op">;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Check payer type from invoice</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>        CString payerType <span class="op">=</span> episode<span class="op">-&gt;</span>GetPrimaryInvoice<span class="op">()-&gt;</span>GetPayerType<span class="op">();</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>        CString billType <span class="op">=</span> episode<span class="op">-&gt;</span>GetBillType<span class="op">();</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>        CString patientType <span class="op">=</span> episode<span class="op">-&gt;</span>GetPatientType<span class="op">();</span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Medicare</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>payerType <span class="op">==</span> <span class="st">&quot;MEDICARE&quot;</span> <span class="op">||</span> payerType <span class="op">==</span> <span class="st">&quot;MCR&quot;</span><span class="op">)</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>Program <span class="op">=</span> <span class="st">&quot;MEDICARE&quot;</span><span class="op">;</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>patientType <span class="op">==</span> <span class="st">&quot;I&quot;</span><span class="op">)</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Grouper <span class="op">=</span> <span class="st">&quot;MS-DRG&quot;</span><span class="op">;</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Pricer <span class="op">=</span> <span class="st">&quot;MEDICARE-IP&quot;</span><span class="op">;</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb15-25"><a href="#cb15-25" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span></span>
+<span id="cb15-26"><a href="#cb15-26" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb15-27"><a href="#cb15-27" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Grouper <span class="op">=</span> <span class="st">&quot;APC&quot;</span><span class="op">;</span></span>
+<span id="cb15-28"><a href="#cb15-28" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Pricer <span class="op">=</span> <span class="st">&quot;MEDICARE-OP&quot;</span><span class="op">;</span></span>
+<span id="cb15-29"><a href="#cb15-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb15-30"><a href="#cb15-30" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> program<span class="op">;</span></span>
+<span id="cb15-31"><a href="#cb15-31" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-32"><a href="#cb15-32" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-33"><a href="#cb15-33" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Medicaid - check state</span></span>
+<span id="cb15-34"><a href="#cb15-34" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>payerType <span class="op">==</span> <span class="st">&quot;MEDICAID&quot;</span> <span class="op">||</span> payerType <span class="op">==</span> <span class="st">&quot;MCD&quot;</span><span class="op">)</span></span>
+<span id="cb15-35"><a href="#cb15-35" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb15-36"><a href="#cb15-36" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>Program <span class="op">=</span> <span class="st">&quot;MEDICAID&quot;</span><span class="op">;</span></span>
+<span id="cb15-37"><a href="#cb15-37" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>State <span class="op">=</span> episode<span class="op">-&gt;</span>GetStateCode<span class="op">();</span></span>
+<span id="cb15-38"><a href="#cb15-38" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb15-39"><a href="#cb15-39" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Illinois uses APR-DRG</span></span>
+<span id="cb15-40"><a href="#cb15-40" aria-hidden="true" tabindex="-1"></a>            <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>State <span class="op">==</span> <span class="st">&quot;IL&quot;</span><span class="op">)</span></span>
+<span id="cb15-41"><a href="#cb15-41" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb15-42"><a href="#cb15-42" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Grouper <span class="op">=</span> <span class="st">&quot;APR-DRG&quot;</span><span class="op">;</span></span>
+<span id="cb15-43"><a href="#cb15-43" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Pricer <span class="op">=</span> <span class="st">&quot;IL-MEDICAID&quot;</span><span class="op">;</span></span>
+<span id="cb15-44"><a href="#cb15-44" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb15-45"><a href="#cb15-45" aria-hidden="true" tabindex="-1"></a>            <span class="cf">else</span></span>
+<span id="cb15-46"><a href="#cb15-46" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb15-47"><a href="#cb15-47" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Grouper <span class="op">=</span> <span class="st">&quot;MS-DRG&quot;</span><span class="op">;</span></span>
+<span id="cb15-48"><a href="#cb15-48" aria-hidden="true" tabindex="-1"></a>                program<span class="op">.</span>Pricer <span class="op">=</span> program<span class="op">.</span>State <span class="op">+</span> <span class="st">&quot;-MEDICAID&quot;</span><span class="op">;</span></span>
+<span id="cb15-49"><a href="#cb15-49" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb15-50"><a href="#cb15-50" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> program<span class="op">;</span></span>
+<span id="cb15-51"><a href="#cb15-51" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-52"><a href="#cb15-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-53"><a href="#cb15-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">// TRICARE</span></span>
+<span id="cb15-54"><a href="#cb15-54" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>payerType <span class="op">==</span> <span class="st">&quot;TRICARE&quot;</span> <span class="op">||</span> payerType <span class="op">==</span> <span class="st">&quot;TRI&quot;</span><span class="op">)</span></span>
+<span id="cb15-55"><a href="#cb15-55" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb15-56"><a href="#cb15-56" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>Program <span class="op">=</span> <span class="st">&quot;TRICARE&quot;</span><span class="op">;</span></span>
+<span id="cb15-57"><a href="#cb15-57" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>Grouper <span class="op">=</span> <span class="op">(</span>patientType <span class="op">==</span> <span class="st">&quot;I&quot;</span><span class="op">)</span> <span class="op">?</span> <span class="st">&quot;TRICARE-IP&quot;</span> <span class="op">:</span> <span class="st">&quot;TRICARE-OPPS&quot;</span><span class="op">;</span></span>
+<span id="cb15-58"><a href="#cb15-58" aria-hidden="true" tabindex="-1"></a>            program<span class="op">.</span>Pricer <span class="op">=</span> program<span class="op">.</span>Grouper<span class="op">;</span></span>
+<span id="cb15-59"><a href="#cb15-59" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> program<span class="op">;</span></span>
+<span id="cb15-60"><a href="#cb15-60" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb15-61"><a href="#cb15-61" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb15-62"><a href="#cb15-62" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Commercial - use contract rules</span></span>
+<span id="cb15-63"><a href="#cb15-63" aria-hidden="true" tabindex="-1"></a>        program<span class="op">.</span>Program <span class="op">=</span> <span class="st">&quot;COMMERCIAL&quot;</span><span class="op">;</span></span>
+<span id="cb15-64"><a href="#cb15-64" aria-hidden="true" tabindex="-1"></a>        program<span class="op">.</span>Grouper <span class="op">=</span> DetermineContractGrouper<span class="op">(</span>episode<span class="op">);</span></span>
+<span id="cb15-65"><a href="#cb15-65" aria-hidden="true" tabindex="-1"></a>        program<span class="op">.</span>Pricer <span class="op">=</span> <span class="st">&quot;CONTRACT&quot;</span><span class="op">;</span></span>
+<span id="cb15-66"><a href="#cb15-66" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> program<span class="op">;</span></span>
+<span id="cb15-67"><a href="#cb15-67" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-68"><a href="#cb15-68" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="pricer-factory">Pricer Factory</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co">// PricerFactory - Creates appropriate pricer</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> PricerFactory</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">static</span> <span class="bu">std::</span>unique_ptr<span class="op">&lt;</span>IPricer<span class="op">&gt;</span> Create<span class="op">(</span><span class="at">const</span> PayerProgram<span class="op">&amp;</span> program<span class="op">)</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Medicare</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>Pricer <span class="op">==</span> <span class="st">&quot;MEDICARE-IP&quot;</span><span class="op">)</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>MedicareInpatientPricer<span class="op">&gt;(</span><span class="va">g_Logger</span><span class="op">);</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>Pricer <span class="op">==</span> <span class="st">&quot;MEDICARE-OP&quot;</span><span class="op">)</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>MedicareOutpatientPricer<span class="op">&gt;(</span><span class="va">g_Logger</span><span class="op">);</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Medicaid</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>Pricer<span class="op">.</span>Find<span class="op">(</span><span class="st">&quot;-MEDICAID&quot;</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> MedicaidPricerFactory<span class="op">::</span>Create<span class="op">(</span>program<span class="op">.</span>State<span class="op">);</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// TRICARE</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>Pricer<span class="op">.</span>Left<span class="op">(</span><span class="dv">7</span><span class="op">)</span> <span class="op">==</span> <span class="st">&quot;TRICARE&quot;</span><span class="op">)</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>TricarePricer<span class="op">&gt;(</span>program<span class="op">.</span>Pricer<span class="op">);</span></span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Contract-based (uses TAC engine)</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="op">(</span>program<span class="op">.</span>Pricer <span class="op">==</span> <span class="st">&quot;CONTRACT&quot;</span><span class="op">)</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>            <span class="cf">return</span> <span class="bu">std::</span>make_unique<span class="op">&lt;</span>ContractPricer<span class="op">&gt;(</span><span class="va">g_Logger</span><span class="op">);</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>        <span class="cf">throw</span> <span class="bu">std::</span>runtime_error<span class="op">(</span><span class="st">&quot;Unknown pricer: &quot;</span> <span class="op">+</span> program<span class="op">.</span>Pricer<span class="op">);</span></span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<hr />
+<h2 id="container-entry-point-flow">10. Container Entry Point Flow</h2>
+<pre><code>JSON Episode Input
+        │
+        ▼
+EpisodeSerializer::Deserialize
+        │
+        ▼
+HEpisode Object
+        │
+        ▼
+ProgramIdentifier::Identify
+        │
+        ▼
+┌───────┴────────┬────────────────┬────────────────┬────────────────┐
+│                │                │                │                │
+▼                ▼                ▼                ▼                ▼
+Medicare IP      Medicare OP      Medicaid         TRICARE          Commercial
+│                │                │                │                │
+▼                ▼                ▼                ▼                ▼
+HDRGGrouper      ApcGrouper       MedicaidPricer   GpServiceClient  ContractPricer
+│                │                Factory          │                │
+▼                ▼                │                ▼                ▼
+MedicareIP       MedicareOP       ▼                TricarePricer    TAC Engine
+Pricer           Pricer           StateMedicaid    │                │
+│                │                Pricer           │                │
+│                │                │                │                │
+└────────────────┴────────────────┴────────────────┴────────────────┘
+                                  │
+                                  ▼
+                        HPricingResult
+                                  │
+                                  ▼
+                  EpisodeSerializer::Serialize
+                                  │
+                                  ▼
+                        JSON Result Output</code></pre>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ol type="1">
+<li><strong><a
+href="10-TAC-ENGINE-EXTRACTION.html">10-TAC-ENGINE-EXTRACTION.md</a></strong>
+- Full TAC engine analysis</li>
+<li><strong><a
+href="11-DATABASE-REQUIREMENTS.html">11-DATABASE-REQUIREMENTS.md</a></strong>
+- Database tables needed</li>
+</ol>
+<hr />
+<p><strong>Document Version History:</strong></p>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 18%" />
+<col style="width: 25%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-01-16</td>
+<td>Andy Bratton</td>
+<td>Initial grouper/pricer documentation</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

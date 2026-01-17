@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>08-TESTING-STRATEGY</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="azure-pem-testing-strategy">Azure PEM Testing Strategy</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 15, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Planning Phase<br />
+<strong>Parent Document:</strong> <a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a></p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document defines the testing strategy for Azure PEM, including
+test types, coverage requirements, and quality gates that must be met
+before code can progress through environments.</p>
+<hr />
+<h2 id="testing-philosophy">Testing Philosophy</h2>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Shift Left</strong></td>
+<td>Test early and often in the development cycle</td>
+</tr>
+<tr>
+<td><strong>100% Coverage</strong></td>
+<td>All code paths must be tested (mandatory quality gate)</td>
+</tr>
+<tr>
+<td><strong>Test Pyramid</strong></td>
+<td>More unit tests, fewer integration tests, minimal E2E tests</td>
+</tr>
+<tr>
+<td><strong>Automation First</strong></td>
+<td>Automate all tests; manual testing is exception only</td>
+</tr>
+<tr>
+<td><strong>Fast Feedback</strong></td>
+<td>Tests should run quickly to enable rapid iteration</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="test-pyramid">Test Pyramid</h2>
+<p><strong>Test Pyramid</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+graph TB
+    subgraph PYRAMID[&quot;Test Pyramid&quot;]
+        E2E[&quot;🔺 E2E Tests (~10%)&lt;br/&gt;Critical user journeys&quot;]
+        INT[&quot;🔶 Integration Tests (~20%)&lt;br/&gt;API contracts, DB, messaging&quot;]
+        UNIT[&quot;🟩 Unit Tests (~70%)&lt;br/&gt;Business logic, components&quot;]
+    end
+    
+    E2E --- INT
+    INT --- UNIT
+    
+    style E2E fill:#ffebee,stroke:#c62828
+    style INT fill:#fff3e0,stroke:#ef6c00
+    style UNIT fill:#e8f5e9,stroke:#2e7d32</code></pre>
+<hr />
+<h2 id="quality-gates-mandatory">Quality Gates (Mandatory)</h2>
+<h3 id="pr-gate-before-merge-to-main">PR Gate (Before Merge to
+Main)</h3>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Threshold</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unit Tests</strong></td>
+<td>100% pass</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Integration Tests</strong></td>
+<td>100% pass</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Code Coverage (Lines)</strong></td>
+<td>100%</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Code Coverage (Branches)</strong></td>
+<td>100%</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Linting</strong></td>
+<td>0 errors</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Security Scan (SAST)</strong></td>
+<td>No critical/high</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Dependency Scan</strong></td>
+<td>No critical CVEs</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Build</strong></td>
+<td>Success</td>
+<td>Pipeline blocks merge</td>
+</tr>
+<tr>
+<td><strong>Code Review</strong></td>
+<td>1+ approvals</td>
+<td>PR blocks merge</td>
+</tr>
+</tbody>
+</table>
+<h3 id="deployment-gate-before-leaving-dev">Deployment Gate (Before
+Leaving DEV)</h3>
+<table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Threshold</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Smoke Tests</strong></td>
+<td>100% pass</td>
+<td>Deployment blocks</td>
+</tr>
+<tr>
+<td><strong>Health Checks</strong></td>
+<td>All services healthy</td>
+<td>Deployment blocks</td>
+</tr>
+<tr>
+<td><strong>No P1/P2 Bugs</strong></td>
+<td>0 open</td>
+<td>Manual verification</td>
+</tr>
+</tbody>
+</table>
+<h3 id="environment-promotion-gates">Environment Promotion Gates</h3>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Required Tests</th>
+<th>Approval</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DEV → QAE</td>
+<td>Unit, Integration, Smoke</td>
+<td>QA representative</td>
+</tr>
+<tr>
+<td>QAE → UAT</td>
+<td>+ Regression suite</td>
+<td>QA Lead</td>
+</tr>
+<tr>
+<td>UAT → PROD</td>
+<td>+ E2E, Performance</td>
+<td>Release Manager + PO</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="test-types">Test Types</h2>
+<h3 id="unit-tests">Unit Tests</h3>
+<p><strong>Purpose:</strong> Test individual units of code in
+isolation.</p>
+<p><strong>Scope:</strong> - Domain entities and value objects -
+Application services and use cases - Angular components, services, pipes
+- Utility functions</p>
+<p><strong>Framework:</strong> - Backend: xUnit, Moq, FluentAssertions -
+Frontend: Jasmine, Karma</p>
+<p><strong>Example (Backend):</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> EpisodeTests</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">AddClaim_WhenClaimInDateRange_ShouldAddSuccessfully</span><span class="op">()</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Arrange</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> episode <span class="op">=</span> <span class="kw">new</span> <span class="fu">Episode</span><span class="op">(</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            definitionVersionId<span class="op">:</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">(),</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            patientId<span class="op">:</span> <span class="st">&quot;P12345&quot;</span><span class="op">,</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            triggerDate<span class="op">:</span> <span class="kw">new</span> <span class="fu">DateOnly</span><span class="op">(</span><span class="dv">2026</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">15</span><span class="op">),</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            preTriggerDays<span class="op">:</span> <span class="dv">30</span><span class="op">,</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>            postTriggerDays<span class="op">:</span> <span class="dv">90</span><span class="op">);</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> claim <span class="op">=</span> <span class="kw">new</span> <span class="fu">Claim</span><span class="op">(</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>            claimId<span class="op">:</span> <span class="st">&quot;CLM-001&quot;</span><span class="op">,</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>            claimDate<span class="op">:</span> <span class="kw">new</span> <span class="fu">DateOnly</span><span class="op">(</span><span class="dv">2026</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">20</span><span class="op">),</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>            amount<span class="op">:</span> <span class="dv">5000</span>m<span class="op">);</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Act</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        episode<span class="op">.</span><span class="fu">AddClaim</span><span class="op">(</span>claim<span class="op">);</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assert</span></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        episode<span class="op">.</span><span class="fu">Claims</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">ContainSingle</span><span class="op">();</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        episode<span class="op">.</span><span class="fu">TotalCharges</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Be</span><span class="op">(</span><span class="dv">5000</span>m<span class="op">);</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">void</span> <span class="fu">AddClaim_WhenClaimOutsideDateRange_ShouldThrow</span><span class="op">()</span></span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Arrange</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> episode <span class="op">=</span> <span class="kw">new</span> <span class="fu">Episode</span><span class="op">(...);</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> claim <span class="op">=</span> <span class="kw">new</span> <span class="fu">Claim</span><span class="op">(</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>            claimId<span class="op">:</span> <span class="st">&quot;CLM-002&quot;</span><span class="op">,</span></span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>            claimDate<span class="op">:</span> <span class="kw">new</span> <span class="fu">DateOnly</span><span class="op">(</span><span class="dv">2027</span><span class="op">,</span> <span class="dv">1</span><span class="op">,</span> <span class="dv">1</span><span class="op">),</span>  <span class="co">// Outside range</span></span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a>            amount<span class="op">:</span> <span class="dv">1000</span>m<span class="op">);</span></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Act</span></span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> act <span class="op">=</span> <span class="op">()</span> <span class="op">=&gt;</span> episode<span class="op">.</span><span class="fu">AddClaim</span><span class="op">(</span>claim<span class="op">);</span></span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assert</span></span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>        act<span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Throw</span><span class="op">&lt;</span>ClaimOutsideEpisodeRangeException<span class="op">&gt;();</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>Example (Frontend):</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">describe</span>(<span class="st">&#39;EpisodeListComponent&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> component<span class="op">:</span> EpisodeListComponent<span class="op">;</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> fixture<span class="op">:</span> ComponentFixture<span class="op">&lt;</span>EpisodeListComponent<span class="op">&gt;;</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="kw">let</span> episodeStore<span class="op">:</span> jasmine<span class="op">.</span><span class="at">SpyObj</span><span class="op">&lt;</span>EpisodeStore<span class="op">&gt;;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">beforeEach</span>(<span class="kw">async</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    episodeStore <span class="op">=</span> jasmine<span class="op">.</span><span class="fu">createSpyObj</span>(<span class="st">&#39;EpisodeStore&#39;</span><span class="op">,</span> [<span class="st">&#39;loadEpisodes&#39;</span>])<span class="op">;</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    episodeStore<span class="op">.</span><span class="at">episodes$</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">BehaviorSubject</span><span class="op">&lt;</span>Episode[]<span class="op">&gt;</span>([])<span class="op">;</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> TestBed<span class="op">.</span><span class="fu">configureTestingModule</span>({</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>      declarations<span class="op">:</span> [EpisodeListComponent]<span class="op">,</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>      providers<span class="op">:</span> [</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>        { provide<span class="op">:</span> EpisodeStore<span class="op">,</span> useValue<span class="op">:</span> episodeStore }</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>      ]</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    })<span class="op">.</span><span class="fu">compileComponents</span>()<span class="op">;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    fixture <span class="op">=</span> TestBed<span class="op">.</span><span class="fu">createComponent</span>(EpisodeListComponent)<span class="op">;</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    component <span class="op">=</span> fixture<span class="op">.</span><span class="at">componentInstance</span><span class="op">;</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;should display episodes from store&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> mockEpisodes <span class="op">=</span> [</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>      { id<span class="op">:</span> <span class="st">&#39;1&#39;</span><span class="op">,</span> episodeNumber<span class="op">:</span> <span class="st">&#39;EP-001&#39;</span><span class="op">,</span> status<span class="op">:</span> <span class="st">&#39;Open&#39;</span> }</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    ]<span class="op">;</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    episodeStore<span class="op">.</span><span class="at">episodes$</span><span class="op">.</span><span class="fu">next</span>(mockEpisodes)<span class="op">;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    fixture<span class="op">.</span><span class="fu">detectChanges</span>()<span class="op">;</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> rows <span class="op">=</span> fixture<span class="op">.</span><span class="at">nativeElement</span><span class="op">.</span><span class="fu">querySelectorAll</span>(<span class="st">&#39;.episode-row&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(rows<span class="op">.</span><span class="at">length</span>)<span class="op">.</span><span class="fu">toBe</span>(<span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="fu">it</span>(<span class="st">&#39;should call store on episode click&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">const</span> episode <span class="op">=</span> { id<span class="op">:</span> <span class="st">&#39;1&#39;</span><span class="op">,</span> episodeNumber<span class="op">:</span> <span class="st">&#39;EP-001&#39;</span> }<span class="op">;</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    component<span class="op">.</span><span class="fu">onEpisodeClick</span>(episode)<span class="op">;</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    <span class="fu">expect</span>(episodeStore<span class="op">.</span><span class="at">selectEpisode</span>)<span class="op">.</span><span class="fu">toHaveBeenCalledWith</span>(<span class="st">&#39;1&#39;</span>)<span class="op">;</span></span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<h3 id="integration-tests">Integration Tests</h3>
+<p><strong>Purpose:</strong> Test component integration with external
+dependencies.</p>
+<p><strong>Scope:</strong> - API endpoints with database - Service Bus
+message handlers - Redis caching - External API calls (mocked)</p>
+<p><strong>Framework:</strong> - Backend: xUnit, Testcontainers,
+WebApplicationFactory - Frontend: Angular TestBed with
+HttpClientTestingModule</p>
+<p><strong>Example (Backend API Test):</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> EpisodesApiTests <span class="op">:</span> IClassFixture<span class="op">&lt;</span>PemWebApplicationFactory<span class="op">&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> HttpClient _client<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> PemDbContext _dbContext<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">EpisodesApiTests</span><span class="op">(</span>PemWebApplicationFactory factory<span class="op">)</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>        _client <span class="op">=</span> factory<span class="op">.</span><span class="fu">CreateClient</span><span class="op">();</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        _dbContext <span class="op">=</span> factory<span class="op">.</span><span class="fu">Services</span><span class="op">.</span><span class="fu">GetRequiredService</span><span class="op">&lt;</span>PemDbContext<span class="op">&gt;();</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">GetEpisodes_ReturnsPagedResults</span><span class="op">()</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Arrange</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        await <span class="fu">SeedTestData</span><span class="op">();</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Act</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> response <span class="op">=</span> await _client<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span><span class="st">&quot;/api/episodes?page=1&amp;pageSize=10&quot;</span><span class="op">);</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assert</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        response<span class="op">.</span><span class="fu">StatusCode</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Be</span><span class="op">(</span>HttpStatusCode<span class="op">.</span><span class="fu">OK</span><span class="op">);</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> result <span class="op">=</span> await response<span class="op">.</span><span class="fu">Content</span><span class="op">.</span><span class="fu">ReadFromJsonAsync</span><span class="op">&lt;</span>PagedResult<span class="op">&lt;</span>EpisodeDto<span class="op">&gt;&gt;();</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        result<span class="op">.</span><span class="fu">Data</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">HaveCount</span><span class="op">(</span><span class="dv">10</span><span class="op">);</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        result<span class="op">.</span><span class="fu">Pagination</span><span class="op">.</span><span class="fu">TotalItems</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Be</span><span class="op">(</span><span class="dv">25</span><span class="op">);</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">CreateEpisode_WithValidData_ReturnsCreated</span><span class="op">()</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Arrange</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> request <span class="op">=</span> <span class="kw">new</span> CreateEpisodeRequest</span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>            DefinitionVersionId <span class="op">=</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">(),</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>            PatientId <span class="op">=</span> <span class="st">&quot;P12345&quot;</span><span class="op">,</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>            TriggerDate <span class="op">=</span> DateOnly<span class="op">.</span><span class="fu">FromDateTime</span><span class="op">(</span>DateTime<span class="op">.</span><span class="fu">Today</span><span class="op">)</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Act</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> response <span class="op">=</span> await _client<span class="op">.</span><span class="fu">PostAsJsonAsync</span><span class="op">(</span><span class="st">&quot;/api/episodes&quot;</span><span class="op">,</span> request<span class="op">);</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assert</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        response<span class="op">.</span><span class="fu">StatusCode</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Be</span><span class="op">(</span>HttpStatusCode<span class="op">.</span><span class="fu">Created</span><span class="op">);</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> created <span class="op">=</span> await response<span class="op">.</span><span class="fu">Content</span><span class="op">.</span><span class="fu">ReadFromJsonAsync</span><span class="op">&lt;</span>EpisodeDto<span class="op">&gt;();</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        created<span class="op">.</span><span class="fu">EpisodeNumber</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">StartWith</span><span class="op">(</span><span class="st">&quot;EP-&quot;</span><span class="op">);</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>Fact<span class="op">]</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">CreateEpisode_WithInvalidData_ReturnsBadRequest</span><span class="op">()</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Arrange</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> request <span class="op">=</span> <span class="kw">new</span> CreateEpisodeRequest</span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>            DefinitionVersionId <span class="op">=</span> Guid<span class="op">.</span><span class="fu">Empty</span><span class="op">,</span>  <span class="co">// Invalid</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>            PatientId <span class="op">=</span> <span class="st">&quot;&quot;</span><span class="op">,</span>  <span class="co">// Invalid</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>            TriggerDate <span class="op">=</span> DateOnly<span class="op">.</span><span class="fu">FromDateTime</span><span class="op">(</span>DateTime<span class="op">.</span><span class="fu">Today</span><span class="op">)</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Act</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> response <span class="op">=</span> await _client<span class="op">.</span><span class="fu">PostAsJsonAsync</span><span class="op">(</span><span class="st">&quot;/api/episodes&quot;</span><span class="op">,</span> request<span class="op">);</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assert</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>        response<span class="op">.</span><span class="fu">StatusCode</span><span class="op">.</span><span class="fu">Should</span><span class="op">().</span><span class="fu">Be</span><span class="op">(</span>HttpStatusCode<span class="op">.</span><span class="fu">BadRequest</span><span class="op">);</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p><strong>WebApplicationFactory Setup:</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PemWebApplicationFactory <span class="op">:</span> WebApplicationFactory<span class="op">&lt;</span>Program<span class="op">&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> <span class="dt">void</span> <span class="fu">ConfigureWebHost</span><span class="op">(</span>IWebHostBuilder builder<span class="op">)</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        builder<span class="op">.</span><span class="fu">ConfigureServices</span><span class="op">(</span>services <span class="op">=&gt;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Replace SQL with Testcontainers</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> descriptor <span class="op">=</span> services<span class="op">.</span><span class="fu">SingleOrDefault</span><span class="op">(</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>                d <span class="op">=&gt;</span> d<span class="op">.</span><span class="fu">ServiceType</span> <span class="op">==</span> <span class="kw">typeof</span><span class="op">(</span>DbContextOptions<span class="op">&lt;</span>PemDbContext<span class="op">&gt;));</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">Remove</span><span class="op">(</span>descriptor<span class="op">);</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddDbContext</span><span class="op">&lt;</span>PemDbContext<span class="op">&gt;(</span>options <span class="op">=&gt;</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>                options<span class="op">.</span><span class="fu">UseSqlServer</span><span class="op">(</span>_sqlContainer<span class="op">.</span><span class="fu">GetConnectionString</span><span class="op">());</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Replace Service Bus with in-memory</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>            services<span class="op">.</span><span class="fu">AddSingleton</span><span class="op">&lt;</span>IServiceBus<span class="op">,</span> InMemoryServiceBus<span class="op">&gt;();</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h3 id="end-to-end-e2e-tests">End-to-End (E2E) Tests</h3>
+<p><strong>Purpose:</strong> Test critical user journeys through the
+full stack.</p>
+<p><strong>Scope:</strong> - Login → Navigate → Action → Verify -
+Cross-service workflows - Real browser interactions</p>
+<p><strong>Framework:</strong> Playwright</p>
+<p><strong>Example:</strong></p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/e2e/specs/episode-workflow.spec.ts</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { test<span class="op">,</span> expect } <span class="im">from</span> <span class="st">&#39;@playwright/test&#39;</span><span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>test<span class="op">.</span><span class="fu">describe</span>(<span class="st">&#39;Episode Workflow&#39;</span><span class="op">,</span> () <span class="kw">=&gt;</span> {</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>  test<span class="op">.</span><span class="fu">beforeEach</span>(<span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;/&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">login</span>(page<span class="op">,</span> <span class="st">&#39;testuser@finthrive.com&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">test</span>(<span class="st">&#39;create and view episode&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Navigate to episodes</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;text=PEM&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;text=Episodes&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Click create</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;button:has-text(&quot;New Episode&quot;)&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Fill form</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">selectOption</span>(<span class="st">&#39;#definition&#39;</span><span class="op">,</span> <span class="st">&#39;Total Hip Replacement&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#patientId&#39;</span><span class="op">,</span> <span class="st">&#39;P12345&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#triggerDate&#39;</span><span class="op">,</span> <span class="st">&#39;2026-01-15&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Submit</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;button:has-text(&quot;Create&quot;)&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Verify created</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;.snackbar&#39;</span>))<span class="op">.</span><span class="fu">toContainText</span>(<span class="st">&#39;Episode created&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;.episode-number&#39;</span>))<span class="op">.</span><span class="fu">toContainText</span>(<span class="st">&#39;EP-&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">test</span>(<span class="st">&#39;search episodes with criteria&#39;</span><span class="op">,</span> <span class="kw">async</span> ({ page }) <span class="kw">=&gt;</span> {</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">goto</span>(<span class="st">&#39;/pem/episodes/criteria&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Set criteria</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">selectOption</span>(<span class="st">&#39;#status&#39;</span><span class="op">,</span> <span class="st">&#39;Open&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#dateFrom&#39;</span><span class="op">,</span> <span class="st">&#39;2026-01-01&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">fill</span>(<span class="st">&#39;#dateTo&#39;</span><span class="op">,</span> <span class="st">&#39;2026-03-31&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Search</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> page<span class="op">.</span><span class="fu">click</span>(<span class="st">&#39;button:has-text(&quot;Search&quot;)&#39;</span>)<span class="op">;</span></span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Verify results</span></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;.episode-grid&#39;</span>))<span class="op">.</span><span class="fu">toBeVisible</span>()<span class="op">;</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>    <span class="cf">await</span> <span class="fu">expect</span>(page<span class="op">.</span><span class="fu">locator</span>(<span class="st">&#39;.episode-row&#39;</span>))<span class="op">.</span><span class="at">toHaveCount</span><span class="op">.</span><span class="fu">greaterThan</span>(<span class="dv">0</span>)<span class="op">;</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a>})<span class="op">;</span></span></code></pre></div>
+<hr />
+<h3 id="performance-tests">Performance Tests</h3>
+<p><strong>Purpose:</strong> Ensure system meets performance
+requirements.</p>
+<p><strong>Scope:</strong> - API response times - Database query
+performance - Load testing</p>
+<p><strong>Framework:</strong> k6, Artillery, or Azure Load Testing</p>
+<p><strong>Requirements:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+<th>Environment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API Response (P95)</td>
+<td>&lt; 200ms</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>API Response (P99)</td>
+<td>&lt; 500ms</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Database Query</td>
+<td>&lt; 50ms</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Concurrent Users</td>
+<td>500+</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Throughput</td>
+<td>1000 req/min</td>
+<td>Production</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Example k6 Test:</strong></p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// tests/performance/episodes-load.js</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> http <span class="im">from</span> <span class="st">&#39;k6/http&#39;</span><span class="op">;</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> { check<span class="op">,</span> sleep } <span class="im">from</span> <span class="st">&#39;k6&#39;</span><span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">const</span> options <span class="op">=</span> {</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">stages</span><span class="op">:</span> [</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">duration</span><span class="op">:</span> <span class="st">&#39;30s&#39;</span><span class="op">,</span> <span class="dt">target</span><span class="op">:</span> <span class="dv">50</span> }<span class="op">,</span>   <span class="co">// Ramp up</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">duration</span><span class="op">:</span> <span class="st">&#39;1m&#39;</span><span class="op">,</span> <span class="dt">target</span><span class="op">:</span> <span class="dv">100</span> }<span class="op">,</span>   <span class="co">// Peak load</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    { <span class="dt">duration</span><span class="op">:</span> <span class="st">&#39;30s&#39;</span><span class="op">,</span> <span class="dt">target</span><span class="op">:</span> <span class="dv">0</span> }<span class="op">,</span>    <span class="co">// Ramp down</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>  ]<span class="op">,</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">thresholds</span><span class="op">:</span> {</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">http_req_duration</span><span class="op">:</span> [<span class="st">&#39;p(95)&lt;200&#39;</span><span class="op">,</span> <span class="st">&#39;p(99)&lt;500&#39;</span>]<span class="op">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">http_req_failed</span><span class="op">:</span> [<span class="st">&#39;rate&lt;0.01&#39;</span>]<span class="op">,</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>  }<span class="op">,</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>}<span class="op">;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="im">default</span> <span class="kw">function</span> () {</span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  <span class="kw">const</span> response <span class="op">=</span> http<span class="op">.</span><span class="fu">get</span>(<span class="st">&#39;https://api-pem-uat.finthrive.com/api/episodes?page=1&amp;pageSize=50&#39;</span><span class="op">,</span> {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    <span class="dt">headers</span><span class="op">:</span> {</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;Authorization&#39;</span><span class="op">:</span> <span class="vs">`Bearer </span><span class="sc">${</span>__ENV<span class="op">.</span><span class="at">AUTH_TOKEN</span><span class="sc">}</span><span class="vs">`</span><span class="op">,</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>      <span class="st">&#39;X-Tenant-Id&#39;</span><span class="op">:</span> __ENV<span class="op">.</span><span class="at">TENANT_ID</span><span class="op">,</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    }<span class="op">,</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">check</span>(response<span class="op">,</span> {</span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;status is 200&#39;</span><span class="op">:</span> (r) <span class="kw">=&gt;</span> r<span class="op">.</span><span class="at">status</span> <span class="op">===</span> <span class="dv">200</span><span class="op">,</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>    <span class="st">&#39;response time OK&#39;</span><span class="op">:</span> (r) <span class="kw">=&gt;</span> r<span class="op">.</span><span class="at">timings</span><span class="op">.</span><span class="at">duration</span> <span class="op">&lt;</span> <span class="dv">200</span><span class="op">,</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  })<span class="op">;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">sleep</span>(<span class="dv">1</span>)<span class="op">;</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h3 id="security-tests">Security Tests</h3>
+<p><strong>Purpose:</strong> Identify security vulnerabilities.</p>
+<p><strong>Scope:</strong> - Static Application Security Testing (SAST)
+- Dependency vulnerability scanning - API security testing</p>
+<p><strong>Tools:</strong> - SAST: CodeQL, SonarQube - Dependencies:
+Dependabot, npm audit - API: OWASP ZAP (for UAT/Prod testing)</p>
+<hr />
+<h2 id="code-coverage">Code Coverage</h2>
+<h3 id="coverage-requirements">Coverage Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Requirement</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Line Coverage</strong></td>
+<td>100%</td>
+<td>Pipeline fails if below</td>
+</tr>
+<tr>
+<td><strong>Branch Coverage</strong></td>
+<td>100%</td>
+<td>Pipeline fails if below</td>
+</tr>
+<tr>
+<td><strong>Function Coverage</strong></td>
+<td>100%</td>
+<td>Pipeline fails if below</td>
+</tr>
+<tr>
+<td><strong>Statement Coverage</strong></td>
+<td>100%</td>
+<td>Pipeline fails if below</td>
+</tr>
+</tbody>
+</table>
+<h3 id="allowed-exclusions">Allowed Exclusions</h3>
+<p>Certain code may be excluded from coverage calculations with
+documented justification:</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 19%" />
+<col style="width: 46%" />
+</colgroup>
+<thead>
+<tr>
+<th>Exclusion Type</th>
+<th>Example</th>
+<th>Required Justification</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Generated Code</strong></td>
+<td>EF Core migrations, OpenAPI clients</td>
+<td>Auto-generated; source is tested</td>
+</tr>
+<tr>
+<td><strong>Infrastructure Bootstrapping</strong></td>
+<td>Program.cs startup code</td>
+<td>Verified by integration tests</td>
+</tr>
+<tr>
+<td><strong>Third-party Wrappers</strong></td>
+<td>Thin wrappers around libraries</td>
+<td>Library is well-tested</td>
+</tr>
+</tbody>
+</table>
+<p><strong>How to Exclude (.NET):</strong></p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">ExcludeFromCodeCoverage</span><span class="op">(</span>Justification <span class="op">=</span> <span class="st">&quot;Auto-generated EF Core migration&quot;</span><span class="op">)]</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">partial</span> <span class="kw">class</span> InitialCreate <span class="op">:</span> Migration <span class="op">{</span> <span class="op">}</span></span></code></pre></div>
+<p><strong>How to Exclude (Angular):</strong></p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">/* istanbul ignore next - startup configuration only */</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="im">export</span> <span class="kw">function</span> <span class="fu">appConfigFactory</span>() { <span class="op">...</span> }</span></code></pre></div>
+<h3 id="coverage-reporting">Coverage Reporting</h3>
+<p><strong>Backend (Coverlet):</strong></p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">&lt;!-- Directory.Build.props --&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">PropertyGroup</span>&gt;</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">CollectCoverage</span>&gt;true&lt;/<span class="kw">CollectCoverage</span>&gt;</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">CoverletOutputFormat</span>&gt;opencover&lt;/<span class="kw">CoverletOutputFormat</span>&gt;</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Threshold</span>&gt;100&lt;/<span class="kw">Threshold</span>&gt;</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">ThresholdType</span>&gt;line,branch&lt;/<span class="kw">ThresholdType</span>&gt;</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">ThresholdStat</span>&gt;total&lt;/<span class="kw">ThresholdStat</span>&gt;</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">PropertyGroup</span>&gt;</span></code></pre></div>
+<p><strong>Frontend (Karma):</strong></p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode javascript"><code class="sourceCode javascript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// karma.conf.js</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>coverageReporter<span class="op">:</span> {</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">check</span><span class="op">:</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">global</span><span class="op">:</span> {</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">statements</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">branches</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">functions</span><span class="op">:</span> <span class="dv">100</span><span class="op">,</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">lines</span><span class="op">:</span> <span class="dv">100</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    }</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  }</span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<hr />
+<h2 id="test-data-management">Test Data Management</h2>
+<h3 id="test-data-strategy">Test Data Strategy</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 27%" />
+<col style="width: 36%" />
+</colgroup>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Strategy</th>
+<th>Data Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Unit Tests</td>
+<td>In-memory mocks</td>
+<td>Factory methods</td>
+</tr>
+<tr>
+<td>Integration Tests</td>
+<td>Testcontainers with seeded data</td>
+<td>SQL scripts</td>
+</tr>
+<tr>
+<td>E2E Tests</td>
+<td>Dedicated test database</td>
+<td>Fixture data</td>
+</tr>
+<tr>
+<td>Performance Tests</td>
+<td>Anonymized production subset</td>
+<td>Data masking pipeline</td>
+</tr>
+</tbody>
+</table>
+<h3 id="data-factories">Data Factories</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">static</span> <span class="kw">class</span> EpisodeFactory</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">static</span> Episode <span class="fu">Create</span><span class="op">(</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>        Guid<span class="op">?</span> id <span class="op">=</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span><span class="op">?</span> patientId <span class="op">=</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>        EpisodeStatus<span class="op">?</span> status <span class="op">=</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">new</span> Episode</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>            Id <span class="op">=</span> id <span class="op">??</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">(),</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>            EpisodeNumber <span class="op">=</span> $<span class="st">&quot;EP-{DateTime.Now:yyyyMMdd}-{Random.Shared.Next(1000):D4}&quot;</span><span class="op">,</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>            PatientId <span class="op">=</span> patientId <span class="op">??</span> $<span class="st">&quot;P{Random.Shared.Next(100000)}&quot;</span><span class="op">,</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>            Status <span class="op">=</span> status <span class="op">??</span> EpisodeStatus<span class="op">.</span><span class="fu">Open</span><span class="op">,</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>            TriggerDate <span class="op">=</span> DateOnly<span class="op">.</span><span class="fu">FromDateTime</span><span class="op">(</span>DateTime<span class="op">.</span><span class="fu">Today</span><span class="op">),</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>            TotalCharges <span class="op">=</span> <span class="dv">25000</span>m<span class="op">,</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>            CreatedAt <span class="op">=</span> DateTime<span class="op">.</span><span class="fu">UtcNow</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="kw">static</span> IEnumerable<span class="op">&lt;</span>Episode<span class="op">&gt;</span> <span class="fu">CreateMany</span><span class="op">(</span><span class="dt">int</span> count<span class="op">)</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Enumerable<span class="op">.</span><span class="fu">Range</span><span class="op">(</span><span class="dv">0</span><span class="op">,</span> count<span class="op">).</span><span class="fu">Select</span><span class="op">(</span>_ <span class="op">=&gt;</span> <span class="fu">Create</span><span class="op">());</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="cicd-integration">CI/CD Integration</h2>
+<h3 id="pipeline-test-stages">Pipeline Test Stages</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Build</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> BuildAndTest</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="co">          # Unit Tests + Coverage</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> dotnet test --collect:&quot;XPlat Code Coverage&quot;</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Run Unit Tests&#39;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="co">          # Check Coverage Threshold</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>              reportgenerator -reports:coverage.xml -targetdir:coverage</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>              # Fail if below 100%</span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Verify Coverage&#39;</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="co">          # Security Scan</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> CodeQL@1</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Security Scan&#39;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> Integration</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> Build</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> IntegrationTests</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> docker-compose up -d</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> dotnet test tests/PEM.Integration.Tests</span></span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> docker-compose down</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> E2E</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> Integration</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">condition</span><span class="kw">:</span><span class="at"> eq(variables[&#39;Build.SourceBranch&#39;], &#39;refs/heads/main&#39;)</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> PlaywrightTests</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">script</span><span class="kw">:</span><span class="at"> npx playwright test</span></span></code></pre></div>
+<hr />
+<h2 id="test-naming-conventions">Test Naming Conventions</h2>
+<h3 id="backend">Backend</h3>
+<pre><code>MethodName_StateUnderTest_ExpectedBehavior</code></pre>
+<p>Examples: -
+<code>AddClaim_WhenClaimInDateRange_ShouldAddSuccessfully</code> -
+<code>GetById_WhenNotFound_ShouldThrowNotFoundException</code> -
+<code>CalculateBundle_WithMultipleClaims_ShouldSumCorrectly</code></p>
+<h3 id="frontend">Frontend</h3>
+<pre><code>&#39;should [expected behavior] when [condition]&#39;</code></pre>
+<p>Examples: -
+<code>'should display loading spinner when data is loading'</code> -
+<code>'should navigate to detail page when row is clicked'</code> -
+<code>'should disable submit button when form is invalid'</code></p>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a> -
+Quality gate requirements</li>
+<li><a href="07-DEVELOPMENT-GUIDE.html">07-DEVELOPMENT-GUIDE.md</a> -
+Running tests locally</li>
+<li><a
+href="03-PEM-FEATURE-SPECIFICATION.html">03-PEM-FEATURE-SPECIFICATION.md</a>
+- Feature requirements to test</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete<br />
+<strong>Next Steps:</strong> Set up CI/CD pipelines with test stages</p>
+</body>
+</html>

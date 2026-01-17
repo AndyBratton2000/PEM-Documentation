@@ -1,0 +1,2806 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>03-PEM-FEATURE-SPECIFICATION</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="pem-feature-specification-from-existing-pem">PEM Feature
+Specification (From Existing PEM)</h1>
+<p><strong>Version:</strong> 1.1<br />
+<strong>Last Updated:</strong> January 14, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Parent Document:</strong> <a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a></p>
+<hr />
+<h2 id="purpose">Purpose</h2>
+<p>This document captures the features and functionality of the existing
+PEM system that must be replicated in the new Azure-based system. The
+existing PEM codebase at <code>claimshop/app-episodemanager</code>
+serves as the <strong>specification only</strong> - we are not porting
+code, but building new.</p>
+<p><strong>Important:</strong> The Azure PEM system will be accessed as
+a module within the on-premises Contract Manager application. Users will
+interact with PEM features through the Contract Manager UI, which
+communicates with Azure-hosted backend services.</p>
+<hr />
+<h2 id="reference-codebase">Reference Codebase</h2>
+<pre><code>claimshop/
+├── app-episodemanager/           # Core PEM service (C# .NET Framework 4.6.2)
+│   ├── Core/                     # Domain models (SPECIFICATION)
+│   ├── Logic/                    # Business logic (SPECIFICATION)
+│   └── Processing/               # Processing pipeline (SPECIFICATION)
+│
+├── app-episodemanager-web/       # PEM Web UI (ASP.NET Web Forms)
+│   └── ClaimShopWeb/Episode/     # UI pages (SPECIFICATION)
+│
+└── Documentation/PEM/            # PEM documentation</code></pre>
+<hr />
+<h2 id="episode-definition-features">Episode Definition Features</h2>
+<h3 id="definition-management">Definition Management</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 35%" />
+<col style="width: 47%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>PEM Implementation</th>
+<th>New Azure Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Definition</td>
+<td><code>EpisodeDefMaster</code> table</td>
+<td><code>EpisodeDefinition</code> entity</td>
+</tr>
+<tr>
+<td>Definition Name/Description</td>
+<td>Standard fields</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Episode Class</td>
+<td>Classification (e.g., Orthopedic)</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Active/Inactive status</td>
+<td><code>IsActive</code> flag</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Definition Versioning</td>
+<td><code>EpisodeDefEffective</code> table</td>
+<td><code>DefinitionVersion</code> entity</td>
+</tr>
+<tr>
+<td>Effective Date Management</td>
+<td>Date-based activation</td>
+<td>Same</td>
+</tr>
+<tr>
+<td>Activation Workflow</td>
+<td>Draft → Active</td>
+<td>Same</td>
+</tr>
+</tbody>
+</table>
+<h3 id="trigger-rules">Trigger Rules</h3>
+<p>Episodes are created when a claim matches trigger criteria:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 39%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Rule Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Diagnosis Code</strong></td>
+<td>ICD-10 diagnosis triggers episode</td>
+<td><code>Z34.00</code> (Pregnancy)</td>
+</tr>
+<tr>
+<td><strong>Procedure Code</strong></td>
+<td>CPT/HCPCS code triggers episode</td>
+<td><code>27447</code> (Knee replacement)</td>
+</tr>
+<tr>
+<td><strong>DRG</strong></td>
+<td>MS-DRG triggers episode</td>
+<td><code>470</code> (Hip/knee replacement)</td>
+</tr>
+<tr>
+<td><strong>Revenue Code</strong></td>
+<td>UB revenue code triggers</td>
+<td><code>0360</code> (OR services)</td>
+</tr>
+<tr>
+<td><strong>Combination</strong></td>
+<td>Multiple criteria with AND/OR</td>
+<td>Diagnosis + Procedure</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule Configuration (from PEM XML):</strong></p>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">TriggerRules</span>&gt;</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Rule</span> <span class="ot">type=</span><span class="st">&quot;Diagnosis&quot;</span> <span class="ot">operator=</span><span class="st">&quot;equals&quot;</span> <span class="ot">value=</span><span class="st">&quot;Z34.00&quot;</span> /&gt;</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Rule</span> <span class="ot">type=</span><span class="st">&quot;Procedure&quot;</span> <span class="ot">operator=</span><span class="st">&quot;in&quot;</span> <span class="ot">values=</span><span class="st">&quot;27447,27130&quot;</span> /&gt;</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Rule</span> <span class="ot">type=</span><span class="st">&quot;DRG&quot;</span> <span class="ot">operator=</span><span class="st">&quot;equals&quot;</span> <span class="ot">value=</span><span class="st">&quot;470&quot;</span> /&gt;</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">TriggerRules</span>&gt;</span></code></pre></div>
+<h3 id="association-rules">Association Rules</h3>
+<p>Rules for adding related claims to an episode:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 39%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Rule Type</th>
+<th>Description</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Time Window</strong></td>
+<td>Days before/after trigger</td>
+<td>30 days pre, 90 days post</td>
+</tr>
+<tr>
+<td><strong>Same Patient</strong></td>
+<td>Patient must match</td>
+<td>Required</td>
+</tr>
+<tr>
+<td><strong>Related Diagnosis</strong></td>
+<td>Diagnosis relationship</td>
+<td>Same condition family</td>
+</tr>
+<tr>
+<td><strong>Same Provider</strong></td>
+<td>Provider must match</td>
+<td>Optional</td>
+</tr>
+<tr>
+<td><strong>Claim Type</strong></td>
+<td>Institutional, Professional</td>
+<td>All or specific</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Rule Configuration (from PEM XML):</strong></p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">AssociationRules</span>&gt;</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">TimeWindow</span> <span class="ot">daysBefore=</span><span class="st">&quot;30&quot;</span> <span class="ot">daysAfter=</span><span class="st">&quot;90&quot;</span> /&gt;</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">PatientMatch</span> <span class="ot">required=</span><span class="st">&quot;true&quot;</span> /&gt;</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">DiagnosisMatch</span> <span class="ot">type=</span><span class="st">&quot;related&quot;</span> /&gt;</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">ClaimType</span> <span class="ot">types=</span><span class="st">&quot;all&quot;</span> /&gt;</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">AssociationRules</span>&gt;</span></code></pre></div>
+<h3 id="episode-phases">Episode Phases</h3>
+<p>Episodes divided into phases for tracking:</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Description</th>
+<th>Typical Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pre-Operative</strong></td>
+<td>Before the procedure</td>
+<td>30 days before</td>
+</tr>
+<tr>
+<td><strong>Operative</strong></td>
+<td>The main procedure/event</td>
+<td>Day 0</td>
+</tr>
+<tr>
+<td><strong>Acute</strong></td>
+<td>Hospital recovery</td>
+<td>1-5 days</td>
+</tr>
+<tr>
+<td><strong>Post-Acute</strong></td>
+<td>Rehabilitation</td>
+<td>30-90 days</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Phase Configuration (from PEM XML):</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">Phases</span>&gt;</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Phase</span> <span class="ot">name=</span><span class="st">&quot;Pre-Operative&quot;</span> <span class="ot">offsetDays=</span><span class="st">&quot;-30&quot;</span> <span class="ot">duration=</span><span class="st">&quot;30&quot;</span> /&gt;</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Phase</span> <span class="ot">name=</span><span class="st">&quot;Operative&quot;</span> <span class="ot">offsetDays=</span><span class="st">&quot;0&quot;</span> <span class="ot">duration=</span><span class="st">&quot;1&quot;</span> /&gt;</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Phase</span> <span class="ot">name=</span><span class="st">&quot;Acute&quot;</span> <span class="ot">offsetDays=</span><span class="st">&quot;1&quot;</span> <span class="ot">duration=</span><span class="st">&quot;5&quot;</span> /&gt;</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  &lt;<span class="kw">Phase</span> <span class="ot">name=</span><span class="st">&quot;Post-Acute&quot;</span> <span class="ot">offsetDays=</span><span class="st">&quot;6&quot;</span> <span class="ot">duration=</span><span class="st">&quot;84&quot;</span> /&gt;</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">Phases</span>&gt;</span></code></pre></div>
+<hr />
+<h2 id="episode-management-features">Episode Management Features</h2>
+<h3 id="episode-lifecycle">Episode Lifecycle</h3>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+stateDiagram-v2
+    [*] --&gt; Triggered
+    Triggered --&gt; Active
+    Triggered --&gt; Excluded
+    Active --&gt; Accepted
+    Active --&gt; Excluded
+    Accepted --&gt; Processed
+    Accepted --&gt; Excluded
+    Processed --&gt; Resolved
+    Resolved --&gt; [*]
+    Excluded --&gt; [*]</code></pre>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 38%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Status</th>
+<th>Description</th>
+<th>Next States</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Triggered</strong></td>
+<td>Episode created from trigger claim</td>
+<td>Active, Excluded</td>
+</tr>
+<tr>
+<td><strong>Active</strong></td>
+<td>Episode actively collecting claims</td>
+<td>Accepted, Excluded</td>
+</tr>
+<tr>
+<td><strong>Accepted</strong></td>
+<td>Episode complete, ready for pricing</td>
+<td>Processed, Excluded</td>
+</tr>
+<tr>
+<td><strong>Processed</strong></td>
+<td>Bundle calculated, finalized</td>
+<td>Resolved</td>
+</tr>
+<tr>
+<td><strong>Resolved</strong></td>
+<td>Episode closed</td>
+<td>-</td>
+</tr>
+<tr>
+<td><strong>Excluded</strong></td>
+<td>Episode excluded from bundling</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<h3 id="episode-data">Episode Data</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Episode ID</td>
+<td>Unique identifier</td>
+<td>Generated</td>
+</tr>
+<tr>
+<td>Definition</td>
+<td>Episode type</td>
+<td>Configuration</td>
+</tr>
+<tr>
+<td>Patient ID</td>
+<td>Patient identifier</td>
+<td>Trigger claim</td>
+</tr>
+<tr>
+<td>Patient Name</td>
+<td>Patient name</td>
+<td>Trigger claim</td>
+</tr>
+<tr>
+<td>Member ID</td>
+<td>Insurance member ID</td>
+<td>Trigger claim</td>
+</tr>
+<tr>
+<td>Trigger Date</td>
+<td>Date episode started</td>
+<td>Trigger claim</td>
+</tr>
+<tr>
+<td>Trigger Claim</td>
+<td>Claim that started episode</td>
+<td>System</td>
+</tr>
+<tr>
+<td>Start Date</td>
+<td>Episode period start</td>
+<td>Calculated</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Episode period end</td>
+<td>Calculated</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Current lifecycle status</td>
+<td>Managed</td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>Associated contract</td>
+<td>Configuration</td>
+</tr>
+<tr>
+<td>Plan</td>
+<td>Insurance plan</td>
+<td>Trigger claim</td>
+</tr>
+<tr>
+<td>Payer</td>
+<td>Payer</td>
+<td>Trigger claim</td>
+</tr>
+</tbody>
+</table>
+<h3 id="episode-operations">Episode Operations</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Description</th>
+<th>User/System</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Create Episode</td>
+<td>Create from trigger claim</td>
+<td>System (auto)</td>
+</tr>
+<tr>
+<td>Manual Create</td>
+<td>Create episode manually</td>
+<td>User</td>
+</tr>
+<tr>
+<td>Add Claims</td>
+<td>Associate claims to episode</td>
+<td>System/User</td>
+</tr>
+<tr>
+<td>Remove Claim</td>
+<td>Remove claim from episode</td>
+<td>User</td>
+</tr>
+<tr>
+<td>Change Status</td>
+<td>Transition lifecycle state</td>
+<td>User</td>
+</tr>
+<tr>
+<td>Calculate Bundle</td>
+<td>Compute bundled price</td>
+<td>System</td>
+</tr>
+<tr>
+<td>Add Note</td>
+<td>Add note to episode</td>
+<td>User</td>
+</tr>
+<tr>
+<td>Add Provider</td>
+<td>Associate provider</td>
+<td>User</td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Export episode data</td>
+<td>User</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="worklist-ui-features-from-contract-manager">Worklist UI Features
+(From Contract Manager)</h2>
+<p>The Azure PEM worklist will replicate the <strong>Contract Manager
+worklist experience</strong>, which is highly valued by current users.
+This modern, Angular-based UI provides an efficient workflow for
+managing episodes.</p>
+<h3 id="angular-implementation-standards">Angular Implementation
+Standards</h3>
+<p>All PEM UI development <strong>must follow Contract Manager Angular
+patterns</strong>:</p>
+<table>
+<colgroup>
+<col style="width: 43%" />
+<col style="width: 56%" />
+</colgroup>
+<thead>
+<tr>
+<th>Standard</th>
+<th>Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Libraries</strong></td>
+<td>Use <code>@gazelle/ng-common</code> and
+<code>@gazelle/ng-common-ui</code></td>
+</tr>
+<tr>
+<td><strong>Components</strong></td>
+<td>Follow CM component structure and naming</td>
+</tr>
+<tr>
+<td><strong>State</strong></td>
+<td>Use Store pattern with <code>BehaviorSubject</code></td>
+</tr>
+<tr>
+<td><strong>Subscriptions</strong></td>
+<td>Extend <code>SubscriberBase</code>, use
+<code>takeUntil(destroyed$)</code></td>
+</tr>
+<tr>
+<td><strong>Change Detection</strong></td>
+<td>Always use <code>OnPush</code> strategy</td>
+</tr>
+<tr>
+<td><strong>Styling</strong></td>
+<td>SCSS with CM design tokens and mixins</td>
+</tr>
+<tr>
+<td><strong>Accessibility</strong></td>
+<td>Follow CM a11y patterns (<code>FocusMonitor</code>, ARIA)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reference Implementation:</strong>
+<code>app-cm-web-app/cm-web-app/projects/cm-web-app/src/app/worklist/</code></p>
+<h3 id="worklist-grid-features">Worklist Grid Features</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Virtual Scrolling</strong></td>
+<td>High-performance grid for large datasets</td>
+</tr>
+<tr>
+<td><strong>Column Reordering</strong></td>
+<td>Drag-and-drop column arrangement</td>
+</tr>
+<tr>
+<td><strong>Column Resizing</strong></td>
+<td>Adjustable column widths (persisted to saved worklist)</td>
+</tr>
+<tr>
+<td><strong>Column Visibility</strong></td>
+<td>Show/hide columns as needed</td>
+</tr>
+<tr>
+<td><strong>Sorting</strong></td>
+<td>Click column headers to sort (ascending/descending)</td>
+</tr>
+<tr>
+<td><strong>In-Grid Filtering</strong></td>
+<td>Filter icons on column headers</td>
+</tr>
+<tr>
+<td><strong>Row Selection</strong></td>
+<td>Select single or multiple episodes</td>
+</tr>
+<tr>
+<td><strong>Quick Actions</strong></td>
+<td>Context menu for common operations</td>
+</tr>
+</tbody>
+</table>
+<h3 id="criteria-builder">Criteria Builder</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Base Criteria Panel</strong></td>
+<td>Primary search filters (always visible)</td>
+</tr>
+<tr>
+<td><strong>Additional Criteria</strong></td>
+<td>Expandable advanced filters</td>
+</tr>
+<tr>
+<td><strong>Operator Selection</strong></td>
+<td>Equals, contains, in, not in, range, etc.</td>
+</tr>
+<tr>
+<td><strong>Multi-Value Selection</strong></td>
+<td>Select multiple values for a criterion</td>
+</tr>
+<tr>
+<td><strong>Date Range Picker</strong></td>
+<td>Date type selection with from/to range</td>
+</tr>
+<tr>
+<td><strong>Facility Selection</strong></td>
+<td>Organization hierarchy picker</td>
+</tr>
+<tr>
+<td><strong>Contract/Product Picker</strong></td>
+<td>Multi-select with equals/not equals</td>
+</tr>
+<tr>
+<td><strong>Mode Selection</strong></td>
+<td>Production, Audit, or Model data</td>
+</tr>
+</tbody>
+</table>
+<h3 id="saved-worklists">Saved Worklists</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Save Worklist</strong></td>
+<td>Save current criteria + column configuration</td>
+</tr>
+<tr>
+<td><strong>Name &amp; Share</strong></td>
+<td>Name the worklist, optionally share with team</td>
+</tr>
+<tr>
+<td><strong>Load Worklist</strong></td>
+<td>Quick-access to saved worklists</td>
+</tr>
+<tr>
+<td><strong>Overwrite Protection</strong></td>
+<td>Warn before overwriting existing worklist</td>
+</tr>
+<tr>
+<td><strong>Rename Worklist</strong></td>
+<td>Rename without losing configuration</td>
+</tr>
+<tr>
+<td><strong>Delete Worklist</strong></td>
+<td>Remove saved worklists</td>
+</tr>
+<tr>
+<td><strong>Shared vs. Personal</strong></td>
+<td>Distinguish personal and shared worklists</td>
+</tr>
+</tbody>
+</table>
+<h3 id="export-features">Export Features</h3>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Export Button</strong></td>
+<td>Trigger export dialog</td>
+</tr>
+<tr>
+<td><strong>Column Selection</strong></td>
+<td>Choose which columns to export</td>
+</tr>
+<tr>
+<td><strong>Column Reordering</strong></td>
+<td>Drag columns to set export order</td>
+</tr>
+<tr>
+<td><strong>Format Selection</strong></td>
+<td>CSV (initially), Excel (future)</td>
+</tr>
+<tr>
+<td><strong>Row Limit</strong></td>
+<td>Export up to 1 million rows</td>
+</tr>
+<tr>
+<td><strong>Background Export</strong></td>
+<td>Large exports processed asynchronously</td>
+</tr>
+</tbody>
+</table>
+<h3 id="real-time-updates-signalr">Real-Time Updates (SignalR)</h3>
+<p>The worklist grid receives <strong>real-time updates</strong> via
+SignalR, eliminating the need for manual refresh or polling.</p>
+<h4 id="real-time-behaviors">Real-Time Behaviors</h4>
+<table>
+<colgroup>
+<col style="width: 37%" />
+<col style="width: 62%" />
+</colgroup>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>User Experience</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>New Episode Created</strong></td>
+<td>Row automatically appears in grid (if matches current filters)</td>
+</tr>
+<tr>
+<td><strong>Episode Updated</strong></td>
+<td>Row data updates in-place without flicker</td>
+</tr>
+<tr>
+<td><strong>Status Changed</strong></td>
+<td>Status badge updates with animation</td>
+</tr>
+<tr>
+<td><strong>Bundle Calculated</strong></td>
+<td>Financial columns update, notification shown</td>
+</tr>
+<tr>
+<td><strong>Episode Deleted</strong></td>
+<td>Row fades out and removes from grid</td>
+</tr>
+<tr>
+<td><strong>Claim Added</strong></td>
+<td>Claim count column updates</td>
+</tr>
+</tbody>
+</table>
+<h4 id="visual-indicators">Visual Indicators</h4>
+<table>
+<colgroup>
+<col style="width: 55%" />
+<col style="width: 45%" />
+</colgroup>
+<thead>
+<tr>
+<th>Indicator</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>🟢 <strong>Green dot</strong></td>
+<td>Connected to real-time updates</td>
+</tr>
+<tr>
+<td>🟡 <strong>Yellow dot</strong></td>
+<td>Reconnecting…</td>
+</tr>
+<tr>
+<td>🔴 <strong>Red dot</strong></td>
+<td>Disconnected (data may be stale)</td>
+</tr>
+<tr>
+<td>✨ <strong>Row highlight</strong></td>
+<td>Row just updated (fades after 3 seconds)</td>
+</tr>
+<tr>
+<td>🔔 <strong>Toast notification</strong></td>
+<td>Important event (bundle calculated, status change)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="connection-management">Connection Management</h4>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart TB
+    subgraph SIGNALR[&quot;SIGNALR CONNECTION LIFECYCLE&quot;]
+        USER[&quot;User opens worklist&quot;]
+        USER --&gt; ANGULAR[&quot;Angular App&quot;]
+        ANGULAR &lt;--&gt;|&quot;WebSocket connection&quot;| SIGNALR_SVC[&quot;Azure SignalR Service&quot;]
+        
+        ANGULAR --&gt; BEHAVIORS[&quot;Automatic behaviors:&lt;br/&gt;• Reconnect on network drop&lt;br/&gt;• Re-authenticate on token refresh&lt;br/&gt;• Re-subscribe to episode groups&lt;br/&gt;• Show connection status indicator&quot;]
+        
+        SIGNALR_SVC --&gt;|&quot;Backend pushes events&quot;| BEHAVIORS
+    end</code></pre>
+<h4 id="notification-scenarios">Notification Scenarios</h4>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 44%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr>
+<th>Event</th>
+<th>Notification Type</th>
+<th>Message Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Episode created by another user</td>
+<td>Info toast</td>
+<td>“New episode: John Smith (Hip Replacement)”</td>
+</tr>
+<tr>
+<td>Bundle calculation complete</td>
+<td>Success toast</td>
+<td>“Bundle calculated: $28,500”</td>
+</tr>
+<tr>
+<td>Episode status changed</td>
+<td>Info toast</td>
+<td>“Episode moved to Accepted”</td>
+</tr>
+<tr>
+<td>Modeling scenario complete</td>
+<td>Success toast</td>
+<td>“Modeling complete - 3 contracts compared”</td>
+</tr>
+<tr>
+<td>Connection lost</td>
+<td>Warning banner</td>
+<td>“Connection lost. Attempting to reconnect…”</td>
+</tr>
+<tr>
+<td>Connection restored</td>
+<td>Success toast</td>
+<td>“Connected - data is up to date”</td>
+</tr>
+</tbody>
+</table>
+<h4 id="performance-considerations">Performance Considerations</h4>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 66%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Batching</strong></td>
+<td>Multiple updates within 100ms are batched</td>
+</tr>
+<tr>
+<td><strong>Debouncing</strong></td>
+<td>Rapid updates to same episode are debounced</td>
+</tr>
+<tr>
+<td><strong>Lazy subscription</strong></td>
+<td>Only subscribe to groups when viewing detail</td>
+</tr>
+<tr>
+<td><strong>Unsubscribe on navigate</strong></td>
+<td>Clean up subscriptions when leaving page</td>
+</tr>
+<tr>
+<td><strong>Offline queue</strong></td>
+<td>Actions queued if disconnected, sent on reconnect</td>
+</tr>
+</tbody>
+</table>
+<h3 id="worklist-data-model">Worklist Data Model</h3>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+erDiagram
+    SavedWorklist ||--o{ WorklistColumn : &quot;has&quot;
+    SavedWorklist ||--o{ WorklistFilter : &quot;has&quot;
+    
+    SavedWorklist {
+        guid Id
+        string Name
+        guid UserId
+        guid OrganizationId
+        bool IsShared
+        json SearchCriteriaJson
+        string SortField
+        string SortDirection
+        int PageSize
+        string Mode
+        datetime CreatedAt
+        datetime ModifiedAt
+    }
+    
+    WorklistColumn {
+        guid WorklistId
+        string PropertyName
+        int DisplayOrder
+        int Width
+        bool IsVisible
+    }
+    
+    WorklistFilter {
+        guid WorklistId
+        string FieldName
+        string Operator
+        json ValueJson
+        bool IsGridFilter
+    }</code></pre>
+<hr />
+<h2 id="episode-search-features">Episode Search Features</h2>
+<h3 id="search-criteria-integrated-into-worklist">Search Criteria
+(Integrated into Worklist)</h3>
+<table>
+<thead>
+<tr>
+<th>Criterion</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>System ID</td>
+<td>Text</td>
+<td>Episode system key</td>
+</tr>
+<tr>
+<td>Medical Record #</td>
+<td>Text</td>
+<td>Patient MRN</td>
+</tr>
+<tr>
+<td>Case Number</td>
+<td>Text</td>
+<td>Case/encounter number</td>
+</tr>
+<tr>
+<td>Episode Definition</td>
+<td>Dropdown</td>
+<td>Filter by type</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Multi-select</td>
+<td>Filter by status</td>
+</tr>
+<tr>
+<td>Date Type</td>
+<td>Dropdown</td>
+<td>Which date to filter</td>
+</tr>
+<tr>
+<td>Date From/To</td>
+<td>Date range</td>
+<td>Date filter</td>
+</tr>
+<tr>
+<td>Patient Number</td>
+<td>Text</td>
+<td>Patient ID</td>
+</tr>
+<tr>
+<td>Patient Name</td>
+<td>Text</td>
+<td>Patient name search</td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>Multi-select picker</td>
+<td>Filter by contract</td>
+</tr>
+<tr>
+<td>Payer</td>
+<td>Dropdown</td>
+<td>Filter by payer</td>
+</tr>
+<tr>
+<td>Class</td>
+<td>Dropdown</td>
+<td>Episode class</td>
+</tr>
+<tr>
+<td>Phase</td>
+<td>Dropdown</td>
+<td>Episode phase</td>
+</tr>
+<tr>
+<td>Variance Type</td>
+<td>Dropdown</td>
+<td>Favorable/Unfavorable</td>
+</tr>
+</tbody>
+</table>
+<h3 id="worklist-result-columns">Worklist Result Columns</h3>
+<table>
+<thead>
+<tr>
+<th>Column</th>
+<th>Description</th>
+<th>Default Visible</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Episode ID</td>
+<td>Link to detail</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Patient Name</td>
+<td>Patient identifier</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Patient ID</td>
+<td>MRN</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Episode Type</td>
+<td>Definition name</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>Current status (with badge)</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Trigger Date</td>
+<td>Episode start</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Start Date</td>
+<td>Episode period start</td>
+<td>No</td>
+</tr>
+<tr>
+<td>End Date</td>
+<td>Episode period end</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Contract</td>
+<td>Associated contract</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Claim Count</td>
+<td>Number of claims</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Bundle Amount</td>
+<td>Calculated price</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Target Price</td>
+<td>Expected price</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Variance</td>
+<td>Target vs. actual</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Variance %</td>
+<td>Percentage variance</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Phase</td>
+<td>Current phase</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Provider</td>
+<td>Primary provider</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Last Modified</td>
+<td>Last update date</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="bundle-calculation-features">Bundle Calculation Features</h2>
+<h3 id="calculation-methods">Calculation Methods</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Sum of Claims</strong></td>
+<td>Total of all claim amounts</td>
+</tr>
+<tr>
+<td><strong>Target Price</strong></td>
+<td>Fixed bundled price</td>
+</tr>
+<tr>
+<td><strong>Per Diem</strong></td>
+<td>Daily rate × days</td>
+</tr>
+<tr>
+<td><strong>Case Rate</strong></td>
+<td>Fixed case rate</td>
+</tr>
+<tr>
+<td><strong>Percentage</strong></td>
+<td>Percentage of charges</td>
+</tr>
+</tbody>
+</table>
+<h3 id="bundle-output">Bundle Output</h3>
+<table>
+<thead>
+<tr>
+<th>Field</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bundle Amount</td>
+<td>Calculated bundled price</td>
+</tr>
+<tr>
+<td>Target Price</td>
+<td>Expected/contracted price</td>
+</tr>
+<tr>
+<td>Variance</td>
+<td>Bundle - Target</td>
+</tr>
+<tr>
+<td>Variance %</td>
+<td>Percentage variance</td>
+</tr>
+<tr>
+<td>Claim Total</td>
+<td>Sum of claim charges</td>
+</tr>
+<tr>
+<td>Phase Breakdown</td>
+<td>Amounts by phase</td>
+</tr>
+</tbody>
+</table>
+<h3 id="calculation-trigger">Calculation Trigger</h3>
+<ul>
+<li><strong>Automatic:</strong> When episode reaches “Accepted”
+status</li>
+<li><strong>Manual:</strong> User triggers recalculation</li>
+<li><strong>Scheduled:</strong> Batch processing</li>
+</ul>
+<hr />
+<h2 id="contract-based-modeling-features">Contract-Based Modeling
+Features</h2>
+<h3 id="overview">Overview</h3>
+<p>Claims can be bundled differently based on contract-specific rules.
+The modeling feature allows users to: - See how claims would be grouped
+under different contracts - Compare bundling outcomes across multiple
+contracts - Perform what-if analysis before contract decisions</p>
+<h3 id="contract-profile-management">Contract Profile Management</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Contract Profile</strong></td>
+<td>Link to Contract Manager contract with bundling rules</td>
+</tr>
+<tr>
+<td><strong>Episode Definitions per Contract</strong></td>
+<td>Different definitions apply to different contracts</td>
+</tr>
+<tr>
+<td><strong>Contract-Specific Rules</strong></td>
+<td>Trigger and association rules vary by contract</td>
+</tr>
+<tr>
+<td><strong>Effective Dates</strong></td>
+<td>Contract bundling rules respect effective date ranges</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modeling-scenarios">Modeling Scenarios</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Create Scenario</strong></td>
+<td>Define a set of claims/patients for modeling</td>
+</tr>
+<tr>
+<td><strong>Select Claims</strong></td>
+<td>Choose claims by patient, date range, or criteria</td>
+</tr>
+<tr>
+<td><strong>Apply Contracts</strong></td>
+<td>Apply one or more contract profiles to the claim set</td>
+</tr>
+<tr>
+<td><strong>Run Bundling</strong></td>
+<td>Execute bundling rules for each contract</td>
+</tr>
+<tr>
+<td><strong>View Results</strong></td>
+<td>See how claims are grouped per contract</td>
+</tr>
+</tbody>
+</table>
+<h3 id="multi-contract-comparison">Multi-Contract Comparison</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Side-by-Side View</strong></td>
+<td>Compare episode groupings across contracts</td>
+</tr>
+<tr>
+<td><strong>Financial Comparison</strong></td>
+<td>Compare bundle amounts per contract</td>
+</tr>
+<tr>
+<td><strong>Episode Count</strong></td>
+<td>Compare number of episodes created per contract</td>
+</tr>
+<tr>
+<td><strong>Claim Distribution</strong></td>
+<td>See which claims map to which episodes per contract</td>
+</tr>
+<tr>
+<td><strong>Variance Analysis</strong></td>
+<td>Compare to targets across contracts</td>
+</tr>
+</tbody>
+</table>
+<h3 id="modeling-workflow">Modeling Workflow</h3>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart TB
+    subgraph WORKFLOW[&quot;MODELING WORKFLOW&quot;]
+        subgraph STEP1[&quot;1. CREATE SCENARIO&quot;]
+            SELECT[&quot;User selects:&lt;br/&gt;• Patient(s) or claim criteria&lt;br/&gt;• Date range&lt;br/&gt;• Contract profiles to compare&quot;]
+        end
+
+        subgraph STEP2[&quot;2. EXECUTE MODELING&quot;]
+            PROCESS[&quot;System processes claims against each contract&#39;s bundling rules:&lt;br/&gt;• Identifies trigger claims per contract definition&lt;br/&gt;• Associates related claims per contract rules&lt;br/&gt;• Creates &#39;modeling episodes&#39; (not production episodes)&lt;br/&gt;• Calculates bundle amounts per contract&quot;]
+        end
+
+        subgraph STEP3[&quot;3. COMPARE RESULTS&quot;]
+            CA[&quot;Contract A&lt;br/&gt;3 Episodes&lt;br/&gt;$85,000&lt;br/&gt;+$5,000 var&quot;]
+            CB[&quot;Contract B&lt;br/&gt;5 Episodes&lt;br/&gt;$72,000&lt;br/&gt;-$8,000 var&quot;]
+            CC[&quot;Contract C&lt;br/&gt;4 Episodes&lt;br/&gt;$78,500&lt;br/&gt;-$1,500 var&quot;]
+        end
+
+        subgraph STEP4[&quot;4. DRILL DOWN / EXPORT&quot;]
+            EXPORT[&quot;• View episode details for each contract&lt;br/&gt;• See claim-to-episode mapping per contract&lt;br/&gt;• Export comparison report&lt;br/&gt;• Save scenario for future reference&quot;]
+        end
+
+        STEP1 --&gt; STEP2
+        STEP2 --&gt; STEP3
+        STEP3 --&gt; STEP4
+    end</code></pre>
+<h3 id="modeling-data-separation">Modeling Data Separation</h3>
+<table>
+<colgroup>
+<col style="width: 16%" />
+<col style="width: 41%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Production Episodes</th>
+<th>Modeling Episodes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Purpose</strong></td>
+<td>Actual episode processing</td>
+<td>What-if analysis</td>
+</tr>
+<tr>
+<td><strong>Persistence</strong></td>
+<td>Permanent</td>
+<td>Scenario-scoped</td>
+</tr>
+<tr>
+<td><strong>Status Flow</strong></td>
+<td>Full lifecycle</td>
+<td>N/A (read-only results)</td>
+</tr>
+<tr>
+<td><strong>Affects Billing</strong></td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td><strong>Identified By</strong></td>
+<td><code>IsModelingResult = false</code></td>
+<td><code>IsModelingResult = true</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="reporting-features">Reporting Features</h2>
+<h3 id="episode-reports">Episode Reports</h3>
+<table>
+<thead>
+<tr>
+<th>Report</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Episode Summary</strong></td>
+<td>Overview of episodes by status, type</td>
+</tr>
+<tr>
+<td><strong>Episode Detail</strong></td>
+<td>Single episode with all claims</td>
+</tr>
+<tr>
+<td><strong>Variance Report</strong></td>
+<td>Episodes with significant variance</td>
+</tr>
+<tr>
+<td><strong>Phase Analysis</strong></td>
+<td>Breakdown by episode phases</td>
+</tr>
+<tr>
+<td><strong>Trend Analysis</strong></td>
+<td>Episode trends over time</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dashboard-kpis">Dashboard KPIs</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Total Episodes</td>
+<td>Count by status</td>
+</tr>
+<tr>
+<td>Average Bundle</td>
+<td>Average bundle amount</td>
+</tr>
+<tr>
+<td>Total Variance</td>
+<td>Sum of variances</td>
+</tr>
+<tr>
+<td>Episode by Type</td>
+<td>Distribution by definition</td>
+</tr>
+<tr>
+<td>Processing Time</td>
+<td>Days from trigger to resolve</td>
+</tr>
+</tbody>
+</table>
+<h3 id="export-options">Export Options</h3>
+<table>
+<thead>
+<tr>
+<th>Format</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CSV</td>
+<td>Comma-separated values</td>
+</tr>
+<tr>
+<td>Excel</td>
+<td>XLSX format</td>
+</tr>
+<tr>
+<td>PDF</td>
+<td>Report format</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="user-roles-permissions">User Roles &amp; Permissions</h2>
+<h3 id="pem-roles-from-existing-system">PEM Roles (from existing
+system)</h3>
+<table>
+<thead>
+<tr>
+<th>Role</th>
+<th>Permissions</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Viewer</strong></td>
+<td>View episodes and reports</td>
+</tr>
+<tr>
+<td><strong>Editor</strong></td>
+<td>View + Create/Edit episodes</td>
+</tr>
+<tr>
+<td><strong>Processor</strong></td>
+<td>Editor + Process episodes</td>
+</tr>
+<tr>
+<td><strong>Admin</strong></td>
+<td>All + Manage definitions</td>
+</tr>
+</tbody>
+</table>
+<h3 id="role-management-contract-manager-integration">Role Management
+(Contract Manager Integration)</h3>
+<p>Users access PEM through Contract Manager, so roles are managed via
+Contract Manager’s existing permission system:</p>
+<table>
+<thead>
+<tr>
+<th>PEM Role</th>
+<th>Contract Manager Role</th>
+<th>Azure API Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Viewer</td>
+<td>CM User + PEM.Read</td>
+<td>episode:read</td>
+</tr>
+<tr>
+<td>Editor</td>
+<td>CM User + PEM.Write</td>
+<td>episode:read, episode:write</td>
+</tr>
+<tr>
+<td>Processor</td>
+<td>CM User + PEM.Process</td>
+<td>+ episode:process</td>
+</tr>
+<tr>
+<td>Admin</td>
+<td>CM Admin + PEM.Admin</td>
+<td>+ episode:admin</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note:</strong> Contract Manager authenticates users and
+requests Azure PEM API access tokens with appropriate scopes based on
+the user’s CM permissions.</p>
+<hr />
+<h2 id="integration-points">Integration Points</h2>
+<h3 id="contract-manager-integration-primary">Contract Manager
+Integration (Primary)</h3>
+<p>Azure PEM is accessed as a module within Contract Manager:</p>
+<table>
+<colgroup>
+<col style="width: 59%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Integration Point</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>PEM Module UI</strong></td>
+<td>Views embedded in Contract Manager application</td>
+</tr>
+<tr>
+<td><strong>API Client SDK</strong></td>
+<td><code>PEM.Client</code> library consumed by Contract Manager</td>
+</tr>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>CM obtains Azure AD tokens for PEM API access</td>
+</tr>
+<tr>
+<td><strong>Claims Data</strong></td>
+<td>CM/ClaimShop provides claims to Azure PEM</td>
+</tr>
+</tbody>
+</table>
+<h3 id="inbound-claims-data">Inbound: Claims Data</h3>
+<p>Claims are ingested into Azure PEM through Contract
+Manager/ClaimShop:</p>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Method</th>
+<th>Format</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contract Manager</td>
+<td>REST API (via PEM.Client)</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>ClaimShop</td>
+<td>REST API</td>
+<td>JSON</td>
+</tr>
+<tr>
+<td>File Upload</td>
+<td>Blob + Function</td>
+<td>CSV, X12</td>
+</tr>
+<tr>
+<td>Event Stream</td>
+<td>Service Bus</td>
+<td>JSON</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Required Claim Fields:</strong> - Claim ID (unique
+identifier) - Patient ID - Service Date - Claim Amount - Diagnosis Codes
+(ICD-10) - Procedure Codes (CPT/HCPCS) - Provider ID - Payer/Plan</p>
+<h3 id="outbound-episode-events">Outbound: Episode Events</h3>
+<p>Events are published for Contract Manager and other subscribers:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Trigger</th>
+<th>Consumer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>EpisodeCreated</td>
+<td>New episode</td>
+<td>Contract Manager, external</td>
+</tr>
+<tr>
+<td>ClaimAssociated</td>
+<td>Claim added</td>
+<td>Contract Manager</td>
+</tr>
+<tr>
+<td>StatusChanged</td>
+<td>Status transition</td>
+<td>Contract Manager, external</td>
+</tr>
+<tr>
+<td>BundleCalculated</td>
+<td>Calculation complete</td>
+<td>Contract Manager</td>
+</tr>
+<tr>
+<td>EpisodeResolved</td>
+<td>Episode closed</td>
+<td>Contract Manager, external</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="data-migration-considerations">Data Migration
+Considerations</h2>
+<h3 id="no-data-migration">No Data Migration</h3>
+<p>Per project scope: - <strong>Existing PEM data stays in PEM</strong>
+- no migration - <strong>New system starts fresh</strong> - clean
+database - <strong>Existing clients continue on PEM</strong> - separate
+systems</p>
+<h3 id="data-to-configure-not-migrate">Data to Configure (Not
+Migrate)</h3>
+<table>
+<thead>
+<tr>
+<th>Data Type</th>
+<th>Source</th>
+<th>Approach</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Episode Definitions</td>
+<td>PEM definitions</td>
+<td>Recreate in new system</td>
+</tr>
+<tr>
+<td>Contract data</td>
+<td>Configuration</td>
+<td>Import/configure</td>
+</tr>
+<tr>
+<td>Payer data</td>
+<td>Configuration</td>
+<td>Import/configure</td>
+</tr>
+<tr>
+<td>User accounts</td>
+<td>Azure AD</td>
+<td>Provision new</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api-mapping">API Mapping</h2>
+<h3 id="existing-pem-endpoints-reference">Existing PEM Endpoints
+(Reference)</h3>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 23%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>PEM Endpoint</th>
+<th>Function</th>
+<th>New API Equivalent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClaimBundles (POST)</td>
+<td>Add claims to bundle</td>
+<td>POST /episodes/{id}/claims</td>
+</tr>
+<tr>
+<td>Episode search</td>
+<td>Search episodes</td>
+<td>GET /episodes?criteria</td>
+</tr>
+<tr>
+<td>Episode detail</td>
+<td>Get episode</td>
+<td>GET /episodes/{id}</td>
+</tr>
+</tbody>
+</table>
+<h3 id="new-apis-full-specification">New APIs (Full Specification)</h3>
+<p>See <a href="05-API-DESIGN.html">05-API-DESIGN.md</a> for complete
+API specification.</p>
+<hr />
+<h2 id="feature-flag-governance">Feature Flag Governance</h2>
+<h3 id="deployment-vs-release-separation">Deployment vs Release
+Separation</h3>
+<p>All new features are developed behind feature flags, enabling:</p>
+<table>
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 24%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>Concept</th>
+<th>Owner</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deployment</strong></td>
+<td>Engineering</td>
+<td>Code is deployed to environments (feature OFF by default)</td>
+</tr>
+<tr>
+<td><strong>Release</strong></td>
+<td>Product Owner</td>
+<td>Feature is enabled for users by toggling the flag</td>
+</tr>
+</tbody>
+</table>
+<h3 id="feature-categories">Feature Categories</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 30%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr>
+<th>Category</th>
+<th>Examples</th>
+<th>Flag Prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Core Features</strong></td>
+<td>Modeling, Advanced Worklist, Bulk Ops</td>
+<td><code>PEM.{Area}.{Feature}</code></td>
+</tr>
+<tr>
+<td><strong>UI Components</strong></td>
+<td>New grid columns, filters, charts</td>
+<td><code>PEM.UI.{Feature}</code></td>
+</tr>
+<tr>
+<td><strong>Integrations</strong></td>
+<td>ClaimShop v2, External APIs</td>
+<td><code>PEM.Integration.{Feature}</code></td>
+</tr>
+<tr>
+<td><strong>Experiments</strong></td>
+<td>A/B tests, beta features</td>
+<td><code>PEM.Experiment.{Feature}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="release-decision-points">Release Decision Points</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 32%" />
+<col style="width: 28%" />
+</colgroup>
+<thead>
+<tr>
+<th>Question</th>
+<th>If Yes</th>
+<th>If No</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Is the feature tested in QAE?</td>
+<td>Proceed to UAT</td>
+<td>Continue testing</td>
+</tr>
+<tr>
+<td>Is UAT sign-off complete?</td>
+<td>Eligible for prod release</td>
+<td>Address feedback</td>
+</tr>
+<tr>
+<td>Is rollback plan documented?</td>
+<td>Safe to enable</td>
+<td>Document rollback first</td>
+</tr>
+<tr>
+<td>Is monitoring in place?</td>
+<td>Safe to enable</td>
+<td>Set up dashboards</td>
+</tr>
+</tbody>
+</table>
+<h3 id="feature-flag-lifecycle">Feature Flag Lifecycle</h3>
+<p><strong>Feature Flag Lifecycle</strong></p>
+<table>
+<thead>
+<tr>
+<th>Stage</th>
+<th>Phase</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1️⃣</td>
+<td>CREATED</td>
+<td>Developer creates flag</td>
+</tr>
+<tr>
+<td>2️⃣</td>
+<td>TESTING</td>
+<td>QA enables in dev/qae</td>
+</tr>
+<tr>
+<td>3️⃣</td>
+<td>UAT PREVIEW</td>
+<td>Product Owner enables in UAT</td>
+</tr>
+<tr>
+<td>4️⃣</td>
+<td>RELEASED</td>
+<td>Product Owner enables in prod</td>
+</tr>
+<tr>
+<td>5️⃣</td>
+<td>STABLE</td>
+<td>Feature stable for 2+ sprints</td>
+</tr>
+<tr>
+<td>6️⃣</td>
+<td>RETIRED</td>
+<td>Flag removed, feature permanent</td>
+</tr>
+</tbody>
+</table>
+<h3 id="rollout-strategies">Rollout Strategies</h3>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 34%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Use Case</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Big Bang</strong></td>
+<td>Low-risk features, minor enhancements</td>
+<td>New grid column</td>
+</tr>
+<tr>
+<td><strong>Percentage Rollout</strong></td>
+<td>Medium-risk, needs gradual validation</td>
+<td>10% → 50% → 100%</td>
+</tr>
+<tr>
+<td><strong>Tenant Targeting</strong></td>
+<td>Customer-specific features, beta programs</td>
+<td>Enable for specific clients</td>
+</tr>
+<tr>
+<td><strong>Time Window</strong></td>
+<td>Scheduled releases, coordinated launches</td>
+<td>Enable at midnight</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="non-functional-requirements">Non-Functional Requirements</h2>
+<h3 id="performance-from-pem-baseline">Performance (from PEM
+baseline)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Current PEM</th>
+<th>Target Azure (PROD)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Episode Search</td>
+<td>2-3 seconds</td>
+<td>&lt; 500ms</td>
+</tr>
+<tr>
+<td>Episode Creation</td>
+<td>1-2 seconds</td>
+<td>&lt; 500ms</td>
+</tr>
+<tr>
+<td>Bundle Calculation</td>
+<td>3-5 seconds</td>
+<td>&lt; 2 seconds</td>
+</tr>
+<tr>
+<td>Page Load</td>
+<td>3-4 seconds</td>
+<td>&lt; 1 second</td>
+</tr>
+<tr>
+<td>API Response (P95)</td>
+<td>N/A</td>
+<td>&lt; 100ms</td>
+</tr>
+<tr>
+<td>API Response (P99)</td>
+<td>N/A</td>
+<td>&lt; 250ms</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Design Principle:</strong> Extremely fast performance is a
+core requirement. All queries are optimized, caching is aggressive, and
+premium service tiers are used in production.</p>
+</blockquote>
+<h3 id="scalability">Scalability</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Concurrent Users</td>
+<td>500+</td>
+</tr>
+<tr>
+<td>Episodes per Day</td>
+<td>10,000+</td>
+</tr>
+<tr>
+<td>Claims per Episode</td>
+<td>500+</td>
+</tr>
+<tr>
+<td>Total Episodes</td>
+<td>10M+</td>
+</tr>
+</tbody>
+</table>
+<h3 id="availability-high-availability">Availability &amp; High
+Availability</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>PROD Target</th>
+<th>Dev/QAE/UAT</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Uptime SLA</strong></td>
+<td>99.99%</td>
+<td>No SLA</td>
+</tr>
+<tr>
+<td><strong>Zone Redundancy</strong></td>
+<td>✅ Required</td>
+<td>❌ Not required</td>
+</tr>
+<tr>
+<td><strong>RTO</strong></td>
+<td>&lt; 15 minutes</td>
+<td>&lt; 4 hours</td>
+</tr>
+<tr>
+<td><strong>RPO</strong></td>
+<td>&lt; 5 minutes</td>
+<td>&lt; 1 hour</td>
+</tr>
+<tr>
+<td><strong>Planned Downtime</strong></td>
+<td>Zero (blue-green deploy)</td>
+<td>Acceptable</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Design Principle:</strong> Production should <strong>never be
+offline</strong>. Zone-redundant architecture eliminates single points
+of failure. Non-production environments are cost-optimized without HA
+requirements.</p>
+</blockquote>
+<h3 id="code-quality-testing-requirements">Code Quality &amp; Testing
+Requirements</h3>
+<p><strong>Mandatory Quality Gates:</strong></p>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 29%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Threshold</th>
+<th>Enforcement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Code Coverage (Lines)</strong></td>
+<td>100%</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Code Coverage (Branches)</strong></td>
+<td>100%</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Code Coverage (Functions)</strong></td>
+<td>100%</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Unit Tests</strong></td>
+<td>100% pass</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Integration Tests</strong></td>
+<td>100% pass</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Security Scan (SAST)</strong></td>
+<td>No critical/high issues</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Dependency Vulnerabilities</strong></td>
+<td>No critical CVEs</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+<tr>
+<td><strong>Linting</strong></td>
+<td>Zero errors</td>
+<td>Pipeline blocks deployment</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Zero Tolerance Policy:</strong> Code cannot leave DEV
+environment unless ALL quality gates pass. There are no exceptions or
+manual overrides for test failures or coverage gaps.</p>
+</blockquote>
+<p><strong>Testing Strategy:</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 15%" />
+<col style="width: 22%" />
+<col style="width: 37%" />
+</colgroup>
+<thead>
+<tr>
+<th>Test Type</th>
+<th>Scope</th>
+<th>When Run</th>
+<th>Coverage Target</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Unit Tests</strong></td>
+<td>Individual functions/methods</td>
+<td>Every PR, every commit</td>
+<td>100%</td>
+</tr>
+<tr>
+<td><strong>Integration Tests</strong></td>
+<td>Service interactions, DB</td>
+<td>Every PR, every commit</td>
+<td>100%</td>
+</tr>
+<tr>
+<td><strong>Smoke Tests</strong></td>
+<td>Critical paths</td>
+<td>After DEV deployment</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>E2E Tests</strong></td>
+<td>Full user workflows</td>
+<td>UAT environment</td>
+<td>Critical paths</td>
+</tr>
+<tr>
+<td><strong>Performance Tests</strong></td>
+<td>Load, latency</td>
+<td>Pre-production</td>
+<td>P95 &lt;100ms</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Test Coverage Exclusions (Must Be Justified):</strong> -
+Auto-generated code (EF migrations, API clients) - excluded with
+documentation - Third-party library wrappers - excluded if library is
+tested - Startup/configuration code - allowed if infrastructure-only</p>
+<blockquote>
+<p><strong>Note:</strong> Any exclusions must be explicitly configured
+and documented. The goal is true 100% coverage of business logic.</p>
+</blockquote>
+<h3 id="observability-logging">Observability &amp; Logging</h3>
+<table>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Logging Level</strong></td>
+<td>Verbose (all requests, responses, timings)</td>
+</tr>
+<tr>
+<td><strong>Distributed Tracing</strong></td>
+<td>End-to-end correlation across all services</td>
+</tr>
+<tr>
+<td><strong>Real-Time Dashboards</strong></td>
+<td>Azure Monitor workbooks with live metrics</td>
+</tr>
+<tr>
+<td><strong>Alerting</strong></td>
+<td>Proactive alerts for latency, errors, saturation</td>
+</tr>
+<tr>
+<td><strong>Log Retention</strong></td>
+<td>90 days (PROD), 30 days (non-prod)</td>
+</tr>
+<tr>
+<td><strong>Query Performance</strong></td>
+<td>Query Store enabled, slow query detection</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Logging Strategy:</strong></p>
+<p><strong>Observability Architecture</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    subgraph REQUEST[&quot;REQUEST FLOW&quot;]
+        CLIENT[&quot;Client&quot;]
+        APIM[&quot;API Mgmt&quot;]
+        APPS[&quot;App Service&quot;]
+        DATA[&quot;SQL/Redis&quot;]
+        CLIENT --&gt; APIM --&gt; APPS --&gt; DATA
+        TRACING[&quot;(Distributed Tracing)&quot;]
+    end
+
+    subgraph AI[&quot;APPLICATION INSIGHTS&quot;]
+        LOGS[&quot;• Request logging&lt;br/&gt;• Dependency tracking&lt;br/&gt;• Exception logging&lt;br/&gt;• Custom metrics&lt;br/&gt;• Distributed tracing&quot;]
+    end
+
+    subgraph LA[&quot;LOG ANALYTICS WORKSPACE&quot;]
+        KQL[&quot;• KQL queries&lt;br/&gt;• Workbooks &amp; Dashboards&lt;br/&gt;• Alerts for anomalies&quot;]
+    end
+
+    REQUEST --&gt; AI --&gt; LA</code></pre>
+<p><strong>Alert Thresholds (PROD):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Warning</th>
+<th>Critical</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>API latency P95</td>
+<td>&gt; 200ms</td>
+<td>&gt; 500ms</td>
+</tr>
+<tr>
+<td>Error rate</td>
+<td>&gt; 1%</td>
+<td>&gt; 5%</td>
+</tr>
+<tr>
+<td>CPU sustained</td>
+<td>&gt; 70%</td>
+<td>&gt; 85%</td>
+</tr>
+<tr>
+<td>Memory</td>
+<td>&gt; 80%</td>
+<td>&gt; 90%</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>Document Status:</strong> ✅ <strong>Complete</strong><br />
+<strong>Next Steps:</strong> Use this specification to guide
+development</p>
+</body>
+</html>

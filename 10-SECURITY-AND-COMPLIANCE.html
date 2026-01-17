@@ -1,0 +1,2882 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>10-SECURITY-AND-COMPLIANCE</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="security-and-compliance">Security and Compliance</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 15, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Planning Phase<br />
+<strong>Parent Document:</strong> <a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a></p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document defines the security architecture, compliance
+requirements, and data protection controls for the Azure PEM system. As
+a healthcare application handling Protected Health Information (PHI),
+PEM must comply with HIPAA regulations and maintain the highest security
+standards.</p>
+<h3 id="compliance-framework">Compliance Framework</h3>
+<table>
+<colgroup>
+<col style="width: 39%" />
+<col style="width: 24%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Regulation/Standard</th>
+<th>Requirement</th>
+<th>PEM Applicability</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>HIPAA Privacy Rule</strong></td>
+<td>Protect PHI confidentiality</td>
+<td>Patient demographics, claim data</td>
+</tr>
+<tr>
+<td><strong>HIPAA Security Rule</strong></td>
+<td>Administrative, physical, technical safeguards</td>
+<td>All system components</td>
+</tr>
+<tr>
+<td><strong>HIPAA Breach Notification</strong></td>
+<td>Notify of PHI breaches within 60 days</td>
+<td>Incident response procedures</td>
+</tr>
+<tr>
+<td><strong>HITECH Act</strong></td>
+<td>Enhanced HIPAA enforcement, EHR requirements</td>
+<td>Audit controls, encryption</td>
+</tr>
+<tr>
+<td><strong>SOC 2 Type II</strong></td>
+<td>Security, availability, confidentiality</td>
+<td>Annual audit certification</td>
+</tr>
+<tr>
+<td><strong>Azure Compliance</strong></td>
+<td>BAA with Microsoft</td>
+<td>Inherited controls</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-principles">Security Principles</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Defense in Depth</strong></td>
+<td>Multiple security layers (network, application, data)</td>
+</tr>
+<tr>
+<td><strong>Least Privilege</strong></td>
+<td>Minimal access rights for all users and services</td>
+</tr>
+<tr>
+<td><strong>Zero Trust</strong></td>
+<td>Verify explicitly, assume breach</td>
+</tr>
+<tr>
+<td><strong>Encryption Everywhere</strong></td>
+<td>Data encrypted at rest and in transit</td>
+</tr>
+<tr>
+<td><strong>Audit Everything</strong></td>
+<td>Complete trail of all access and changes</td>
+</tr>
+<tr>
+<td><strong>Secure by Default</strong></td>
+<td>Security controls enabled out-of-box</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="hipaa-compliance">HIPAA Compliance</h2>
+<h3 id="business-associate-agreement-baa">Business Associate Agreement
+(BAA)</h3>
+<p><strong>HIPAA Business Associate Relationships</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    CE[&quot;Covered Entity&lt;br/&gt;Healthcare Provider&quot;]
+    BA[&quot;Business Associate&lt;br/&gt;FinThrive (PEM Provider)&quot;]
+    SUB[&quot;Subcontractor BA&lt;br/&gt;Microsoft Azure (Cloud Platform)&quot;]
+
+    CE --&gt;|&quot;BAA&quot;| BA --&gt;|&quot;BAA&quot;| SUB</code></pre>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 30%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Agreement</th>
+<th>Parties</th>
+<th>Coverage</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Customer BAA</strong></td>
+<td>Healthcare Provider ↔︎ FinThrive</td>
+<td>PEM services, PHI handling</td>
+</tr>
+<tr>
+<td><strong>Microsoft BAA</strong></td>
+<td>FinThrive ↔︎ Microsoft</td>
+<td>Azure services, data storage</td>
+</tr>
+</tbody>
+</table>
+<h3 id="hipaa-security-rule-compliance-matrix">HIPAA Security Rule
+Compliance Matrix</h3>
+<h4 id="administrative-safeguards-164.308">Administrative Safeguards
+(§164.308)</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 23%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Control</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Security Management Process</strong></td>
+<td>Risk Analysis</td>
+<td>Annual security risk assessment</td>
+</tr>
+<tr>
+<td></td>
+<td>Risk Management</td>
+<td>Documented risk mitigation plans</td>
+</tr>
+<tr>
+<td></td>
+<td>Sanction Policy</td>
+<td>HR policy for security violations</td>
+</tr>
+<tr>
+<td></td>
+<td>Information System Activity Review</td>
+<td>Daily log review, SIEM alerts</td>
+</tr>
+<tr>
+<td><strong>Assigned Security Responsibility</strong></td>
+<td>Security Officer</td>
+<td>Designated HIPAA Security Officer</td>
+</tr>
+<tr>
+<td><strong>Workforce Security</strong></td>
+<td>Authorization/Supervision</td>
+<td>Role-based access, manager approval</td>
+</tr>
+<tr>
+<td></td>
+<td>Workforce Clearance</td>
+<td>Background checks for PHI access</td>
+</tr>
+<tr>
+<td></td>
+<td>Termination Procedures</td>
+<td>Immediate access revocation</td>
+</tr>
+<tr>
+<td><strong>Information Access Management</strong></td>
+<td>Access Authorization</td>
+<td>RBAC with approval workflow</td>
+</tr>
+<tr>
+<td></td>
+<td>Access Establishment/Modification</td>
+<td>Documented provisioning process</td>
+</tr>
+<tr>
+<td><strong>Security Awareness Training</strong></td>
+<td>Security Reminders</td>
+<td>Quarterly security bulletins</td>
+</tr>
+<tr>
+<td></td>
+<td>Protection from Malware</td>
+<td>EDR, email security training</td>
+</tr>
+<tr>
+<td></td>
+<td>Login Monitoring</td>
+<td>Failed login alerts</td>
+</tr>
+<tr>
+<td></td>
+<td>Password Management</td>
+<td>Azure AD password policies</td>
+</tr>
+<tr>
+<td><strong>Security Incident Procedures</strong></td>
+<td>Response and Reporting</td>
+<td>Incident response plan, 24/7 on-call</td>
+</tr>
+<tr>
+<td><strong>Contingency Plan</strong></td>
+<td>Data Backup</td>
+<td>Automated backups, geo-redundant</td>
+</tr>
+<tr>
+<td></td>
+<td>Disaster Recovery</td>
+<td>DR plan, annual testing</td>
+</tr>
+<tr>
+<td></td>
+<td>Emergency Mode Operation</td>
+<td>Degraded mode procedures</td>
+</tr>
+<tr>
+<td><strong>Evaluation</strong></td>
+<td>Periodic Assessment</td>
+<td>Annual HIPAA assessment</td>
+</tr>
+</tbody>
+</table>
+<h4 id="physical-safeguards-164.310">Physical Safeguards (§164.310)</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 23%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Control</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Facility Access Controls</strong></td>
+<td>Azure Data Centers</td>
+<td>SOC 2, ISO 27001 certified facilities</td>
+</tr>
+<tr>
+<td><strong>Workstation Use</strong></td>
+<td>Acceptable Use Policy</td>
+<td>Corporate security policies</td>
+</tr>
+<tr>
+<td><strong>Workstation Security</strong></td>
+<td>Endpoint Protection</td>
+<td>MDM, disk encryption, EDR</td>
+</tr>
+<tr>
+<td><strong>Device and Media Controls</strong></td>
+<td>Disposal</td>
+<td>Secure deletion, media destruction</td>
+</tr>
+<tr>
+<td></td>
+<td>Media Re-use</td>
+<td>Cryptographic erasure</td>
+</tr>
+</tbody>
+</table>
+<h4 id="technical-safeguards-164.312">Technical Safeguards
+(§164.312)</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 23%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Requirement</th>
+<th>Control</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Access Control</strong></td>
+<td>Unique User ID</td>
+<td>Azure AD individual accounts</td>
+</tr>
+<tr>
+<td></td>
+<td>Emergency Access</td>
+<td>Break-glass procedures</td>
+</tr>
+<tr>
+<td></td>
+<td>Automatic Logoff</td>
+<td>Session timeout (15 min idle)</td>
+</tr>
+<tr>
+<td></td>
+<td>Encryption/Decryption</td>
+<td>AES-256, TLS 1.3</td>
+</tr>
+<tr>
+<td><strong>Audit Controls</strong></td>
+<td>Activity Logging</td>
+<td>Application Insights, Azure Monitor</td>
+</tr>
+<tr>
+<td><strong>Integrity Controls</strong></td>
+<td>Data Validation</td>
+<td>Input validation, checksums</td>
+</tr>
+<tr>
+<td></td>
+<td>Authentication</td>
+<td>MFA required for all users</td>
+</tr>
+<tr>
+<td><strong>Transmission Security</strong></td>
+<td>Encryption</td>
+<td>TLS 1.3 minimum</td>
+</tr>
+<tr>
+<td></td>
+<td>Integrity Controls</td>
+<td>HMAC, digital signatures</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="protected-health-information-phi-handling">Protected Health
+Information (PHI) Handling</h2>
+<h3 id="phi-data-classification">PHI Data Classification</h3>
+<p><strong>Data Classification Levels</strong></p>
+<table>
+<thead>
+<tr>
+<th>Level</th>
+<th>Classification</th>
+<th>Sensitivity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>PHI</strong> (Protected Health Information)</td>
+<td>🔴 Highest</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>PII</strong> (Personally Identifiable Information)</td>
+<td>🟠 High</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Sensitive Business Data</strong></td>
+<td>🟡 Medium</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Internal Data</strong></td>
+<td>🔵 Low</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Public Data</strong></td>
+<td>🟢 None</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phi-elements-in-pem">PHI Elements in PEM</h3>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 30%" />
+<col style="width: 23%" />
+</colgroup>
+<thead>
+<tr>
+<th>Data Element</th>
+<th>PHI Category</th>
+<th>Storage Location</th>
+<th>Access Level</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Patient Name</td>
+<td>Direct Identifier</td>
+<td>Azure SQL (encrypted)</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Medical Record Number (MRN)</td>
+<td>Direct Identifier</td>
+<td>Azure SQL (encrypted)</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Date of Birth</td>
+<td>Direct Identifier</td>
+<td>Azure SQL (encrypted)</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Social Security Number</td>
+<td>Direct Identifier</td>
+<td><strong>Not Stored</strong></td>
+<td>N/A</td>
+</tr>
+<tr>
+<td>Account Number</td>
+<td>Direct Identifier</td>
+<td>Azure SQL (encrypted)</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Admission Date</td>
+<td>PHI Date</td>
+<td>Azure SQL</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Discharge Date</td>
+<td>PHI Date</td>
+<td>Azure SQL</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Diagnosis Codes (ICD-10)</td>
+<td>Clinical Data</td>
+<td>Azure SQL</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Procedure Codes (CPT)</td>
+<td>Clinical Data</td>
+<td>Azure SQL</td>
+<td>Clinical, Analyst</td>
+</tr>
+<tr>
+<td>Provider NPI</td>
+<td>Provider Data</td>
+<td>Azure SQL</td>
+<td>All authenticated</td>
+</tr>
+<tr>
+<td>Claim Amount</td>
+<td>Financial PHI</td>
+<td>Azure SQL</td>
+<td>Analyst, Finance</td>
+</tr>
+<tr>
+<td>Insurance ID</td>
+<td>Direct Identifier</td>
+<td>Azure SQL (encrypted)</td>
+<td>Clinical, Analyst</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phi-data-flow">PHI Data Flow</h3>
+<p><strong>PHI Data Flow</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart TB
+    subgraph SOURCES[&quot;DATA SOURCES&quot;]
+        CLAIMS[&quot;Claims Feed&lt;br/&gt;(ClaimShop)&quot;]
+        ADT[&quot;ADT Feed&lt;br/&gt;(Admissions)&quot;]
+    end
+
+    subgraph INGESTION[&quot;INGESTION LAYER&quot;]
+        SB[&quot;Service Bus&lt;br/&gt;(Encrypted Queue)&quot;]
+        FUNC[&quot;Azure Functions&lt;br/&gt;(Processing)&quot;]
+    end
+
+    subgraph STORAGE[&quot;STORAGE LAYER (PHI)&quot;]
+        SQL[&quot;Azure SQL&lt;br/&gt;(TDE + Column Encrypt)&quot;]
+        BLOB[&quot;Blob Storage&lt;br/&gt;(SSE + Customer Key)&quot;]
+        REDIS[&quot;Redis Cache&lt;br/&gt;(In-Memory, Encrypted)&quot;]
+    end
+
+    subgraph ACCESS[&quot;ACCESS LAYER&quot;]
+        CM[&quot;Contract Manager&lt;br/&gt;UI (HTTPS)&quot;]
+    end
+
+    CLAIMS --&gt;|&quot;TLS 1.3&quot;| SB
+    ADT --&gt; SB
+    SB --&gt; SQL
+    SB --&gt; FUNC
+    FUNC --&gt;|&quot;Priv. Endpt&quot;| REDIS
+    FUNC --&gt; BLOB
+    CM --&gt;|&quot;ExpressRoute&quot;| API[&quot;PEM API (TLS 1.3)&quot;]
+    API --&gt;|&quot;Private Endpoint&quot;| STORAGE</code></pre>
+<h3 id="phi-minimization">PHI Minimization</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Principle</th>
+<th>Implementation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Minimum Necessary</strong></td>
+<td>Only request/display PHI required for the task</td>
+</tr>
+<tr>
+<td><strong>Role-Based Display</strong></td>
+<td>Finance roles see masked patient names</td>
+</tr>
+<tr>
+<td><strong>Audit Trail</strong></td>
+<td>Log all PHI access with business justification</td>
+</tr>
+<tr>
+<td><strong>Data Retention</strong></td>
+<td>PHI retained per policy, then securely deleted</td>
+</tr>
+<tr>
+<td><strong>De-identification</strong></td>
+<td>Analytics use de-identified data where possible</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phi-masking-rules">PHI Masking Rules</h3>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PhiMaskingService</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> PatientDisplayDto <span class="fu">MaskForRole</span><span class="op">(</span>Patient patient<span class="op">,</span> UserRole role<span class="op">)</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> role <span class="kw">switch</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            UserRole<span class="op">.</span><span class="fu">Clinical</span> <span class="op">=&gt;</span> <span class="kw">new</span> PatientDisplayDto</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>                Name <span class="op">=</span> patient<span class="op">.</span><span class="fu">FullName</span><span class="op">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>                MRN <span class="op">=</span> patient<span class="op">.</span><span class="fu">MRN</span><span class="op">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>                DOB <span class="op">=</span> patient<span class="op">.</span><span class="fu">DateOfBirth</span><span class="op">,</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>                AccountNumber <span class="op">=</span> patient<span class="op">.</span><span class="fu">AccountNumber</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>            <span class="op">},</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>            UserRole<span class="op">.</span><span class="fu">Analyst</span> <span class="op">=&gt;</span> <span class="kw">new</span> PatientDisplayDto</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                Name <span class="op">=</span> patient<span class="op">.</span><span class="fu">FullName</span><span class="op">,</span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                MRN <span class="op">=</span> patient<span class="op">.</span><span class="fu">MRN</span><span class="op">,</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>                DOB <span class="op">=</span> patient<span class="op">.</span><span class="fu">DateOfBirth</span><span class="op">,</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>                AccountNumber <span class="op">=</span> patient<span class="op">.</span><span class="fu">AccountNumber</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">},</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>            UserRole<span class="op">.</span><span class="fu">Finance</span> <span class="op">=&gt;</span> <span class="kw">new</span> PatientDisplayDto</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                Name <span class="op">=</span> <span class="fu">MaskName</span><span class="op">(</span>patient<span class="op">.</span><span class="fu">FullName</span><span class="op">),</span>  <span class="co">// &quot;J*** D**&quot;</span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                MRN <span class="op">=</span> <span class="fu">MaskPartial</span><span class="op">(</span>patient<span class="op">.</span><span class="fu">MRN</span><span class="op">,</span> <span class="dv">4</span><span class="op">),</span> <span class="co">// &quot;****1234&quot;</span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                DOB <span class="op">=</span> <span class="kw">null</span><span class="op">,</span>  <span class="co">// Not displayed</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                AccountNumber <span class="op">=</span> patient<span class="op">.</span><span class="fu">AccountNumber</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>            <span class="op">},</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>            UserRole<span class="op">.</span><span class="fu">Auditor</span> <span class="op">=&gt;</span> <span class="kw">new</span> PatientDisplayDto</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>                Name <span class="op">=</span> patient<span class="op">.</span><span class="fu">FullName</span><span class="op">,</span>  <span class="co">// Full access for audit</span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>                MRN <span class="op">=</span> patient<span class="op">.</span><span class="fu">MRN</span><span class="op">,</span></span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>                DOB <span class="op">=</span> patient<span class="op">.</span><span class="fu">DateOfBirth</span><span class="op">,</span></span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>                AccountNumber <span class="op">=</span> patient<span class="op">.</span><span class="fu">AccountNumber</span></span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>            <span class="op">},</span></span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>            _ <span class="op">=&gt;</span> <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">UnauthorizedAccessException</span><span class="op">(</span><span class="st">&quot;Role not authorized for PHI&quot;</span><span class="op">)</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">string</span> <span class="fu">MaskName</span><span class="op">(</span><span class="dt">string</span> name<span class="op">)</span></span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> parts <span class="op">=</span> name<span class="op">.</span><span class="fu">Split</span><span class="op">(</span><span class="ch">&#39; &#39;</span><span class="op">);</span></span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="dt">string</span><span class="op">.</span><span class="fu">Join</span><span class="op">(</span><span class="st">&quot; &quot;</span><span class="op">,</span> parts<span class="op">.</span><span class="fu">Select</span><span class="op">(</span>p <span class="op">=&gt;</span> </span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>            p<span class="op">.</span><span class="fu">Length</span> <span class="op">&gt;</span> <span class="dv">1</span> <span class="op">?</span> $<span class="st">&quot;{p[0]}{&quot;</span><span class="op">*</span><span class="st">&quot;.PadRight(p.Length - 1, &#39;*&#39;)}&quot;</span> <span class="op">:</span> <span class="st">&quot;*&quot;</span><span class="op">));</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">string</span> <span class="fu">MaskPartial</span><span class="op">(</span><span class="dt">string</span> value<span class="op">,</span> <span class="dt">int</span> visibleChars<span class="op">)</span></span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span><span class="dt">string</span><span class="op">.</span><span class="fu">IsNullOrEmpty</span><span class="op">(</span>value<span class="op">)</span> <span class="op">||</span> value<span class="op">.</span><span class="fu">Length</span> <span class="op">&lt;=</span> visibleChars<span class="op">)</span></span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> <span class="kw">new</span> <span class="dt">string</span><span class="op">(</span><span class="ch">&#39;*&#39;</span><span class="op">,</span> value<span class="op">?.</span><span class="fu">Length</span> <span class="op">??</span> <span class="dv">0</span><span class="op">);</span></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> masked <span class="op">=</span> <span class="kw">new</span> <span class="dt">string</span><span class="op">(</span><span class="ch">&#39;*&#39;</span><span class="op">,</span> value<span class="op">.</span><span class="fu">Length</span> <span class="op">-</span> visibleChars<span class="op">);</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> masked <span class="op">+</span> value<span class="op">[^</span>visibleChars<span class="op">..];</span></span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="encryption">Encryption</h2>
+<h3 id="encryption-at-rest">Encryption at Rest</h3>
+<p>All data at rest is encrypted using AES-256 encryption:</p>
+<p><strong>Encryption at Rest</strong></p>
+<table>
+<colgroup>
+<col style="width: 38%" />
+<col style="width: 21%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Key Management</th>
+<th>Service</th>
+<th>Encryption Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Platform-Managed Keys</strong></td>
+<td>Azure SQL TDE</td>
+<td>Transparent Data Encryption</td>
+</tr>
+<tr>
+<td></td>
+<td>Blob Storage SSE</td>
+<td>Storage Service Encryption</td>
+</tr>
+<tr>
+<td></td>
+<td>Redis Enterprise</td>
+<td>At-Rest Encryption</td>
+</tr>
+<tr>
+<td><strong>Customer-Managed Keys</strong></td>
+<td>SQL Always Encrypted</td>
+<td>Column-Level ──► Key Vault (HSM-Backed)</td>
+</tr>
+<tr>
+<td></td>
+<td>Blob Storage CMK</td>
+<td>Customer Key ──► Key Vault (HSM-Backed)</td>
+</tr>
+</tbody>
+</table>
+<h4 id="azure-sql-database-encryption">Azure SQL Database
+Encryption</h4>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 16%" />
+<col style="width: 44%" />
+<col style="width: 19%" />
+</colgroup>
+<thead>
+<tr>
+<th>Layer</th>
+<th>Type</th>
+<th>Key Management</th>
+<th>Scope</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TDE (Transparent Data Encryption)</strong></td>
+<td>AES-256</td>
+<td>Platform or CMK</td>
+<td>Entire database</td>
+</tr>
+<tr>
+<td><strong>Always Encrypted</strong></td>
+<td>AES-256</td>
+<td>Customer-managed (Key Vault)</td>
+<td>Sensitive columns</td>
+</tr>
+<tr>
+<td><strong>Backup Encryption</strong></td>
+<td>AES-256</td>
+<td>Inherited from TDE</td>
+<td>All backups</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Always Encrypted Columns (PHI):</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Column encryption configuration</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">COLUMN</span> <span class="kw">MASTER</span> <span class="kw">KEY</span> [CMK_PEM]</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> (</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    KEY_STORE_PROVIDER_NAME <span class="op">=</span> <span class="st">&#39;AZURE_KEY_VAULT&#39;</span>,</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    KEY_PATH <span class="op">=</span> <span class="st">&#39;https://kv-pem-prod.vault.azure.net/keys/CMK-PEM/abc123...&#39;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">COLUMN</span> ENCRYPTION <span class="kw">KEY</span> [CEK_PHI]</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">WITH</span> <span class="kw">VALUES</span> (</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    COLUMN_MASTER_KEY <span class="op">=</span> [CMK_PEM],</span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    ALGORITHM <span class="op">=</span> <span class="st">&#39;RSA_OAEP&#39;</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>    ENCRYPTED_VALUE <span class="op">=</span> <span class="bn">0x01700000016</span><span class="op">..</span>.</span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">-- Encrypted columns</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Episodes</span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">COLUMN</span> PatientName <span class="dt">NVARCHAR</span>(<span class="dv">200</span>)</span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>ENCRYPTED <span class="kw">WITH</span> (</span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>    COLUMN_ENCRYPTION_KEY <span class="op">=</span> [CEK_PHI],</span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>    ENCRYPTION_TYPE <span class="op">=</span> DETERMINISTIC,  <span class="co">-- Allows equality searches</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>    ALGORITHM <span class="op">=</span> <span class="st">&#39;AEAD_AES_256_CBC_HMAC_SHA_256&#39;</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Episodes</span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">COLUMN</span> MedicalRecordNumber <span class="dt">NVARCHAR</span>(<span class="dv">50</span>)</span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>ENCRYPTED <span class="kw">WITH</span> (</span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>    COLUMN_ENCRYPTION_KEY <span class="op">=</span> [CEK_PHI],</span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    ENCRYPTION_TYPE <span class="op">=</span> DETERMINISTIC,</span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    ALGORITHM <span class="op">=</span> <span class="st">&#39;AEAD_AES_256_CBC_HMAC_SHA_256&#39;</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>);</span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">TABLE</span> Episodes</span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a><span class="kw">ALTER</span> <span class="kw">COLUMN</span> DateOfBirth <span class="dt">DATE</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>ENCRYPTED <span class="kw">WITH</span> (</span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>    COLUMN_ENCRYPTION_KEY <span class="op">=</span> [CEK_PHI],</span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    ENCRYPTION_TYPE <span class="op">=</span> RANDOMIZED,  <span class="co">-- More secure, no searches</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    ALGORITHM <span class="op">=</span> <span class="st">&#39;AEAD_AES_256_CBC_HMAC_SHA_256&#39;</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Application Configuration for Always Encrypted:</strong></p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Connection string with Always Encrypted</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddDbContext</span><span class="op">&lt;</span>PemDbContext<span class="op">&gt;(</span>options <span class="op">=&gt;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">UseSqlServer</span><span class="op">(</span>connectionString<span class="op">,</span> sqlOptions <span class="op">=&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        sqlOptions<span class="op">.</span><span class="fu">EnableRetryOnFailure</span><span class="op">();</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">});</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a><span class="co">// appsettings.json</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;ConnectionStrings&quot;</span><span class="op">:</span> <span class="op">{</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">&quot;PemDatabase&quot;</span><span class="op">:</span> <span class="st">&quot;Server=sql-pem-prod.database.windows.net;Database=PEM;Column Encryption Setting=Enabled;...&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>  <span class="op">}</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="azure-blob-storage-encryption">Azure Blob Storage
+Encryption</h4>
+<pre class="hcl"><code># Terraform configuration
+resource &quot;azurerm_storage_account&quot; &quot;pem&quot; {
+  name                     = &quot;stpemprod&quot;
+  resource_group_name      = azurerm_resource_group.data.name
+  location                 = var.location
+  account_tier             = &quot;Standard&quot;
+  account_replication_type = &quot;ZRS&quot;
+  
+  # Encryption configuration
+  blob_properties {
+    versioning_enabled = true
+  }
+  
+  # Customer-managed key
+  identity {
+    type = &quot;SystemAssigned&quot;
+  }
+  
+  customer_managed_key {
+    key_vault_key_id          = azurerm_key_vault_key.storage.id
+    user_assigned_identity_id = azurerm_user_assigned_identity.storage.id
+  }
+  
+  # Require secure transfer
+  enable_https_traffic_only = true
+  min_tls_version           = &quot;TLS1_2&quot;
+}</code></pre>
+<h4 id="azure-key-vault-configuration">Azure Key Vault
+Configuration</h4>
+<pre class="hcl"><code>resource &quot;azurerm_key_vault&quot; &quot;pem&quot; {
+  name                = &quot;kv-pem-${var.environment}&quot;
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  tenant_id           = data.azurerm_client_config.current.tenant_id
+  
+  sku_name = &quot;premium&quot;  # HSM-backed keys
+  
+  # Security settings
+  enabled_for_disk_encryption     = false
+  enabled_for_deployment          = false
+  enabled_for_template_deployment = false
+  enable_rbac_authorization       = true
+  purge_protection_enabled        = true
+  soft_delete_retention_days      = 90
+  
+  network_acls {
+    default_action             = &quot;Deny&quot;
+    bypass                     = &quot;AzureServices&quot;
+    ip_rules                   = []
+    virtual_network_subnet_ids = [var.app_subnet_id]
+  }
+}
+
+# Encryption keys
+resource &quot;azurerm_key_vault_key&quot; &quot;sql_tde&quot; {
+  name         = &quot;sql-tde-key&quot;
+  key_vault_id = azurerm_key_vault.pem.id
+  key_type     = &quot;RSA-HSM&quot;
+  key_size     = 2048
+  
+  key_opts = [&quot;unwrapKey&quot;, &quot;wrapKey&quot;]
+  
+  rotation_policy {
+    automatic {
+      time_before_expiry = &quot;P30D&quot;
+    }
+    expire_after         = &quot;P365D&quot;
+    notify_before_expiry = &quot;P30D&quot;
+  }
+}
+
+resource &quot;azurerm_key_vault_key&quot; &quot;column_encryption&quot; {
+  name         = &quot;column-master-key&quot;
+  key_vault_id = azurerm_key_vault.pem.id
+  key_type     = &quot;RSA-HSM&quot;
+  key_size     = 2048
+  
+  key_opts = [&quot;decrypt&quot;, &quot;encrypt&quot;, &quot;sign&quot;, &quot;verify&quot;, &quot;wrapKey&quot;, &quot;unwrapKey&quot;]
+}</code></pre>
+<h3 id="encryption-in-transit">Encryption in Transit</h3>
+<p>All data in transit is encrypted using TLS 1.3:</p>
+<p><strong>Encryption in Transit</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    subgraph EXTERNAL[&quot;EXTERNAL TRAFFIC&quot;]
+        BROWSER[&quot;Browser/Client&quot;]
+        ONPREM[&quot;On-Premises&quot;]
+    end
+
+    subgraph EDGE[&quot;EDGE&quot;]
+        AFD[&quot;Azure Front Door&quot;]
+        ER[&quot;ExpressRoute&quot;]
+    end
+
+    subgraph INTERNAL[&quot;INTERNAL&quot;]
+        APIM[&quot;API Management&quot;]
+    end
+
+    subgraph COMPUTE[&quot;COMPUTE&quot;]
+        APP[&quot;App Service&lt;br/&gt;(TLS 1.3)&quot;]
+    end
+
+    subgraph DATA[&quot;DATA SERVICES&quot;]
+        SQL[&quot;Azure SQL&lt;br/&gt;(TLS 1.3+Force)&quot;]
+        REDIS[&quot;Redis (TLS 1.2)&quot;]
+        SB[&quot;SB (TLS 1.2)&quot;]
+    end
+
+    BROWSER --&gt;|&quot;TLS 1.3&quot;| AFD --&gt;|&quot;TLS 1.3&quot;| APIM --&gt;|&quot;mTLS&quot;| APP
+    ONPREM --&gt;|&quot;MACsec/IPsec&quot;| ER --&gt;|&quot;TLS 1.3&quot;| APIM
+    APP --&gt; SQL
+    APP --&gt; REDIS
+    APP --&gt; SB</code></pre>
+<h4 id="tls-configuration">TLS Configuration</h4>
+<table>
+<colgroup>
+<col style="width: 21%" />
+<col style="width: 25%" />
+<col style="width: 28%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Minimum TLS</th>
+<th>Cipher Suites</th>
+<th>Certificate</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Azure Front Door</strong></td>
+<td>TLS 1.3</td>
+<td>TLS_AES_256_GCM_SHA384</td>
+<td>Managed (auto-renewal)</td>
+</tr>
+<tr>
+<td><strong>API Management</strong></td>
+<td>TLS 1.2</td>
+<td>Policy-controlled</td>
+<td>Managed</td>
+</tr>
+<tr>
+<td><strong>App Service</strong></td>
+<td>TLS 1.2</td>
+<td>Platform default</td>
+<td>Managed</td>
+</tr>
+<tr>
+<td><strong>Azure SQL</strong></td>
+<td>TLS 1.2 (Force)</td>
+<td>Platform default</td>
+<td>Microsoft-managed</td>
+</tr>
+<tr>
+<td><strong>Redis Cache</strong></td>
+<td>TLS 1.2</td>
+<td>Platform default</td>
+<td>Microsoft-managed</td>
+</tr>
+<tr>
+<td><strong>Service Bus</strong></td>
+<td>TLS 1.2</td>
+<td>Platform default</td>
+<td>Microsoft-managed</td>
+</tr>
+<tr>
+<td><strong>ExpressRoute</strong></td>
+<td>MACsec</td>
+<td>AES-256</td>
+<td>Provider-managed</td>
+</tr>
+</tbody>
+</table>
+<h4 id="enforcing-tls-in-application">Enforcing TLS in Application</h4>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Program.cs - Enforce HTTPS</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>builder<span class="op">.</span><span class="fu">Services</span><span class="op">.</span><span class="fu">AddHttpsRedirection</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">RedirectStatusCode</span> <span class="op">=</span> StatusCodes<span class="op">.</span><span class="fu">Status307TemporaryRedirect</span><span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">HttpsPort</span> <span class="op">=</span> <span class="dv">443</span><span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>builder<span class="op">.</span><span class="fu">Services</span><span class="op">.</span><span class="fu">AddHsts</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">Preload</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">IncludeSubDomains</span> <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">MaxAge</span> <span class="op">=</span> TimeSpan<span class="op">.</span><span class="fu">FromDays</span><span class="op">(</span><span class="dv">365</span><span class="op">);</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a><span class="co">// API client configuration</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddHttpClient</span><span class="op">&lt;</span>IPemApiClient<span class="op">&gt;(</span>client <span class="op">=&gt;</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    client<span class="op">.</span><span class="fu">BaseAddress</span> <span class="op">=</span> <span class="kw">new</span> <span class="fu">Uri</span><span class="op">(</span>configuration<span class="op">[</span><span class="st">&quot;PemApi:BaseUrl&quot;</span><span class="op">]);</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a><span class="op">})</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="op">.</span><span class="fu">ConfigurePrimaryHttpMessageHandler</span><span class="op">(()</span> <span class="op">=&gt;</span> <span class="kw">new</span> HttpClientHandler</span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    SslProtocols <span class="op">=</span> SslProtocols<span class="op">.</span><span class="fu">Tls13</span> <span class="op">|</span> SslProtocols<span class="op">.</span><span class="fu">Tls12</span><span class="op">,</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    ServerCertificateCustomValidationCallback <span class="op">=</span> <span class="op">(</span>message<span class="op">,</span> cert<span class="op">,</span> chain<span class="op">,</span> errors<span class="op">)</span> <span class="op">=&gt;</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Validate certificate chain in production</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>environment<span class="op">.</span><span class="fu">IsProduction</span><span class="op">())</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> errors <span class="op">==</span> SslPolicyErrors<span class="op">.</span><span class="fu">None</span><span class="op">;</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">true</span><span class="op">;</span>  <span class="co">// Allow self-signed in dev</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span></code></pre></div>
+<h4 id="certificate-management">Certificate Management</h4>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;certificateManagement&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;strategy&quot;</span><span class="fu">:</span> <span class="st">&quot;Azure-Managed&quot;</span><span class="fu">,</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;certificates&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-api-cert&quot;</span><span class="fu">,</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;Azure Front Door Managed&quot;</span><span class="fu">,</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;domains&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;api-pem.finthrive.com&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;autoRenewal&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;renewalDays&quot;</span><span class="fu">:</span> <span class="dv">30</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-internal-cert&quot;</span><span class="fu">,</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;Key Vault Certificate&quot;</span><span class="fu">,</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;usage&quot;</span><span class="fu">:</span> <span class="st">&quot;mTLS between services&quot;</span><span class="fu">,</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;autoRenewal&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">&quot;validityPeriod&quot;</span><span class="fu">:</span> <span class="st">&quot;12 months&quot;</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;monitoring&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;expirationAlertDays&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">30</span><span class="ot">,</span> <span class="dv">14</span><span class="ot">,</span> <span class="dv">7</span><span class="ot">,</span> <span class="dv">1</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;alertRecipients&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;security-team@finthrive.com&quot;</span><span class="ot">]</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="authentication-and-authorization">Authentication and
+Authorization</h2>
+<h3 id="identity-architecture">Identity Architecture</h3>
+<p><strong>Authentication &amp; Authorization Flow</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    subgraph USERS[&quot;USERS&quot;]
+        CMU[&quot;Contract Manager User&quot;]
+        API[&quot;API Client&lt;br/&gt;(Service Principal)&quot;]
+    end
+
+    subgraph IDP[&quot;IDENTITY PROVIDER&quot;]
+        AAD[&quot;Azure AD&lt;br/&gt;(Entra ID)&quot;]
+        MFA[&quot;Multi-Factor&lt;br/&gt;Authentication&quot;]
+        AAD --&gt; MFA
+    end
+
+    subgraph TOKEN[&quot;TOKEN FLOW&quot;]
+        OAUTH[&quot;OAuth 2.0&lt;br/&gt;Authorization&quot;]
+        JWT[&quot;JWT Access Token&quot;]
+        OAUTH --&gt; JWT
+    end
+
+    subgraph AUTHZ[&quot;AUTHORIZATION&quot;]
+        RBAC[&quot;Role-Based&lt;br/&gt;Access Control&quot;]
+        CLAIMS[&quot;Claims-Based&lt;br/&gt;Permissions&quot;]
+        TENANT[&quot;Tenant Isolation&quot;]
+        RBAC --&gt; CLAIMS --&gt; TENANT
+    end
+
+    CMU --&gt;|&quot;Login&quot;| IDP
+    API --&gt;|&quot;Creds&quot;| IDP
+    IDP --&gt; TOKEN --&gt; AUTHZ</code></pre>
+<h3 id="authentication-methods">Authentication Methods</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 16%" />
+<col style="width: 29%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Scenario</th>
+<th>Method</th>
+<th>MFA Required</th>
+<th>Token Lifetime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Interactive User</strong></td>
+<td>Azure AD + OIDC</td>
+<td>Yes</td>
+<td>1 hour (sliding)</td>
+</tr>
+<tr>
+<td><strong>Service-to-Service</strong></td>
+<td>Client Credentials</td>
+<td>N/A (service identity)</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td><strong>On-Premises Integration</strong></td>
+<td>Managed Identity via proxy</td>
+<td>N/A</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td><strong>Break-Glass Access</strong></td>
+<td>Emergency account</td>
+<td>Yes (hardware key)</td>
+<td>15 minutes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="role-based-access-control-rbac">Role-Based Access Control
+(RBAC)</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;roles&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-admin&quot;</span><span class="fu">,</span></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;PEM Administrator&quot;</span><span class="fu">,</span></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Full system access for administration&quot;</span><span class="fu">,</span></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:*&quot;</span><span class="ot">,</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;definitions:*&quot;</span><span class="ot">,</span></span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;contracts:*&quot;</span><span class="ot">,</span></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;users:*&quot;</span><span class="ot">,</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;audit:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;system:configure&quot;</span></span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;full&quot;</span><span class="fu">,</span></span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;IT Administrators&quot;</span><span class="ot">]</span></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-analyst&quot;</span><span class="fu">,</span></span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Bundle Analyst&quot;</span><span class="fu">,</span></span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Analyze episodes and manage bundles&quot;</span><span class="fu">,</span></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:update&quot;</span><span class="ot">,</span></span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:recalculate&quot;</span><span class="ot">,</span></span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;definitions:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;contracts:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;worklist:*&quot;</span><span class="ot">,</span></span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;reports:read&quot;</span></span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;full&quot;</span><span class="fu">,</span></span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Revenue Cycle Staff&quot;</span><span class="ot">]</span></span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-viewer&quot;</span><span class="fu">,</span></span>
+<span id="cb12-36"><a href="#cb12-36" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Report Viewer&quot;</span><span class="fu">,</span></span>
+<span id="cb12-37"><a href="#cb12-37" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;View reports and dashboards only&quot;</span><span class="fu">,</span></span>
+<span id="cb12-38"><a href="#cb12-38" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-39"><a href="#cb12-39" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:read:summary&quot;</span><span class="ot">,</span></span>
+<span id="cb12-40"><a href="#cb12-40" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;reports:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-41"><a href="#cb12-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;dashboards:read&quot;</span></span>
+<span id="cb12-42"><a href="#cb12-42" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-43"><a href="#cb12-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;masked&quot;</span><span class="fu">,</span></span>
+<span id="cb12-44"><a href="#cb12-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Finance&quot;</span><span class="ot">,</span> <span class="st">&quot;Executive&quot;</span><span class="ot">]</span></span>
+<span id="cb12-45"><a href="#cb12-45" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-46"><a href="#cb12-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-47"><a href="#cb12-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-clinical&quot;</span><span class="fu">,</span></span>
+<span id="cb12-48"><a href="#cb12-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Clinical Reviewer&quot;</span><span class="fu">,</span></span>
+<span id="cb12-49"><a href="#cb12-49" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Review clinical aspects of episodes&quot;</span><span class="fu">,</span></span>
+<span id="cb12-50"><a href="#cb12-50" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-51"><a href="#cb12-51" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-52"><a href="#cb12-52" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:addNote&quot;</span><span class="ot">,</span></span>
+<span id="cb12-53"><a href="#cb12-53" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;definitions:read&quot;</span></span>
+<span id="cb12-54"><a href="#cb12-54" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-55"><a href="#cb12-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;full&quot;</span><span class="fu">,</span></span>
+<span id="cb12-56"><a href="#cb12-56" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Clinical Staff&quot;</span><span class="ot">,</span> <span class="st">&quot;Case Management&quot;</span><span class="ot">]</span></span>
+<span id="cb12-57"><a href="#cb12-57" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-58"><a href="#cb12-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-59"><a href="#cb12-59" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-auditor&quot;</span><span class="fu">,</span></span>
+<span id="cb12-60"><a href="#cb12-60" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Compliance Auditor&quot;</span><span class="fu">,</span></span>
+<span id="cb12-61"><a href="#cb12-61" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Full read access for compliance auditing&quot;</span><span class="fu">,</span></span>
+<span id="cb12-62"><a href="#cb12-62" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-63"><a href="#cb12-63" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-64"><a href="#cb12-64" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;definitions:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-65"><a href="#cb12-65" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;contracts:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-66"><a href="#cb12-66" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;audit:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-67"><a href="#cb12-67" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;reports:read&quot;</span></span>
+<span id="cb12-68"><a href="#cb12-68" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-69"><a href="#cb12-69" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;full&quot;</span><span class="fu">,</span></span>
+<span id="cb12-70"><a href="#cb12-70" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Compliance&quot;</span><span class="ot">,</span> <span class="st">&quot;Internal Audit&quot;</span><span class="ot">]</span></span>
+<span id="cb12-71"><a href="#cb12-71" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb12-72"><a href="#cb12-72" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb12-73"><a href="#cb12-73" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;pem-integration&quot;</span><span class="fu">,</span></span>
+<span id="cb12-74"><a href="#cb12-74" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Integration Service&quot;</span><span class="fu">,</span></span>
+<span id="cb12-75"><a href="#cb12-75" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;description&quot;</span><span class="fu">:</span> <span class="st">&quot;Service account for system integrations&quot;</span><span class="fu">,</span></span>
+<span id="cb12-76"><a href="#cb12-76" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;permissions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb12-77"><a href="#cb12-77" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:create&quot;</span><span class="ot">,</span></span>
+<span id="cb12-78"><a href="#cb12-78" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;episodes:read&quot;</span><span class="ot">,</span></span>
+<span id="cb12-79"><a href="#cb12-79" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;claims:ingest&quot;</span><span class="ot">,</span></span>
+<span id="cb12-80"><a href="#cb12-80" aria-hidden="true" tabindex="-1"></a>        <span class="st">&quot;webhooks:publish&quot;</span></span>
+<span id="cb12-81"><a href="#cb12-81" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb12-82"><a href="#cb12-82" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phiAccess&quot;</span><span class="fu">:</span> <span class="st">&quot;full&quot;</span><span class="fu">,</span></span>
+<span id="cb12-83"><a href="#cb12-83" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;assignableTo&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Service Accounts&quot;</span><span class="ot">]</span></span>
+<span id="cb12-84"><a href="#cb12-84" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb12-85"><a href="#cb12-85" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb12-86"><a href="#cb12-86" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="authorization-implementation">Authorization Implementation</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Custom authorization policy</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PhiAccessRequirement <span class="op">:</span> IAuthorizationRequirement</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> PhiAccessLevel RequiredLevel <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">PhiAccessRequirement</span><span class="op">(</span>PhiAccessLevel level<span class="op">)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>        RequiredLevel <span class="op">=</span> level<span class="op">;</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PhiAccessHandler <span class="op">:</span> AuthorizationHandler<span class="op">&lt;</span>PhiAccessRequirement<span class="op">&gt;</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> Task <span class="fu">HandleRequirementAsync</span><span class="op">(</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>        AuthorizationHandlerContext context<span class="op">,</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>        PhiAccessRequirement requirement<span class="op">)</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> phiAccessClaim <span class="op">=</span> context<span class="op">.</span><span class="fu">User</span><span class="op">.</span><span class="fu">FindFirst</span><span class="op">(</span><span class="st">&quot;phi_access&quot;</span><span class="op">)?.</span><span class="fu">Value</span><span class="op">;</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span><span class="dt">string</span><span class="op">.</span><span class="fu">IsNullOrEmpty</span><span class="op">(</span>phiAccessClaim<span class="op">))</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">Fail</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AuthorizationFailureReason</span><span class="op">(</span></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>                <span class="kw">this</span><span class="op">,</span> <span class="st">&quot;No PHI access claim present&quot;</span><span class="op">));</span></span>
+<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> userLevel <span class="op">=</span> Enum<span class="op">.</span><span class="fu">Parse</span><span class="op">&lt;</span>PhiAccessLevel<span class="op">&gt;(</span>phiAccessClaim<span class="op">,</span> <span class="kw">true</span><span class="op">);</span></span>
+<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>userLevel <span class="op">&gt;=</span> requirement<span class="op">.</span><span class="fu">RequiredLevel</span><span class="op">)</span></span>
+<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">Succeed</span><span class="op">(</span>requirement<span class="op">);</span></span>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a>        <span class="kw">else</span></span>
+<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">Fail</span><span class="op">(</span><span class="kw">new</span> <span class="fu">AuthorizationFailureReason</span><span class="op">(</span></span>
+<span id="cb13-36"><a href="#cb13-36" aria-hidden="true" tabindex="-1"></a>                <span class="kw">this</span><span class="op">,</span> $<span class="st">&quot;Requires {requirement.RequiredLevel} PHI access, user has {userLevel}&quot;</span><span class="op">));</span></span>
+<span id="cb13-37"><a href="#cb13-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb13-38"><a href="#cb13-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb13-39"><a href="#cb13-39" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> Task<span class="op">.</span><span class="fu">CompletedTask</span><span class="op">;</span></span>
+<span id="cb13-40"><a href="#cb13-40" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb13-41"><a href="#cb13-41" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb13-42"><a href="#cb13-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-43"><a href="#cb13-43" aria-hidden="true" tabindex="-1"></a><span class="co">// Policy registration</span></span>
+<span id="cb13-44"><a href="#cb13-44" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddAuthorization</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb13-45"><a href="#cb13-45" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-46"><a href="#cb13-46" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">AddPolicy</span><span class="op">(</span><span class="st">&quot;RequireFullPhiAccess&quot;</span><span class="op">,</span> policy <span class="op">=&gt;</span></span>
+<span id="cb13-47"><a href="#cb13-47" aria-hidden="true" tabindex="-1"></a>        policy<span class="op">.</span><span class="fu">Requirements</span><span class="op">.</span><span class="fu">Add</span><span class="op">(</span><span class="kw">new</span> <span class="fu">PhiAccessRequirement</span><span class="op">(</span>PhiAccessLevel<span class="op">.</span><span class="fu">Full</span><span class="op">)));</span></span>
+<span id="cb13-48"><a href="#cb13-48" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-49"><a href="#cb13-49" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">AddPolicy</span><span class="op">(</span><span class="st">&quot;RequireMaskedPhiAccess&quot;</span><span class="op">,</span> policy <span class="op">=&gt;</span></span>
+<span id="cb13-50"><a href="#cb13-50" aria-hidden="true" tabindex="-1"></a>        policy<span class="op">.</span><span class="fu">Requirements</span><span class="op">.</span><span class="fu">Add</span><span class="op">(</span><span class="kw">new</span> <span class="fu">PhiAccessRequirement</span><span class="op">(</span>PhiAccessLevel<span class="op">.</span><span class="fu">Masked</span><span class="op">)));</span></span>
+<span id="cb13-51"><a href="#cb13-51" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb13-52"><a href="#cb13-52" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">AddPolicy</span><span class="op">(</span><span class="st">&quot;CanManageEpisodes&quot;</span><span class="op">,</span> policy <span class="op">=&gt;</span></span>
+<span id="cb13-53"><a href="#cb13-53" aria-hidden="true" tabindex="-1"></a>        policy<span class="op">.</span><span class="fu">RequireClaim</span><span class="op">(</span><span class="st">&quot;permissions&quot;</span><span class="op">,</span> <span class="st">&quot;episodes:update&quot;</span><span class="op">,</span> <span class="st">&quot;episodes:*&quot;</span><span class="op">));</span></span>
+<span id="cb13-54"><a href="#cb13-54" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb13-55"><a href="#cb13-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-56"><a href="#cb13-56" aria-hidden="true" tabindex="-1"></a><span class="co">// Usage in controller</span></span>
+<span id="cb13-57"><a href="#cb13-57" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">Authorize</span><span class="op">(</span>Policy <span class="op">=</span> <span class="st">&quot;RequireFullPhiAccess&quot;</span><span class="op">)]</span></span>
+<span id="cb13-58"><a href="#cb13-58" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">HttpGet</span><span class="op">(</span><span class="st">&quot;{id}&quot;</span><span class="op">)]</span></span>
+<span id="cb13-59"><a href="#cb13-59" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>ActionResult<span class="op">&lt;</span>EpisodeDetail<span class="op">&gt;&gt;</span> <span class="fu">GetEpisode</span><span class="op">(</span>Guid id<span class="op">)</span></span>
+<span id="cb13-60"><a href="#cb13-60" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-61"><a href="#cb13-61" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Full PHI access verified</span></span>
+<span id="cb13-62"><a href="#cb13-62" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="multi-tenant-isolation">Multi-Tenant Isolation</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> TenantAuthorizationMiddleware</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">InvokeAsync</span><span class="op">(</span>HttpContext context<span class="op">,</span> ITenantService tenantService<span class="op">)</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> tenantId <span class="op">=</span> context<span class="op">.</span><span class="fu">Request</span><span class="op">.</span><span class="fu">Headers</span><span class="op">[</span><span class="st">&quot;X-Tenant-Id&quot;</span><span class="op">].</span><span class="fu">FirstOrDefault</span><span class="op">();</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span><span class="dt">string</span><span class="op">.</span><span class="fu">IsNullOrEmpty</span><span class="op">(</span>tenantId<span class="op">))</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">Response</span><span class="op">.</span><span class="fu">StatusCode</span> <span class="op">=</span> <span class="dv">400</span><span class="op">;</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            await context<span class="op">.</span><span class="fu">Response</span><span class="op">.</span><span class="fu">WriteAsJsonAsync</span><span class="op">(</span><span class="kw">new</span> ProblemDetails</span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>                Title <span class="op">=</span> <span class="st">&quot;Missing Tenant&quot;</span><span class="op">,</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                Detail <span class="op">=</span> <span class="st">&quot;X-Tenant-Id header is required&quot;</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span><span class="op">;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Verify user has access to this tenant</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> userTenants <span class="op">=</span> context<span class="op">.</span><span class="fu">User</span><span class="op">.</span><span class="fu">FindAll</span><span class="op">(</span><span class="st">&quot;tenant_access&quot;</span><span class="op">)</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Select</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">Value</span><span class="op">)</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">ToHashSet</span><span class="op">();</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(!</span>userTenants<span class="op">.</span><span class="fu">Contains</span><span class="op">(</span>tenantId<span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="op">!</span>userTenants<span class="op">.</span><span class="fu">Contains</span><span class="op">(</span><span class="st">&quot;*&quot;</span><span class="op">))</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogWarning</span><span class="op">(</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;User {UserId} attempted to access tenant {TenantId} without permission&quot;</span><span class="op">,</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>                context<span class="op">.</span><span class="fu">User</span><span class="op">.</span><span class="fu">Identity</span><span class="op">?.</span><span class="fu">Name</span><span class="op">,</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>                tenantId<span class="op">);</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>            context<span class="op">.</span><span class="fu">Response</span><span class="op">.</span><span class="fu">StatusCode</span> <span class="op">=</span> <span class="dv">403</span><span class="op">;</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>            await context<span class="op">.</span><span class="fu">Response</span><span class="op">.</span><span class="fu">WriteAsJsonAsync</span><span class="op">(</span><span class="kw">new</span> ProblemDetails</span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb14-33"><a href="#cb14-33" aria-hidden="true" tabindex="-1"></a>                Title <span class="op">=</span> <span class="st">&quot;Tenant Access Denied&quot;</span><span class="op">,</span></span>
+<span id="cb14-34"><a href="#cb14-34" aria-hidden="true" tabindex="-1"></a>                Detail <span class="op">=</span> <span class="st">&quot;You do not have access to this tenant&quot;</span></span>
+<span id="cb14-35"><a href="#cb14-35" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb14-36"><a href="#cb14-36" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span><span class="op">;</span></span>
+<span id="cb14-37"><a href="#cb14-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-38"><a href="#cb14-38" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-39"><a href="#cb14-39" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Set tenant context for the request</span></span>
+<span id="cb14-40"><a href="#cb14-40" aria-hidden="true" tabindex="-1"></a>        tenantService<span class="op">.</span><span class="fu">SetCurrentTenant</span><span class="op">(</span>Guid<span class="op">.</span><span class="fu">Parse</span><span class="op">(</span>tenantId<span class="op">));</span></span>
+<span id="cb14-41"><a href="#cb14-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-42"><a href="#cb14-42" aria-hidden="true" tabindex="-1"></a>        await <span class="fu">_next</span><span class="op">(</span>context<span class="op">);</span></span>
+<span id="cb14-43"><a href="#cb14-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-44"><a href="#cb14-44" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb14-45"><a href="#cb14-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-46"><a href="#cb14-46" aria-hidden="true" tabindex="-1"></a><span class="co">// Row-level security in queries</span></span>
+<span id="cb14-47"><a href="#cb14-47" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> EpisodeRepository <span class="op">:</span> IEpisodeRepository</span>
+<span id="cb14-48"><a href="#cb14-48" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-49"><a href="#cb14-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>Episode<span class="op">?&gt;</span> <span class="fu">GetByIdAsync</span><span class="op">(</span>Guid id<span class="op">,</span> CancellationToken ct<span class="op">)</span></span>
+<span id="cb14-50"><a href="#cb14-50" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-51"><a href="#cb14-51" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> tenantId <span class="op">=</span> _tenantService<span class="op">.</span><span class="fu">CurrentTenantId</span><span class="op">;</span></span>
+<span id="cb14-52"><a href="#cb14-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-53"><a href="#cb14-53" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> await _context<span class="op">.</span><span class="fu">Episodes</span></span>
+<span id="cb14-54"><a href="#cb14-54" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Where</span><span class="op">(</span>e <span class="op">=&gt;</span> e<span class="op">.</span><span class="fu">TenantId</span> <span class="op">==</span> tenantId<span class="op">)</span>  <span class="co">// Tenant filter</span></span>
+<span id="cb14-55"><a href="#cb14-55" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">Where</span><span class="op">(</span>e <span class="op">=&gt;</span> e<span class="op">.</span><span class="fu">Id</span> <span class="op">==</span> id<span class="op">)</span></span>
+<span id="cb14-56"><a href="#cb14-56" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">FirstOrDefaultAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb14-57"><a href="#cb14-57" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-58"><a href="#cb14-58" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="audit-logging">Audit Logging</h2>
+<h3 id="audit-architecture">Audit Architecture</h3>
+<p><strong>Audit Logging Architecture</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    subgraph SOURCES[&quot;AUDIT SOURCES&quot;]
+        APP[&quot;Application Events&quot;]
+        PLAT[&quot;Azure Platform Logs&quot;]
+        NET[&quot;Network Logs&quot;]
+    end
+
+    subgraph COLLECTION[&quot;COLLECTION&quot;]
+        AI[&quot;Application Insights&quot;]
+        MON[&quot;Azure Monitor&quot;]
+        NSG[&quot;NSG Flow Logs&quot;]
+    end
+
+    subgraph STORAGE[&quot;STORAGE &amp; ANALYSIS&quot;]
+        LA[&quot;Log Analytics Workspace&quot;]
+        BLOB[&quot;Audit Blob (Immutable)&quot;]
+        SENTINEL[&quot;Azure Sentinel (SIEM)&quot;]
+    end
+
+    subgraph RETENTION[&quot;RETENTION&quot;]
+        HOT[&quot;Hot: 30 days&lt;br/&gt;(Log Analytics)&quot;]
+        WARM[&quot;Warm: 1 year&lt;br/&gt;(Archive)&quot;]
+        COLD[&quot;Cold: 7 years&lt;br/&gt;(Compliance)&quot;]
+    end
+
+    APP --&gt; AI --&gt; LA --&gt; HOT
+    PLAT --&gt; MON --&gt; BLOB --&gt; WARM
+    NET --&gt; NSG --&gt; SENTINEL --&gt; COLD</code></pre>
+<h3 id="audit-event-categories">Audit Event Categories</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 21%" />
+<col style="width: 51%" />
+</colgroup>
+<thead>
+<tr>
+<th>Category</th>
+<th>Events</th>
+<th>HIPAA Requirement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Login, logout, MFA, failed attempts</td>
+<td>§164.312(d)</td>
+</tr>
+<tr>
+<td><strong>Authorization</strong></td>
+<td>Permission checks, access denied</td>
+<td>§164.312(a)(1)</td>
+</tr>
+<tr>
+<td><strong>PHI Access</strong></td>
+<td>View, search, export patient data</td>
+<td>§164.312(b)</td>
+</tr>
+<tr>
+<td><strong>PHI Modification</strong></td>
+<td>Create, update, delete PHI</td>
+<td>§164.312(b)</td>
+</tr>
+<tr>
+<td><strong>Configuration</strong></td>
+<td>System settings, user management</td>
+<td>§164.308(a)(4)</td>
+</tr>
+<tr>
+<td><strong>Security</strong></td>
+<td>Alerts, incidents, policy violations</td>
+<td>§164.308(a)(6)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="audit-event-structure">Audit Event Structure</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AuditEvent</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Event identification</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid EventId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span> <span class="op">=</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">();</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DateTime Timestamp <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span> <span class="op">=</span> DateTime<span class="op">.</span><span class="fu">UtcNow</span><span class="op">;</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> EventType <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> EventCategory <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Actor information</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> UserId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> UserEmail <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> UserDisplayName <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> IpAddress <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> UserAgent <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> SessionId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Tenant context</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Guid TenantId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> TenantName <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-20"><a href="#cb16-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-21"><a href="#cb16-21" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Action details</span></span>
+<span id="cb16-22"><a href="#cb16-22" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> Action <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span>  <span class="co">// &quot;Read&quot;, &quot;Create&quot;, &quot;Update&quot;, &quot;Delete&quot;</span></span>
+<span id="cb16-23"><a href="#cb16-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ResourceType <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span>  <span class="co">// &quot;Episode&quot;, &quot;Definition&quot;, etc.</span></span>
+<span id="cb16-24"><a href="#cb16-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ResourceId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-25"><a href="#cb16-25" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ResourceName <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-26"><a href="#cb16-26" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-27"><a href="#cb16-27" aria-hidden="true" tabindex="-1"></a>    <span class="co">// PHI tracking</span></span>
+<span id="cb16-28"><a href="#cb16-28" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">bool</span> InvolvesPhi <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-29"><a href="#cb16-29" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> List<span class="op">&lt;</span><span class="dt">string</span><span class="op">&gt;</span> PhiFieldsAccessed <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="kw">new</span><span class="op">();</span></span>
+<span id="cb16-30"><a href="#cb16-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-31"><a href="#cb16-31" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Request context</span></span>
+<span id="cb16-32"><a href="#cb16-32" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> RequestPath <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-33"><a href="#cb16-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> RequestMethod <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> CorrelationId <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Outcome</span></span>
+<span id="cb16-37"><a href="#cb16-37" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> Outcome <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span>  <span class="co">// &quot;Success&quot;, &quot;Failure&quot;, &quot;Denied&quot;</span></span>
+<span id="cb16-38"><a href="#cb16-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> FailureReason <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-39"><a href="#cb16-39" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb16-40"><a href="#cb16-40" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Changes (for modifications)</span></span>
+<span id="cb16-41"><a href="#cb16-41" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> ChangeDetail<span class="op">&gt;</span> Changes <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span> <span class="op">=</span> <span class="kw">new</span><span class="op">();</span></span>
+<span id="cb16-42"><a href="#cb16-42" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb16-43"><a href="#cb16-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-44"><a href="#cb16-44" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ChangeDetail</span>
+<span id="cb16-45"><a href="#cb16-45" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb16-46"><a href="#cb16-46" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> FieldName <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-47"><a href="#cb16-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> OldValue <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-48"><a href="#cb16-48" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> NewValue <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-49"><a href="#cb16-49" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">bool</span> IsPhi <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> init<span class="op">;</span> <span class="op">}</span></span>
+<span id="cb16-50"><a href="#cb16-50" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="audit-logging-implementation">Audit Logging Implementation</h3>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AuditService <span class="op">:</span> IAuditService</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ILogger<span class="op">&lt;</span>AuditService<span class="op">&gt;</span> _logger<span class="op">;</span></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> TelemetryClient _telemetry<span class="op">;</span></span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IHttpContextAccessor _httpContextAccessor<span class="op">;</span></span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ITenantService _tenantService<span class="op">;</span></span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">LogPhiAccessAsync</span><span class="op">(</span></span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> action<span class="op">,</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> resourceType<span class="op">,</span></span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> resourceId<span class="op">,</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        IEnumerable<span class="op">&lt;</span><span class="dt">string</span><span class="op">&gt;</span> phiFields<span class="op">,</span></span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct <span class="op">=</span> <span class="kw">default</span><span class="op">)</span></span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> context <span class="op">=</span> _httpContextAccessor<span class="op">.</span><span class="fu">HttpContext</span><span class="op">;</span></span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> user <span class="op">=</span> context<span class="op">?.</span><span class="fu">User</span><span class="op">;</span></span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> auditEvent <span class="op">=</span> <span class="kw">new</span> AuditEvent</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>            EventType <span class="op">=</span> <span class="st">&quot;PHI_ACCESS&quot;</span><span class="op">,</span></span>
+<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>            EventCategory <span class="op">=</span> <span class="st">&quot;DataAccess&quot;</span><span class="op">,</span></span>
+<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>            UserId <span class="op">=</span> user<span class="op">?.</span><span class="fu">FindFirst</span><span class="op">(</span>ClaimTypes<span class="op">.</span><span class="fu">NameIdentifier</span><span class="op">)?.</span><span class="fu">Value</span><span class="op">,</span></span>
+<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>            UserEmail <span class="op">=</span> user<span class="op">?.</span><span class="fu">FindFirst</span><span class="op">(</span>ClaimTypes<span class="op">.</span><span class="fu">Email</span><span class="op">)?.</span><span class="fu">Value</span><span class="op">,</span></span>
+<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>            UserDisplayName <span class="op">=</span> user<span class="op">?.</span><span class="fu">FindFirst</span><span class="op">(</span><span class="st">&quot;name&quot;</span><span class="op">)?.</span><span class="fu">Value</span><span class="op">,</span></span>
+<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>            IpAddress <span class="op">=</span> context<span class="op">?.</span><span class="fu">Connection</span><span class="op">.</span><span class="fu">RemoteIpAddress</span><span class="op">?.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>            UserAgent <span class="op">=</span> context<span class="op">?.</span><span class="fu">Request</span><span class="op">.</span><span class="fu">Headers</span><span class="op">.</span><span class="fu">UserAgent</span><span class="op">.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>            SessionId <span class="op">=</span> context<span class="op">?.</span><span class="fu">Session</span><span class="op">?.</span><span class="fu">Id</span><span class="op">,</span></span>
+<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>            TenantId <span class="op">=</span> _tenantService<span class="op">.</span><span class="fu">CurrentTenantId</span><span class="op">,</span></span>
+<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>            TenantName <span class="op">=</span> _tenantService<span class="op">.</span><span class="fu">CurrentTenantName</span><span class="op">,</span></span>
+<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>            Action <span class="op">=</span> action<span class="op">,</span></span>
+<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>            ResourceType <span class="op">=</span> resourceType<span class="op">,</span></span>
+<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>            ResourceId <span class="op">=</span> resourceId<span class="op">,</span></span>
+<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>            InvolvesPhi <span class="op">=</span> <span class="kw">true</span><span class="op">,</span></span>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>            PhiFieldsAccessed <span class="op">=</span> phiFields<span class="op">.</span><span class="fu">ToList</span><span class="op">(),</span></span>
+<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>            RequestPath <span class="op">=</span> context<span class="op">?.</span><span class="fu">Request</span><span class="op">.</span><span class="fu">Path</span><span class="op">,</span></span>
+<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>            RequestMethod <span class="op">=</span> context<span class="op">?.</span><span class="fu">Request</span><span class="op">.</span><span class="fu">Method</span><span class="op">,</span></span>
+<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>            CorrelationId <span class="op">=</span> Activity<span class="op">.</span><span class="fu">Current</span><span class="op">?.</span><span class="fu">Id</span> <span class="op">??</span> context<span class="op">?.</span><span class="fu">TraceIdentifier</span><span class="op">,</span></span>
+<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>            Outcome <span class="op">=</span> <span class="st">&quot;Success&quot;</span></span>
+<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Log to Application Insights</span></span>
+<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>        _telemetry<span class="op">.</span><span class="fu">TrackEvent</span><span class="op">(</span><span class="st">&quot;AuditEvent&quot;</span><span class="op">,</span> <span class="kw">new</span> Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> <span class="dt">string</span><span class="op">&gt;</span></span>
+<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;EventId&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">EventId</span><span class="op">.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;EventType&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">EventType</span><span class="op">,</span></span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;UserId&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">UserId</span><span class="op">,</span></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;TenantId&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">TenantId</span><span class="op">.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;Action&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">Action</span><span class="op">,</span></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;ResourceType&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">ResourceType</span><span class="op">,</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;ResourceId&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">ResourceId</span><span class="op">,</span></span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;InvolvesPhi&quot;</span><span class="op">]</span> <span class="op">=</span> auditEvent<span class="op">.</span><span class="fu">InvolvesPhi</span><span class="op">.</span><span class="fu">ToString</span><span class="op">(),</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>            <span class="op">[</span><span class="st">&quot;PhiFields&quot;</span><span class="op">]</span> <span class="op">=</span> <span class="dt">string</span><span class="op">.</span><span class="fu">Join</span><span class="op">(</span><span class="st">&quot;,&quot;</span><span class="op">,</span> auditEvent<span class="op">.</span><span class="fu">PhiFieldsAccessed</span><span class="op">)</span></span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Log structured for Log Analytics</span></span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span></span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;PHI_ACCESS: User {UserId} performed {Action} on {ResourceType}/{ResourceId}. &quot;</span> <span class="op">+</span></span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;PHI fields: {PhiFields}. Tenant: {TenantId}. IP: {IpAddress}&quot;</span><span class="op">,</span></span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">UserId</span><span class="op">,</span></span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">Action</span><span class="op">,</span></span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">ResourceType</span><span class="op">,</span></span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">ResourceId</span><span class="op">,</span></span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>            <span class="dt">string</span><span class="op">.</span><span class="fu">Join</span><span class="op">(</span><span class="st">&quot;,&quot;</span><span class="op">,</span> auditEvent<span class="op">.</span><span class="fu">PhiFieldsAccessed</span><span class="op">),</span></span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">TenantId</span><span class="op">,</span></span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>            auditEvent<span class="op">.</span><span class="fu">IpAddress</span><span class="op">);</span></span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">LogDataModificationAsync</span><span class="op">(</span></span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> resourceType<span class="op">,</span></span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> resourceId<span class="op">,</span></span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a>        <span class="dt">object</span> oldValue<span class="op">,</span></span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>        <span class="dt">object</span> newValue<span class="op">,</span></span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct <span class="op">=</span> <span class="kw">default</span><span class="op">)</span></span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> changes <span class="op">=</span> <span class="fu">CalculateChanges</span><span class="op">(</span>oldValue<span class="op">,</span> newValue<span class="op">);</span></span>
+<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> phiChanges <span class="op">=</span> changes<span class="op">.</span><span class="fu">Where</span><span class="op">(</span>c <span class="op">=&gt;</span> c<span class="op">.</span><span class="fu">Value</span><span class="op">.</span><span class="fu">IsPhi</span><span class="op">).</span><span class="fu">ToList</span><span class="op">();</span></span>
+<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> auditEvent <span class="op">=</span> <span class="kw">new</span> AuditEvent</span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>            EventType <span class="op">=</span> <span class="st">&quot;DATA_MODIFICATION&quot;</span><span class="op">,</span></span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a>            EventCategory <span class="op">=</span> <span class="st">&quot;DataChange&quot;</span><span class="op">,</span></span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a>            Action <span class="op">=</span> oldValue <span class="op">==</span> <span class="kw">null</span> <span class="op">?</span> <span class="st">&quot;Create&quot;</span> <span class="op">:</span> <span class="st">&quot;Update&quot;</span><span class="op">,</span></span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a>            ResourceType <span class="op">=</span> resourceType<span class="op">,</span></span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a>            ResourceId <span class="op">=</span> resourceId<span class="op">,</span></span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a>            InvolvesPhi <span class="op">=</span> phiChanges<span class="op">.</span><span class="fu">Any</span><span class="op">(),</span></span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>            Changes <span class="op">=</span> changes<span class="op">,</span></span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a>            Outcome <span class="op">=</span> <span class="st">&quot;Success&quot;</span></span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Populate user/request context (similar to above)</span></span>
+<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a>        <span class="fu">PopulateContext</span><span class="op">(</span>auditEvent<span class="op">);</span></span>
+<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a>        <span class="co">// For PHI changes, redact values in logs but keep in secure audit store</span></span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a>        <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> phiChange <span class="kw">in</span> phiChanges<span class="op">)</span></span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span></span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;PHI_CHANGE: User {UserId} modified PHI field {FieldName} on {ResourceType}/{ResourceId}&quot;</span><span class="op">,</span></span>
+<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>                auditEvent<span class="op">.</span><span class="fu">UserId</span><span class="op">,</span></span>
+<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a>                phiChange<span class="op">.</span><span class="fu">Key</span><span class="op">,</span></span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a>                resourceType<span class="op">,</span></span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>                resourceId<span class="op">);</span></span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Store complete audit record (with PHI) in secure immutable storage</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>        await <span class="fu">StoreSecureAuditRecordAsync</span><span class="op">(</span>auditEvent<span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="audit-auto-instrumentation">Audit Auto-Instrumentation</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Attribute for automatic PHI audit logging</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">AttributeUsage</span><span class="op">(</span>AttributeTargets<span class="op">.</span><span class="fu">Method</span><span class="op">)]</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AuditPhiAccessAttribute <span class="op">:</span> Attribute</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span> ResourceType <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="dt">string</span><span class="op">[]</span> PhiFields <span class="op">{</span> <span class="kw">get</span><span class="op">;</span> <span class="op">}</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">AuditPhiAccessAttribute</span><span class="op">(</span><span class="dt">string</span> resourceType<span class="op">,</span> <span class="kw">params</span> <span class="dt">string</span><span class="op">[]</span> phiFields<span class="op">)</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>        ResourceType <span class="op">=</span> resourceType<span class="op">;</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        PhiFields <span class="op">=</span> phiFields<span class="op">;</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a><span class="co">// Action filter for automatic audit</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> AuditActionFilter <span class="op">:</span> IAsyncActionFilter</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">OnActionExecutionAsync</span><span class="op">(</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        ActionExecutingContext context<span class="op">,</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>        ActionExecutionDelegate next<span class="op">)</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> auditAttr <span class="op">=</span> context<span class="op">.</span><span class="fu">ActionDescriptor</span><span class="op">.</span><span class="fu">EndpointMetadata</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">OfType</span><span class="op">&lt;</span>AuditPhiAccessAttribute<span class="op">&gt;()</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>            <span class="op">.</span><span class="fu">FirstOrDefault</span><span class="op">();</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> result <span class="op">=</span> await <span class="fu">next</span><span class="op">();</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>auditAttr <span class="op">!=</span> <span class="kw">null</span> <span class="op">&amp;&amp;</span> result<span class="op">.</span><span class="fu">Exception</span> <span class="op">==</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb18-30"><a href="#cb18-30" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> resourceId <span class="op">=</span> <span class="fu">ExtractResourceId</span><span class="op">(</span>context<span class="op">);</span></span>
+<span id="cb18-31"><a href="#cb18-31" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb18-32"><a href="#cb18-32" aria-hidden="true" tabindex="-1"></a>            await _auditService<span class="op">.</span><span class="fu">LogPhiAccessAsync</span><span class="op">(</span></span>
+<span id="cb18-33"><a href="#cb18-33" aria-hidden="true" tabindex="-1"></a>                action<span class="op">:</span> context<span class="op">.</span><span class="fu">HttpContext</span><span class="op">.</span><span class="fu">Request</span><span class="op">.</span><span class="fu">Method</span><span class="op">,</span></span>
+<span id="cb18-34"><a href="#cb18-34" aria-hidden="true" tabindex="-1"></a>                resourceType<span class="op">:</span> auditAttr<span class="op">.</span><span class="fu">ResourceType</span><span class="op">,</span></span>
+<span id="cb18-35"><a href="#cb18-35" aria-hidden="true" tabindex="-1"></a>                resourceId<span class="op">:</span> resourceId<span class="op">,</span></span>
+<span id="cb18-36"><a href="#cb18-36" aria-hidden="true" tabindex="-1"></a>                phiFields<span class="op">:</span> auditAttr<span class="op">.</span><span class="fu">PhiFields</span><span class="op">);</span></span>
+<span id="cb18-37"><a href="#cb18-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb18-38"><a href="#cb18-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb18-39"><a href="#cb18-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span>
+<span id="cb18-40"><a href="#cb18-40" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-41"><a href="#cb18-41" aria-hidden="true" tabindex="-1"></a><span class="co">// Usage</span></span>
+<span id="cb18-42"><a href="#cb18-42" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">HttpGet</span><span class="op">(</span><span class="st">&quot;{id}&quot;</span><span class="op">)]</span></span>
+<span id="cb18-43"><a href="#cb18-43" aria-hidden="true" tabindex="-1"></a><span class="op">[</span><span class="fu">AuditPhiAccess</span><span class="op">(</span><span class="st">&quot;Episode&quot;</span><span class="op">,</span> <span class="st">&quot;PatientName&quot;</span><span class="op">,</span> <span class="st">&quot;MRN&quot;</span><span class="op">,</span> <span class="st">&quot;DOB&quot;</span><span class="op">)]</span></span>
+<span id="cb18-44"><a href="#cb18-44" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> async Task<span class="op">&lt;</span>ActionResult<span class="op">&lt;</span>EpisodeDetail<span class="op">&gt;&gt;</span> <span class="fu">GetEpisode</span><span class="op">(</span>Guid id<span class="op">)</span></span>
+<span id="cb18-45"><a href="#cb18-45" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb18-46"><a href="#cb18-46" aria-hidden="true" tabindex="-1"></a>    <span class="co">// PHI access automatically logged</span></span>
+<span id="cb18-47"><a href="#cb18-47" aria-hidden="true" tabindex="-1"></a>    <span class="kw">return</span> await _episodeService<span class="op">.</span><span class="fu">GetByIdAsync</span><span class="op">(</span>id<span class="op">);</span></span>
+<span id="cb18-48"><a href="#cb18-48" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="audit-query-examples-kql">Audit Query Examples (KQL)</h3>
+<pre class="kusto"><code>// PHI access report for compliance
+AuditEvents
+| where TimeGenerated &gt; ago(30d)
+| where EventType == &quot;PHI_ACCESS&quot;
+| summarize 
+    AccessCount = count(),
+    UniquePatients = dcount(ResourceId),
+    UniqueUsers = dcount(UserId)
+  by UserId, UserEmail, TenantId
+| order by AccessCount desc
+
+// Failed authentication attempts
+AuditEvents
+| where TimeGenerated &gt; ago(24h)
+| where EventCategory == &quot;Authentication&quot;
+| where Outcome == &quot;Failure&quot;
+| summarize FailedAttempts = count() by UserId, IpAddress, bin(TimeGenerated, 1h)
+| where FailedAttempts &gt; 5
+| order by FailedAttempts desc
+
+// Data modification history for specific patient
+AuditEvents
+| where TimeGenerated &gt; ago(90d)
+| where EventType == &quot;DATA_MODIFICATION&quot;
+| where ResourceType == &quot;Episode&quot;
+| where ResourceId == &quot;episode-12345&quot;
+| project TimeGenerated, UserId, UserEmail, Action, Changes
+| order by TimeGenerated desc
+
+// Unusual access patterns (potential breach indicator)
+AuditEvents
+| where TimeGenerated &gt; ago(7d)
+| where EventType == &quot;PHI_ACCESS&quot;
+| summarize 
+    AccessCount = count(),
+    UniqueResources = dcount(ResourceId),
+    UniqueIPs = dcount(IpAddress)
+  by UserId, bin(TimeGenerated, 1h)
+| where AccessCount &gt; 100 or UniqueIPs &gt; 3
+| order by TimeGenerated desc</code></pre>
+<h3 id="immutable-audit-storage">Immutable Audit Storage</h3>
+<pre class="hcl"><code># Terraform - Immutable blob storage for audit logs
+resource &quot;azurerm_storage_container&quot; &quot;audit&quot; {
+  name                  = &quot;audit-logs&quot;
+  storage_account_name  = azurerm_storage_account.audit.name
+  container_access_type = &quot;private&quot;
+}
+
+resource &quot;azurerm_storage_management_policy&quot; &quot;audit_lifecycle&quot; {
+  storage_account_id = azurerm_storage_account.audit.id
+
+  rule {
+    name    = &quot;audit-retention&quot;
+    enabled = true
+    
+    filters {
+      prefix_match = [&quot;audit-logs/&quot;]
+      blob_types   = [&quot;blockBlob&quot;]
+    }
+    
+    actions {
+      base_blob {
+        tier_to_cool_after_days_since_creation_greater_than    = 30
+        tier_to_archive_after_days_since_creation_greater_than = 365
+        delete_after_days_since_creation_greater_than          = 2555  # 7 years
+      }
+    }
+  }
+}
+
+# Immutability policy
+resource &quot;azurerm_storage_blob_inventory_policy&quot; &quot;audit&quot; {
+  storage_account_id = azurerm_storage_account.audit.id
+  
+  rules {
+    name                   = &quot;audit-immutable&quot;
+    storage_container_name = azurerm_storage_container.audit.name
+    format                 = &quot;Parquet&quot;
+    schedule               = &quot;Daily&quot;
+    scope                  = &quot;Container&quot;
+    
+    schema_fields = [
+      &quot;Name&quot;, &quot;Last-Modified&quot;, &quot;Content-Length&quot;, &quot;BlobType&quot;
+    ]
+  }
+}</code></pre>
+<hr />
+<h2 id="security-monitoring-and-incident-response">Security Monitoring
+and Incident Response</h2>
+<h3 id="security-monitoring-architecture">Security Monitoring
+Architecture</h3>
+<p><strong>Threat Detection &amp; Response</strong></p>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 42%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Component</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Detection</strong></td>
+<td>WAF Alerts</td>
+<td>→ Automated Playbooks → Block IP/Revoke Access</td>
+</tr>
+<tr>
+<td></td>
+<td>Sentinel Analytics</td>
+<td>→ On-Call Engineer → Contain &amp; Investigate</td>
+</tr>
+<tr>
+<td></td>
+<td>Defender for Cloud</td>
+<td>→ Security Operations → Notify Stakeholders</td>
+</tr>
+<tr>
+<td></td>
+<td>Custom Alerts</td>
+<td>→ Security Operations → Breach Reporting</td>
+</tr>
+</tbody>
+</table>
+<h3 id="security-alerts">Security Alerts</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 27%" />
+<col style="width: 25%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Alert</th>
+<th>Severity</th>
+<th>Trigger</th>
+<th>Response</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Brute Force Attack</strong></td>
+<td>High</td>
+<td>10+ failed logins in 5 min</td>
+<td>Block IP, notify security</td>
+</tr>
+<tr>
+<td><strong>Impossible Travel</strong></td>
+<td>High</td>
+<td>Login from distant locations</td>
+<td>Require re-auth, investigate</td>
+</tr>
+<tr>
+<td><strong>Unusual PHI Access</strong></td>
+<td>Medium</td>
+<td>100+ records in 1 hour</td>
+<td>Alert, review access</td>
+</tr>
+<tr>
+<td><strong>After-Hours Access</strong></td>
+<td>Low</td>
+<td>Access outside business hours</td>
+<td>Log, weekly review</td>
+</tr>
+<tr>
+<td><strong>Privilege Escalation</strong></td>
+<td>Critical</td>
+<td>Role change without approval</td>
+<td>Immediate investigation</td>
+</tr>
+<tr>
+<td><strong>Data Exfiltration</strong></td>
+<td>Critical</td>
+<td>Large data export</td>
+<td>Block, immediate response</td>
+</tr>
+<tr>
+<td><strong>SQL Injection Attempt</strong></td>
+<td>High</td>
+<td>WAF detection</td>
+<td>Block, log, review</td>
+</tr>
+<tr>
+<td><strong>Certificate Expiry</strong></td>
+<td>Medium</td>
+<td>7 days before expiry</td>
+<td>Auto-renewal check</td>
+</tr>
+</tbody>
+</table>
+<h3 id="incident-response-procedure">Incident Response Procedure</h3>
+<p><strong>Incident Response Lifecycle</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Phase</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Detect</strong></td>
+<td>Alert Triggered</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Triage</strong></td>
+<td>Assess Severity</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Contain</strong></td>
+<td>Stop Bleeding</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Investigate</strong></td>
+<td>Root Cause Analysis</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Remediate</strong></td>
+<td>Fix &amp; Prevent</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Report</strong></td>
+<td>Documentation</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Improve</strong></td>
+<td>Update Controls</td>
+</tr>
+</tbody>
+</table>
+<h3 id="breach-notification-hipaa">Breach Notification (HIPAA)</h3>
+<table>
+<colgroup>
+<col style="width: 30%" />
+<col style="width: 51%" />
+<col style="width: 18%" />
+</colgroup>
+<thead>
+<tr>
+<th>Breach Size</th>
+<th>Notification Deadline</th>
+<th>Notify</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>&lt; 500 individuals</td>
+<td>Within 60 days of discovery</td>
+<td>Affected individuals, HHS annually</td>
+</tr>
+<tr>
+<td>≥ 500 individuals</td>
+<td>Within 60 days of discovery</td>
+<td>Affected individuals, HHS, media</td>
+</tr>
+</tbody>
+</table>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;breachResponsePlan&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;discoveryActions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Preserve evidence&quot;</span><span class="ot">,</span></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Document discovery timeline&quot;</span><span class="ot">,</span></span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Assess scope of breach&quot;</span><span class="ot">,</span></span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Identify affected individuals&quot;</span></span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;containmentActions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Revoke compromised credentials&quot;</span><span class="ot">,</span></span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Block malicious IPs&quot;</span><span class="ot">,</span></span>
+<span id="cb21-12"><a href="#cb21-12" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Isolate affected systems&quot;</span><span class="ot">,</span></span>
+<span id="cb21-13"><a href="#cb21-13" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Enable enhanced logging&quot;</span></span>
+<span id="cb21-14"><a href="#cb21-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-15"><a href="#cb21-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;notificationActions&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb21-16"><a href="#cb21-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Notify HIPAA Privacy Officer within 24 hours&quot;</span><span class="ot">,</span></span>
+<span id="cb21-17"><a href="#cb21-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Notify Legal within 24 hours&quot;</span><span class="ot">,</span></span>
+<span id="cb21-18"><a href="#cb21-18" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Prepare individual notifications&quot;</span><span class="ot">,</span></span>
+<span id="cb21-19"><a href="#cb21-19" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Prepare HHS notification if required&quot;</span><span class="ot">,</span></span>
+<span id="cb21-20"><a href="#cb21-20" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Prepare media notification if required&quot;</span></span>
+<span id="cb21-21"><a href="#cb21-21" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb21-22"><a href="#cb21-22" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;contacts&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb21-23"><a href="#cb21-23" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;hipaaPrivacyOfficer&quot;</span><span class="fu">:</span> <span class="st">&quot;privacy@finthrive.com&quot;</span><span class="fu">,</span></span>
+<span id="cb21-24"><a href="#cb21-24" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;legal&quot;</span><span class="fu">:</span> <span class="st">&quot;legal@finthrive.com&quot;</span><span class="fu">,</span></span>
+<span id="cb21-25"><a href="#cb21-25" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;securityTeam&quot;</span><span class="fu">:</span> <span class="st">&quot;security@finthrive.com&quot;</span><span class="fu">,</span></span>
+<span id="cb21-26"><a href="#cb21-26" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;oncall&quot;</span><span class="fu">:</span> <span class="st">&quot;PagerDuty security rotation&quot;</span></span>
+<span id="cb21-27"><a href="#cb21-27" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb21-28"><a href="#cb21-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb21-29"><a href="#cb21-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="vulnerability-management">Vulnerability Management</h2>
+<h3 id="security-scanning-pipeline">Security Scanning Pipeline</h3>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Azure DevOps pipeline - Security scanning</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> SecurityScan</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> SAST</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Static Application Security Testing&#39;</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SonarQubePrepare@5</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">SonarQube</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;SonarQube-Connection&#39;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">projectKey</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;pem-api&#39;</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> DotNetCoreCLI@2</span></span>
+<span id="cb22-14"><a href="#cb22-14" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb22-15"><a href="#cb22-15" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">command</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;build&#39;</span></span>
+<span id="cb22-16"><a href="#cb22-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb22-17"><a href="#cb22-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SonarQubeAnalyze@5</span></span>
+<span id="cb22-18"><a href="#cb22-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb22-19"><a href="#cb22-19" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SonarQubePublish@5</span></span>
+<span id="cb22-20"><a href="#cb22-20" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb22-21"><a href="#cb22-21" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">pollingTimeoutSec</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;300&#39;</span></span>
+<span id="cb22-22"><a href="#cb22-22" aria-hidden="true" tabindex="-1"></a><span class="at">      </span></span>
+<span id="cb22-23"><a href="#cb22-23" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> DependencyScan</span></span>
+<span id="cb22-24"><a href="#cb22-24" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Dependency Vulnerability Scan&#39;</span></span>
+<span id="cb22-25"><a href="#cb22-25" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb22-26"><a href="#cb22-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> DotNetCoreCLI@2</span></span>
+<span id="cb22-27"><a href="#cb22-27" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb22-28"><a href="#cb22-28" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">command</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;custom&#39;</span></span>
+<span id="cb22-29"><a href="#cb22-29" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">custom</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;list&#39;</span></span>
+<span id="cb22-30"><a href="#cb22-30" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">arguments</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;package --vulnerable --include-transitive&#39;</span></span>
+<span id="cb22-31"><a href="#cb22-31" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb22-32"><a href="#cb22-32" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb22-33"><a href="#cb22-33" aria-hidden="true" tabindex="-1"></a>              dotnet tool install --global dotnet-outdated-tool</span>
+<span id="cb22-34"><a href="#cb22-34" aria-hidden="true" tabindex="-1"></a>              dotnet outdated --fail-on-updates</span>
+<span id="cb22-35"><a href="#cb22-35" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Check for outdated packages&#39;</span></span>
+<span id="cb22-36"><a href="#cb22-36" aria-hidden="true" tabindex="-1"></a><span class="at">      </span></span>
+<span id="cb22-37"><a href="#cb22-37" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> ContainerScan</span></span>
+<span id="cb22-38"><a href="#cb22-38" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Container Image Scan&#39;</span></span>
+<span id="cb22-39"><a href="#cb22-39" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb22-40"><a href="#cb22-40" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> ContainerScan@0</span></span>
+<span id="cb22-41"><a href="#cb22-41" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb22-42"><a href="#cb22-42" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">imageName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;$(containerRegistry)/pem-api:$(Build.BuildId)&#39;</span></span>
+<span id="cb22-43"><a href="#cb22-43" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">severityThreshold</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;High&#39;</span></span>
+<span id="cb22-44"><a href="#cb22-44" aria-hidden="true" tabindex="-1"></a><span class="at">      </span></span>
+<span id="cb22-45"><a href="#cb22-45" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> SecretScan</span></span>
+<span id="cb22-46"><a href="#cb22-46" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Secret Detection&#39;</span></span>
+<span id="cb22-47"><a href="#cb22-47" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb22-48"><a href="#cb22-48" aria-hidden="true" tabindex="-1"></a><span class="kw">          - </span><span class="fu">script</span><span class="kw">:</span><span class="at"> </span><span class="ch">|</span></span>
+<span id="cb22-49"><a href="#cb22-49" aria-hidden="true" tabindex="-1"></a>              pip install detect-secrets</span>
+<span id="cb22-50"><a href="#cb22-50" aria-hidden="true" tabindex="-1"></a>              detect-secrets scan --all-files --baseline .secrets.baseline</span>
+<span id="cb22-51"><a href="#cb22-51" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">displayName</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;Scan for secrets&#39;</span></span></code></pre></div>
+<h3 id="dependency-management">Dependency Management</h3>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dependencyManagement&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;scanning&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;frequency&quot;</span><span class="fu">:</span> <span class="st">&quot;Daily&quot;</span><span class="fu">,</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;tools&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Dependabot&quot;</span><span class="ot">,</span> <span class="st">&quot;NuGet Audit&quot;</span><span class="ot">,</span> <span class="st">&quot;npm audit&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;severityThreshold&quot;</span><span class="fu">:</span> <span class="st">&quot;High&quot;</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;updatePolicy&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;critical&quot;</span><span class="fu">:</span> <span class="st">&quot;Immediate (within 24 hours)&quot;</span><span class="fu">,</span></span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;high&quot;</span><span class="fu">:</span> <span class="st">&quot;Within 7 days&quot;</span><span class="fu">,</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;medium&quot;</span><span class="fu">:</span> <span class="st">&quot;Within 30 days&quot;</span><span class="fu">,</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;low&quot;</span><span class="fu">:</span> <span class="st">&quot;Next release cycle&quot;</span></span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;approvedSources&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;nuget.org&quot;</span><span class="ot">,</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;npmjs.com&quot;</span><span class="ot">,</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>      <span class="st">&quot;Internal artifact feed&quot;</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="compliance-checklist">Compliance Checklist</h2>
+<h3 id="pre-production-security-review">Pre-Production Security
+Review</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Item</th>
+<th>Status</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Authentication</strong></td>
+<td>Azure AD integration</td>
+<td>☐</td>
+<td>Config screenshot</td>
+</tr>
+<tr>
+<td></td>
+<td>MFA enforced</td>
+<td>☐</td>
+<td>Conditional access policy</td>
+</tr>
+<tr>
+<td></td>
+<td>Session timeout configured</td>
+<td>☐</td>
+<td>Code review</td>
+</tr>
+<tr>
+<td><strong>Authorization</strong></td>
+<td>RBAC implemented</td>
+<td>☐</td>
+<td>Role definitions</td>
+</tr>
+<tr>
+<td></td>
+<td>Tenant isolation verified</td>
+<td>☐</td>
+<td>Penetration test</td>
+</tr>
+<tr>
+<td></td>
+<td>Least privilege review</td>
+<td>☐</td>
+<td>Access matrix</td>
+</tr>
+<tr>
+<td><strong>Encryption</strong></td>
+<td>TDE enabled</td>
+<td>☐</td>
+<td>Azure portal</td>
+</tr>
+<tr>
+<td></td>
+<td>Always Encrypted for PHI</td>
+<td>☐</td>
+<td>Schema review</td>
+</tr>
+<tr>
+<td></td>
+<td>TLS 1.2+ enforced</td>
+<td>☐</td>
+<td>SSL Labs scan</td>
+</tr>
+<tr>
+<td></td>
+<td>Key Vault for secrets</td>
+<td>☐</td>
+<td>Config review</td>
+</tr>
+<tr>
+<td><strong>Audit</strong></td>
+<td>PHI access logging</td>
+<td>☐</td>
+<td>Log sample</td>
+</tr>
+<tr>
+<td></td>
+<td>Modification tracking</td>
+<td>☐</td>
+<td>Audit query</td>
+</tr>
+<tr>
+<td></td>
+<td>7-year retention</td>
+<td>☐</td>
+<td>Retention policy</td>
+</tr>
+<tr>
+<td><strong>Network</strong></td>
+<td>Private endpoints</td>
+<td>☐</td>
+<td>Network diagram</td>
+</tr>
+<tr>
+<td></td>
+<td>NSG rules reviewed</td>
+<td>☐</td>
+<td>Rule export</td>
+</tr>
+<tr>
+<td></td>
+<td>WAF enabled</td>
+<td>☐</td>
+<td>Policy review</td>
+</tr>
+<tr>
+<td><strong>Vulnerability</strong></td>
+<td>SAST scan clean</td>
+<td>☐</td>
+<td>Scan report</td>
+</tr>
+<tr>
+<td></td>
+<td>Dependency scan clean</td>
+<td>☐</td>
+<td>Audit output</td>
+</tr>
+<tr>
+<td></td>
+<td>Penetration test</td>
+<td>☐</td>
+<td>Test report</td>
+</tr>
+<tr>
+<td><strong>Incident Response</strong></td>
+<td>Runbook documented</td>
+<td>☐</td>
+<td>Document link</td>
+</tr>
+<tr>
+<td></td>
+<td>On-call configured</td>
+<td>☐</td>
+<td>PagerDuty</td>
+</tr>
+<tr>
+<td></td>
+<td>Breach plan reviewed</td>
+<td>☐</td>
+<td>Legal sign-off</td>
+</tr>
+</tbody>
+</table>
+<h3 id="annual-compliance-activities">Annual Compliance Activities</h3>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 28%" />
+<col style="width: 18%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>Activity</th>
+<th>Frequency</th>
+<th>Owner</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>HIPAA Risk Assessment</td>
+<td>Annual</td>
+<td>Security Officer</td>
+<td>Risk report</td>
+</tr>
+<tr>
+<td>Security Awareness Training</td>
+<td>Annual</td>
+<td>HR/Security</td>
+<td>Training records</td>
+</tr>
+<tr>
+<td>Penetration Testing</td>
+<td>Annual</td>
+<td>Security</td>
+<td>Pentest report</td>
+</tr>
+<tr>
+<td>Disaster Recovery Test</td>
+<td>Annual</td>
+<td>DevOps</td>
+<td>DR test results</td>
+</tr>
+<tr>
+<td>Access Review</td>
+<td>Quarterly</td>
+<td>IT/Managers</td>
+<td>Access reports</td>
+</tr>
+<tr>
+<td>Vulnerability Scan</td>
+<td>Monthly</td>
+<td>Security</td>
+<td>Scan reports</td>
+</tr>
+<tr>
+<td>Incident Response Drill</td>
+<td>Annual</td>
+<td>Security</td>
+<td>Drill report</td>
+</tr>
+<tr>
+<td>BAA Review</td>
+<td>Annual</td>
+<td>Legal</td>
+<td>BAA copies</td>
+</tr>
+<tr>
+<td>Policy Review</td>
+<td>Annual</td>
+<td>Compliance</td>
+<td>Updated policies</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="appendix-security-configuration-reference">Appendix: Security
+Configuration Reference</h2>
+<h3 id="azure-policy-assignments">Azure Policy Assignments</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;policyAssignments&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;HIPAA HITRUST&quot;</span><span class="fu">,</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;policyDefinitionId&quot;</span><span class="fu">:</span> <span class="st">&quot;/providers/Microsoft.Authorization/policySetDefinitions/a169a624-5599-4385-a696-c8d643089fab&quot;</span><span class="fu">,</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;scope&quot;</span><span class="fu">:</span> <span class="st">&quot;/subscriptions/{subscription-id}/resourceGroups/rg-pem-prod&quot;</span></span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;CIS Microsoft Azure Foundations Benchmark&quot;</span><span class="fu">,</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;policyDefinitionId&quot;</span><span class="fu">:</span> <span class="st">&quot;/providers/Microsoft.Authorization/policySetDefinitions/1a5bb27d-173f-493e-9568-eb56638dde4d&quot;</span><span class="fu">,</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;scope&quot;</span><span class="fu">:</span> <span class="st">&quot;/subscriptions/{subscription-id}&quot;</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="defender-for-cloud-configuration">Defender for Cloud
+Configuration</h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;defenderPlans&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForServers&quot;</span><span class="fu">:</span> <span class="st">&quot;P2&quot;</span><span class="fu">,</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForAppService&quot;</span><span class="fu">:</span> <span class="st">&quot;Enabled&quot;</span><span class="fu">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForSql&quot;</span><span class="fu">:</span> <span class="st">&quot;Enabled&quot;</span><span class="fu">,</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForStorage&quot;</span><span class="fu">:</span> <span class="st">&quot;Enabled&quot;</span><span class="fu">,</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForKeyVault&quot;</span><span class="fu">:</span> <span class="st">&quot;Enabled&quot;</span><span class="fu">,</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;defenderForContainers&quot;</span><span class="fu">:</span> <span class="st">&quot;Enabled&quot;</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;securityContacts&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;email&quot;</span><span class="fu">:</span> <span class="st">&quot;security-alerts@finthrive.com&quot;</span><span class="fu">,</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;phone&quot;</span><span class="fu">:</span> <span class="st">&quot;+1-xxx-xxx-xxxx&quot;</span><span class="fu">,</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;alertNotifications&quot;</span><span class="fu">:</span> <span class="st">&quot;On&quot;</span><span class="fu">,</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;alertsToAdmins&quot;</span><span class="fu">:</span> <span class="st">&quot;On&quot;</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<p><strong>Document Status:</strong> ✅ <strong>Complete</strong><br />
+<strong>Next Steps:</strong> Review with Security and Compliance teams,
+conduct HIPAA gap analysis</p>
+</body>
+</html>

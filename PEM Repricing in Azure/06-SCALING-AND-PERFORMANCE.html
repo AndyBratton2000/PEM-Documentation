@@ -1,0 +1,2271 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>06-SCALING-AND-PERFORMANCE</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="scaling-and-performance-architecture">Scaling and Performance
+Architecture</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Planning</p>
+<hr />
+<h2 id="executive-summary">Executive Summary</h2>
+<p>The containerized repricing solution achieves high-volume claim
+processing through <strong>queue-based horizontal scaling</strong>. By
+leveraging Azure Service Bus and KEDA (Kubernetes Event-Driven
+Autoscaling), the system automatically scales container instances based
+on workload, processing <strong>up to 200+ million claims per
+day</strong> at peak capacity.</p>
+<hr />
+<h2 id="scaling-architecture-overview">Scaling Architecture
+Overview</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ CLAIM SOURCES                                                                │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────────────┐    │
+│  │ Hospital A  │ │ Hospital B  │ │ Hospital C  │ │ Batch Import        │    │
+│  │ 1,000/hr    │ │ 2,000/hr    │ │ 5,000/hr    │ │ 500K claims         │    │
+│  └──────┬──────┘ └──────┬──────┘ └──────┬──────┘ └──────────┬──────────┘    │
+└─────────┼───────────────┼───────────────┼───────────────────┼───────────────┘
+          │               │               │                   │
+          └───────────────┼───────────────┼───────────────────┘
+                          ▼               ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ INGESTION LAYER                                                              │
+│  ┌───────────────────────────────┐  ┌───────────────────────────────┐       │
+│  │ API Management (Rate Limiting)│→ │ Claim Router                  │       │
+│  └───────────────────────────────┘  └────────────────┬──────────────┘       │
+└──────────────────────────────────────────────────────┼──────────────────────┘
+                                                       ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AZURE SERVICE BUS                                                             │
+│  ┌───────────────────────────────────────────┐  ┌──────────────────────────┐ │
+│  │ claims-reprice Queue (16 partitions)      │  │ Dead Letter Queue        │ │
+│  └─────────────────────┬─────────────────────┘  └──────────────────────────┘ │
+└────────────────────────┼────────────────────────────────────────────────────-┘
+                         │
+        ┌────────────────┼────────────────┐
+        ▼                ▼                ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ KEDA AUTOSCALER                                                               │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐               │
+│  │ Queue Depth     │→ │ Scaling Rules   │→ │ Metrics         │               │
+│  │ Monitor         │  │                 │  │ Collector       │               │
+│  └─────────────────┘  └────────┬────────┘  └─────────────────┘               │
+└────────────────────────────────┼─────────────────────────────────────────────┘
+                                 │ Scale Out/In
+                                 ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ AZURE CONTAINER APPS - Pricing Worker Pool                                    │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌─────────┐                 │
+│  │Worker 1 │ │Worker 2 │ │Worker 3 │ │Worker 4 │ │Worker N │                 │
+│  │~50/sec  │ │~50/sec  │ │~50/sec  │ │~50/sec  │ │~50/sec  │                 │
+│  └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘ └────┬────┘                 │
+└───────┼───────────┼───────────┼───────────┼───────────┼─────────────────────-┘
+        │           │           │           │           │
+        └───────────┴───────────┼───────────┴───────────┘
+                                ▼
+┌──────────────────────────────────────────────────────────────────────────────┐
+│ OUTPUT LAYER                                                                  │
+│  ┌─────────────────────────┐  ┌─────────────────────────┐                    │
+│  │ claims-priced Queue     │→ │ Cosmos DB               │                    │
+│  └─────────────────────────┘  └─────────────────────────┘                    │
+└──────────────────────────────────────────────────────────────────────────────┘
+
+OBSERVABILITY: Application Insights ← Workers → Log Analytics → Alert Rules</code></pre>
+<hr />
+<h2 id="queue-based-load-distribution">Queue-Based Load
+Distribution</h2>
+<h3 id="competing-consumers-pattern">Competing Consumers Pattern</h3>
+<p>Azure Service Bus enables <strong>competing consumers</strong> -
+multiple worker containers pull messages from the same queue,
+distributing the workload evenly:</p>
+<pre><code>SERVICE BUS QUEUE                    WORKER CONTAINERS
+┌─────────────────────────┐          ┌─────────────────────┐
+│ ┌───┐ ┌───┐ ┌───┐ ┌───┐│          │  ┌─────────────┐    │
+│ │ 1 │ │ 2 │ │ 3 │ │...││──Lock────│→ │  Worker 1   │    │
+│ └───┘ └───┘ └───┘ └───┘│          │  └─────────────┘    │
+│ ┌───┐ ┌───┐ ┌───┐      │          │  ┌─────────────┐    │
+│ │ 4 │ │ 5 │ │ 6 │      │──Lock────│→ │  Worker 2   │    │
+│ └───┘ └───┘ └───┘      │          │  └─────────────┘    │
+│                        │          │  ┌─────────────┐    │
+│                        │──Lock────│→ │  Worker 3   │    │
+│                        │          │  └─────────────┘    │
+└─────────────────────────┘          └─────────────────────┘
+
+Distribution: Claims 1,4 → Worker 1 | Claims 2,5 → Worker 2 | Claims 3,6 → Worker 3</code></pre>
+<h3 id="message-processing-flow">Message Processing Flow</h3>
+<p><strong>Parallel Processing Sequence:</strong></p>
+<table>
+<colgroup>
+<col style="width: 26%" />
+<col style="width: 34%" />
+<col style="width: 39%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Action</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Queue State</td>
+<td>Queue has 1000 messages</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Parallel Receive</td>
+<td>Worker 1 receives batch of 10, Worker 2 receives batch of 10</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Price Claims</td>
+<td>Worker 1 → Bridge: claims 1-10, Worker 2 → Bridge: claims 11-20</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Results Return</td>
+<td>Bridge → Worker 1: results 1-10, Bridge → Worker 2: results
+11-20</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Parallel Complete</td>
+<td>Worker 1 completes 1-10, Worker 2 completes 11-20</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Parallel Send</td>
+<td>Both workers send results to Output Queue</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Queue State</td>
+<td>Queue now has 980 messages</td>
+</tr>
+</tbody>
+</table>
+<pre><code>Service Bus (1000 msgs) → Workers (parallel batches of 10) → Pricing Bridge → Output Queue → Service Bus (980 msgs)</code></pre>
+<h3 id="worker-service-implementation">Worker Service
+Implementation</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> PricingWorkerService <span class="op">:</span> BackgroundService</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ServiceBusClient _serviceBusClient<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IPricingBridge _pricingBridge<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ILogger<span class="op">&lt;</span>PricingWorkerService<span class="op">&gt;</span> _logger<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> async Task <span class="fu">ExecuteAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> processor <span class="op">=</span> _serviceBusClient<span class="op">.</span><span class="fu">CreateProcessor</span><span class="op">(</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;claims-reprice&quot;</span><span class="op">,</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>            <span class="kw">new</span> ServiceBusProcessorOptions</span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Process 10 claims in parallel per container</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                MaxConcurrentCalls <span class="op">=</span> <span class="dv">10</span><span class="op">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Pre-fetch next batch while processing</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>                PrefetchCount <span class="op">=</span> <span class="dv">20</span><span class="op">,</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Manual acknowledgment after successful pricing</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>                AutoCompleteMessages <span class="op">=</span> <span class="kw">false</span><span class="op">,</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Receive mode with lock</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>                ReceiveMode <span class="op">=</span> ServiceBusReceiveMode<span class="op">.</span><span class="fu">PeekLock</span><span class="op">,</span></span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>                <span class="co">// Lock duration (must complete within this time)</span></span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>                MaxAutoLockRenewalDuration <span class="op">=</span> TimeSpan<span class="op">.</span><span class="fu">FromMinutes</span><span class="op">(</span><span class="dv">5</span><span class="op">)</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            <span class="op">});</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>        processor<span class="op">.</span><span class="fu">ProcessMessageAsync</span> <span class="op">+=</span> ProcessClaimAsync<span class="op">;</span></span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>        processor<span class="op">.</span><span class="fu">ProcessErrorAsync</span> <span class="op">+=</span> HandleErrorAsync<span class="op">;</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        await processor<span class="op">.</span><span class="fu">StartProcessingAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Keep running until cancelled</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        await Task<span class="op">.</span><span class="fu">Delay</span><span class="op">(</span>Timeout<span class="op">.</span><span class="fu">Infinite</span><span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> async Task <span class="fu">ProcessClaimAsync</span><span class="op">(</span>ProcessMessageEventArgs args<span class="op">)</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> claim <span class="op">=</span> JsonSerializer<span class="op">.</span><span class="fu">Deserialize</span><span class="op">&lt;</span>ClaimInput<span class="op">&gt;(</span>args<span class="op">.</span><span class="fu">Message</span><span class="op">.</span><span class="fu">Body</span><span class="op">);</span></span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;Processing claim {ClaimId} on worker {WorkerId}&quot;</span><span class="op">,</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>            claim<span class="op">.</span><span class="fu">ClaimId</span><span class="op">,</span></span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>            Environment<span class="op">.</span><span class="fu">MachineName</span><span class="op">);</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        <span class="kw">try</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Execute repricing via native bridge</span></span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> result <span class="op">=</span> await _pricingBridge<span class="op">.</span><span class="fu">PriceClaimAsync</span><span class="op">(</span>claim<span class="op">);</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Send to output queue</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>            await _outputSender<span class="op">.</span><span class="fu">SendMessageAsync</span><span class="op">(</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>                <span class="kw">new</span> <span class="fu">ServiceBusMessage</span><span class="op">(</span>JsonSerializer<span class="op">.</span><span class="fu">SerializeToUtf8Bytes</span><span class="op">(</span>result<span class="op">))</span></span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>                    ContentType <span class="op">=</span> <span class="st">&quot;application/json&quot;</span><span class="op">,</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>                    CorrelationId <span class="op">=</span> claim<span class="op">.</span><span class="fu">ClaimId</span></span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>                <span class="op">});</span></span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Acknowledge successful processing</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>            await args<span class="op">.</span><span class="fu">CompleteMessageAsync</span><span class="op">(</span>args<span class="op">.</span><span class="fu">Message</span><span class="op">);</span></span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>            _metrics<span class="op">.</span><span class="fu">IncrementClaimsProcessed</span><span class="op">();</span></span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>        <span class="kw">catch</span> <span class="op">(</span>Exception ex<span class="op">)</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogError</span><span class="op">(</span>ex<span class="op">,</span> <span class="st">&quot;Failed to price claim {ClaimId}&quot;</span><span class="op">,</span> claim<span class="op">.</span><span class="fu">ClaimId</span><span class="op">);</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Will be retried or sent to DLQ after max retries</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>            await args<span class="op">.</span><span class="fu">AbandonMessageAsync</span><span class="op">(</span>args<span class="op">.</span><span class="fu">Message</span><span class="op">);</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>            _metrics<span class="op">.</span><span class="fu">IncrementClaimsFailed</span><span class="op">();</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="keda-autoscaling">KEDA Autoscaling</h2>
+<h3 id="how-keda-works">How KEDA Works</h3>
+<pre><code>┌───────────────────────────────────────┐
+│ AZURE SERVICE BUS                     │
+│  ┌─────────────────────────────────┐  │
+│  │ claims-reprice Queue            │  │
+│  └──────────────┬──────────────────┘  │
+│                 ▼                     │
+│  ┌─────────────────────────────────┐  │
+│  │ Queue Metrics                   │  │
+│  │ • Message Count                 │  │
+│  │ • Active Messages               │──┼─── Poll every 30s ───┐
+│  └─────────────────────────────────┘  │                      │
+└───────────────────────────────────────┘                      │
+                                                               ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ KEDA CONTROLLER                                                            │
+│  ┌─────────────────────┐                 ┌─────────────────────┐          │
+│  │ Service Bus Scaler  │────────────────→│ Horizontal Pod      │          │
+│  │                     │                 │ Autoscaler          │          │
+│  │ Messages: 2000      │                 │                     │          │
+│  │ Target: 100/replica │                 │ Desired: 20 replicas│          │
+│  └─────────────────────┘                 └──────────┬──────────┘          │
+└─────────────────────────────────────────────────────┼─────────────────────┘
+                                                      │ Scale to 20
+                                                      ▼
+┌───────────────────────────────────────────────────────────────────────────┐
+│ CONTAINER APPS                                                             │
+│  ┌─────────────────────────────────────────────────────────────────────┐  │
+│  │ Current Replicas: 5 → Scaling to 20                                 │  │
+│  └─────────────────────────────────────────────────────────────────────┘  │
+└───────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="scaling-rules-configuration">Scaling Rules Configuration</h3>
+<p><strong>Scaling Rules:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Queue Messages</th>
+<th>Replica Count</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0-100 msgs</td>
+<td>3 replicas</td>
+</tr>
+<tr>
+<td>100-500 msgs</td>
+<td>5 replicas</td>
+</tr>
+<tr>
+<td>500-1000 msgs</td>
+<td>10 replicas</td>
+</tr>
+<tr>
+<td>1000-5000 msgs</td>
+<td>20 replicas</td>
+</tr>
+<tr>
+<td>5000+ msgs</td>
+<td>50 replicas</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Scaling Behavior:</strong> - <strong>Scale Up:</strong>
+Immediate, +100% max per step - <strong>Scale Down:</strong> 5 minute
+cooldown, -10% per step</p>
+<h3 id="azure-container-apps-scaling-configuration">Azure Container Apps
+Scaling Configuration</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Container App scaling configuration</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">apiVersion</span><span class="kw">:</span><span class="at"> apps.containerapps.azure.com/v1</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="fu">kind</span><span class="kw">:</span><span class="at"> ContainerApp</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">name</span><span class="kw">:</span><span class="at"> pricing-worker</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="fu">spec</span><span class="kw">:</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">configuration</span><span class="kw">:</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">secrets</span><span class="kw">:</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> servicebus-connection</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">value</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;${SERVICEBUS_CONNECTION_STRING}&quot;</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a><span class="at">  </span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">template</span><span class="kw">:</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">containers</span><span class="kw">:</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> pricing-worker</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">image</span><span class="kw">:</span><span class="at"> acr-pem.azurecr.io/pricing-worker:latest</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">resources</span><span class="kw">:</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">cpu</span><span class="kw">:</span><span class="at"> </span><span class="fl">2.0</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">memory</span><span class="kw">:</span><span class="at"> 4Gi</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">env</span><span class="kw">:</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> WORKER_CONCURRENCY</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">value</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;10&quot;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="at">    </span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">scale</span><span class="kw">:</span></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">minReplicas</span><span class="kw">:</span><span class="at"> </span><span class="dv">3</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">maxReplicas</span><span class="kw">:</span><span class="at"> </span><span class="dv">50</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a><span class="at">      </span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">rules</span><span class="kw">:</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="kw">-</span><span class="at"> </span><span class="fu">name</span><span class="kw">:</span><span class="at"> queue-depth-scaler</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="fu">custom</span><span class="kw">:</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">type</span><span class="kw">:</span><span class="at"> azure-servicebus</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">metadata</span><span class="kw">:</span></span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">queueName</span><span class="kw">:</span><span class="at"> claims-reprice</span></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">messageCount</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;100&quot;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">activationMessageCount</span><span class="kw">:</span><span class="at"> </span><span class="st">&quot;10&quot;</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">auth</span><span class="kw">:</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="kw">-</span><span class="at"> </span><span class="fu">secretRef</span><span class="kw">:</span><span class="at"> servicebus-connection</span></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="at">                </span><span class="fu">triggerParameter</span><span class="kw">:</span><span class="at"> connection</span></span></code></pre></div>
+<h3 id="terraform-configuration">Terraform Configuration</h3>
+<pre class="hcl"><code>resource &quot;azurerm_container_app&quot; &quot;pricing_worker&quot; {
+  name                         = &quot;ca-pricing-worker-${var.environment}&quot;
+  resource_group_name          = azurerm_resource_group.compute.name
+  container_app_environment_id = azurerm_container_app_environment.pricing.id
+  revision_mode                = &quot;Single&quot;
+  
+  template {
+    min_replicas = local.is_production ? 3 : 0
+    max_replicas = local.is_production ? 50 : 5
+    
+    container {
+      name   = &quot;pricing-worker&quot;
+      image  = &quot;${azurerm_container_registry.pem.login_server}/pricing-worker:${var.image_tag}&quot;
+      cpu    = 2.0
+      memory = &quot;4Gi&quot;
+      
+      env {
+        name  = &quot;WORKER_CONCURRENCY&quot;
+        value = &quot;10&quot;
+      }
+      
+      env {
+        name        = &quot;ServiceBus__ConnectionString&quot;
+        secret_name = &quot;servicebus-connection&quot;
+      }
+      
+      env {
+        name        = &quot;ApplicationInsights__ConnectionString&quot;
+        secret_name = &quot;appinsights-connection&quot;
+      }
+    }
+    
+    # KEDA scaling rule - scale based on Service Bus queue depth
+    custom_scale_rule {
+      name             = &quot;servicebus-queue-scaler&quot;
+      custom_rule_type = &quot;azure-servicebus&quot;
+      metadata = {
+        queueName              = &quot;claims-reprice&quot;
+        messageCount           = &quot;100&quot;
+        activationMessageCount = &quot;10&quot;
+        namespace              = azurerm_servicebus_namespace.pem.name
+      }
+      authentication {
+        secret_name       = &quot;servicebus-connection&quot;
+        trigger_parameter = &quot;connection&quot;
+      }
+    }
+  }
+  
+  secret {
+    name  = &quot;servicebus-connection&quot;
+    value = azurerm_servicebus_namespace.pem.default_primary_connection_string
+  }
+  
+  secret {
+    name  = &quot;appinsights-connection&quot;
+    value = azurerm_application_insights.pem.connection_string
+  }
+}</code></pre>
+<hr />
+<h2 id="performance-characteristics">Performance Characteristics</h2>
+<h3 id="single-container-performance">Single Container Performance</h3>
+<p><strong>Resource Utilization per Container:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>% of Resources</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Grouping</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>Medicare Pricing</td>
+<td>25%</td>
+</tr>
+<tr>
+<td>JSON Serialization</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>Message Handling</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>Overhead</td>
+<td>5%</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>50-100 claims/second</td>
+<td>Varies by claim complexity</td>
+</tr>
+<tr>
+<td><strong>Latency (p50)</strong></td>
+<td>15-25 ms</td>
+<td>Simple claims</td>
+</tr>
+<tr>
+<td><strong>Latency (p95)</strong></td>
+<td>80-150 ms</td>
+<td>Complex claims with outliers</td>
+</tr>
+<tr>
+<td><strong>Latency (p99)</strong></td>
+<td>200-400 ms</td>
+<td>Edge cases</td>
+</tr>
+<tr>
+<td><strong>Memory Usage</strong></td>
+<td>2-4 GB</td>
+<td>DLLs + working set</td>
+</tr>
+<tr>
+<td><strong>CPU Usage</strong></td>
+<td>60-80% (2 vCPU)</td>
+<td>DRG grouper is CPU-intensive</td>
+</tr>
+<tr>
+<td><strong>Startup Time</strong></td>
+<td>45-60 seconds</td>
+<td>Windows container cold start</td>
+</tr>
+</tbody>
+</table>
+<h3 id="claim-complexity-impact">Claim Complexity Impact</h3>
+<p><strong>Processing Time by Claim Type:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Claim Type</th>
+<th>Processing Time (ms)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Simple IP</td>
+<td>25</td>
+</tr>
+<tr>
+<td>Complex IP</td>
+<td>80</td>
+</tr>
+<tr>
+<td>Simple OP</td>
+<td>20</td>
+</tr>
+<tr>
+<td>Complex OP</td>
+<td>60</td>
+</tr>
+<tr>
+<td>Medicaid</td>
+<td>40</td>
+</tr>
+<tr>
+<td>TRICARE</td>
+<td>50</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Claim Type</th>
+<th>Avg Processing Time</th>
+<th>Claims/sec/Container</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Simple Inpatient</strong></td>
+<td>25 ms</td>
+<td>80</td>
+</tr>
+<tr>
+<td><strong>Complex Inpatient</strong></td>
+<td>80 ms</td>
+<td>25</td>
+</tr>
+<tr>
+<td><strong>Simple Outpatient</strong></td>
+<td>20 ms</td>
+<td>100</td>
+</tr>
+<tr>
+<td><strong>Complex Outpatient</strong></td>
+<td>60 ms</td>
+<td>33</td>
+</tr>
+<tr>
+<td><strong>Medicaid</strong></td>
+<td>40 ms</td>
+<td>50</td>
+</tr>
+<tr>
+<td><strong>TRICARE</strong></td>
+<td>50 ms</td>
+<td>40</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scaled-performance-matrix">Scaled Performance Matrix</h3>
+<p><strong>Throughput vs Replica Count:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Replicas</th>
+<th>Claims/Second</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3</td>
+<td>150</td>
+</tr>
+<tr>
+<td>5</td>
+<td>250</td>
+</tr>
+<tr>
+<td>10</td>
+<td>500</td>
+</tr>
+<tr>
+<td>20</td>
+<td>1,000</td>
+</tr>
+<tr>
+<td>30</td>
+<td>1,500</td>
+</tr>
+<tr>
+<td>50</td>
+<td>2,500</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Replicas</th>
+<th>Throughput</th>
+<th>Claims/Hour</th>
+<th>Claims/Day</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>3 (minimum)</td>
+<td>150/sec</td>
+<td>540,000</td>
+<td>12.9 million</td>
+</tr>
+<tr>
+<td>5</td>
+<td>250/sec</td>
+<td>900,000</td>
+<td>21.6 million</td>
+</tr>
+<tr>
+<td>10</td>
+<td>500/sec</td>
+<td>1,800,000</td>
+<td>43.2 million</td>
+</tr>
+<tr>
+<td>20</td>
+<td>1,000/sec</td>
+<td>3,600,000</td>
+<td>86.4 million</td>
+</tr>
+<tr>
+<td>30</td>
+<td>1,500/sec</td>
+<td>5,400,000</td>
+<td>129.6 million</td>
+</tr>
+<tr>
+<td>50 (maximum)</td>
+<td>2,500/sec</td>
+<td>9,000,000</td>
+<td>216 million</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="partitioning-strategies">Partitioning Strategies</h2>
+<h3 id="partition-by-payer-program">Partition by Payer Program</h3>
+<p>For maximum throughput and isolation, partition claims by program
+type:</p>
+<pre><code>                        ┌─────────────────────────────┐
+                        │ INCOMING CLAIMS             │
+                        │  All Claims                 │
+                        └─────────────┬───────────────┘
+                                      ▼
+                        ┌─────────────────────────────┐
+                        │ INTELLIGENT ROUTER          │
+                        │  Detect Payer Type          │
+                        └──┬────┬────┬────┬────┬──────┘
+                           │    │    │    │    │
+         Bill Type 11x ────┘    │    │    │    └──── TRICARE
+         Bill Type 13x ─────────┘    │    └──── Commercial Payer
+         State Medicaid ─────────────┘
+                                      
+                        ┌─────────────────────────────┐
+                        │ PARTITIONED QUEUES          │
+┌───────────────────────┼─────────────────────────────┼───────────────────────┐
+│ medicare-ip-queue     │ medicare-op-queue           │ medicaid-queue        │
+│ (High Priority)       │ (High Volume)               │ (State-Specific)      │
+└───────────┬───────────┼───────────┬─────────────────┼───────────┬───────────┘
+            │           │           │                 │           │
+            ▼           │           ▼                 │           ▼
+┌───────────────────────┤ ┌─────────────────────────┐ │ ┌───────────────────────┐
+│ Medicare IP Pool      │ │ Medicare OP Pool        │ │ │ Other Programs Pool   │
+│  • Worker 1           │ │  • Worker 1             │ │ │  • Workers for        │
+│  • Worker 2           │ │  • Worker 2             │ │ │    Medicaid           │
+│  • Worker N           │ │  • Worker N             │ │ │    Commercial         │
+└───────────────────────┘ └─────────────────────────┘   │    TRICARE            │
+                                                        └───────────────────────┘</code></pre>
+<p><strong>Routing Rules:</strong> - Bill Type 11x → medicare-ip-queue -
+Bill Type 13x → medicare-op-queue<br />
+- State Medicaid → medicaid-queue - Commercial Payer → commercial-queue
+- TRICARE → tricare-queue</p>
+<h3 id="benefits-of-partitioning">Benefits of Partitioning</h3>
+<table>
+<colgroup>
+<col style="width: 40%" />
+<col style="width: 59%" />
+</colgroup>
+<thead>
+<tr>
+<th>Benefit</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Independent Scaling</strong></td>
+<td>Scale Medicare OP (high volume) separately from TRICARE (low
+volume)</td>
+</tr>
+<tr>
+<td><strong>Resource Optimization</strong></td>
+<td>Different container sizes per program type</td>
+</tr>
+<tr>
+<td><strong>Isolation</strong></td>
+<td>One program’s issues don’t affect others</td>
+</tr>
+<tr>
+<td><strong>SLA Management</strong></td>
+<td>Different priority levels per queue</td>
+</tr>
+<tr>
+<td><strong>Cost Control</strong></td>
+<td>Scale each pool based on actual demand</td>
+</tr>
+</tbody>
+</table>
+<h3 id="partition-scaling-configuration">Partition Scaling
+Configuration</h3>
+<pre class="hcl"><code># Medicare Inpatient - High priority, moderate volume
+resource &quot;azurerm_container_app&quot; &quot;pricing_medicare_ip&quot; {
+  name = &quot;ca-pricing-medicare-ip-${var.environment}&quot;
+  
+  template {
+    min_replicas = 2
+    max_replicas = 15
+    
+    container {
+      cpu    = 2.0
+      memory = &quot;4Gi&quot;
+    }
+    
+    custom_scale_rule {
+      metadata = {
+        queueName    = &quot;medicare-ip-queue&quot;
+        messageCount = &quot;50&quot;  # Scale faster for priority
+      }
+    }
+  }
+}
+
+# Medicare Outpatient - High volume
+resource &quot;azurerm_container_app&quot; &quot;pricing_medicare_op&quot; {
+  name = &quot;ca-pricing-medicare-op-${var.environment}&quot;
+  
+  template {
+    min_replicas = 3
+    max_replicas = 25
+    
+    container {
+      cpu    = 2.0
+      memory = &quot;4Gi&quot;
+    }
+    
+    custom_scale_rule {
+      metadata = {
+        queueName    = &quot;medicare-op-queue&quot;
+        messageCount = &quot;100&quot;
+      }
+    }
+  }
+}
+
+# Commercial - Moderate volume, TAC complexity
+resource &quot;azurerm_container_app&quot; &quot;pricing_commercial&quot; {
+  name = &quot;ca-pricing-commercial-${var.environment}&quot;
+  
+  template {
+    min_replicas = 2
+    max_replicas = 20
+    
+    container {
+      cpu    = 4.0   # More CPU for TAC evaluation
+      memory = &quot;8Gi&quot;
+    }
+    
+    custom_scale_rule {
+      metadata = {
+        queueName    = &quot;commercial-queue&quot;
+        messageCount = &quot;75&quot;
+      }
+    }
+  }
+}</code></pre>
+<hr />
+<h2 id="batch-processing-for-bulk-loads">Batch Processing for Bulk
+Loads</h2>
+<h3 id="batch-import-architecture">Batch Import Architecture</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ BATCH SOURCE                                                                 │
+│  CSV/JSON File (500K Claims) → Azure Blob Storage                           │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ IMPORT PIPELINE                                                              │
+│  Blob Trigger Function → Claim Parser → Batch Processor                     │
+│                                              │                               │
+│                                              ▼ (1000 msg batches)           │
+└──────────────────────────────────────────────┼──────────────────────────────┘
+                                               ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ SERVICE BUS                                                                  │
+│  Session-Enabled Queue → Partitions (P1, P2, P3...)                         │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PROCESSING                                                                   │
+│  Worker Pool (Auto-scaled)                                                  │
+└──────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ PROGRESS TRACKING                                                            │
+│  Cosmos DB (Batch Status) → Status Dashboard                                │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<h3 id="batch-processing-implementation">Batch Processing
+Implementation</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> BatchImportService</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ServiceBusSender _sender<span class="op">;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ILogger<span class="op">&lt;</span>BatchImportService<span class="op">&gt;</span> _logger<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>BatchImportResult<span class="op">&gt;</span> <span class="fu">ImportBatchAsync</span><span class="op">(</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>        Stream claimStream<span class="op">,</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>        BatchOptions options<span class="op">)</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> batchId <span class="op">=</span> Guid<span class="op">.</span><span class="fu">NewGuid</span><span class="op">().</span><span class="fu">ToString</span><span class="op">();</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> totalClaims <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> sentBatches <span class="op">=</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Starting batch import {BatchId}&quot;</span><span class="op">,</span> batchId<span class="op">);</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Stream claims to avoid loading all into memory</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        await <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> claimBatch <span class="kw">in</span> <span class="fu">ParseClaimsAsync</span><span class="op">(</span>claimStream<span class="op">).</span><span class="fu">Chunk</span><span class="op">(</span><span class="dv">1000</span><span class="op">))</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Create message batch for efficient sending</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> messageBatch <span class="op">=</span> await _sender<span class="op">.</span><span class="fu">CreateMessageBatchAsync</span><span class="op">();</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>            <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> claim <span class="kw">in</span> claimBatch<span class="op">)</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>                <span class="dt">var</span> message <span class="op">=</span> <span class="kw">new</span> <span class="fu">ServiceBusMessage</span><span class="op">(</span></span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>                    JsonSerializer<span class="op">.</span><span class="fu">SerializeToUtf8Bytes</span><span class="op">(</span>claim<span class="op">))</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Session for ordered processing per facility</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>                    SessionId <span class="op">=</span> claim<span class="op">.</span><span class="fu">FacilityId</span><span class="op">,</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Correlation for tracking</span></span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>                    CorrelationId <span class="op">=</span> batchId<span class="op">,</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>                    </span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Custom properties for routing</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>                    ApplicationProperties <span class="op">=</span></span>
+<span id="cb11-35"><a href="#cb11-35" aria-hidden="true" tabindex="-1"></a>                    <span class="op">{</span></span>
+<span id="cb11-36"><a href="#cb11-36" aria-hidden="true" tabindex="-1"></a>                        <span class="op">[</span><span class="st">&quot;BatchId&quot;</span><span class="op">]</span> <span class="op">=</span> batchId<span class="op">,</span></span>
+<span id="cb11-37"><a href="#cb11-37" aria-hidden="true" tabindex="-1"></a>                        <span class="op">[</span><span class="st">&quot;ClaimIndex&quot;</span><span class="op">]</span> <span class="op">=</span> totalClaims<span class="op">,</span></span>
+<span id="cb11-38"><a href="#cb11-38" aria-hidden="true" tabindex="-1"></a>                        <span class="op">[</span><span class="st">&quot;PayerType&quot;</span><span class="op">]</span> <span class="op">=</span> claim<span class="op">.</span><span class="fu">Payer</span><span class="op">.</span><span class="fu">PayerType</span></span>
+<span id="cb11-39"><a href="#cb11-39" aria-hidden="true" tabindex="-1"></a>                    <span class="op">}</span></span>
+<span id="cb11-40"><a href="#cb11-40" aria-hidden="true" tabindex="-1"></a>                <span class="op">};</span></span>
+<span id="cb11-41"><a href="#cb11-41" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-42"><a href="#cb11-42" aria-hidden="true" tabindex="-1"></a>                <span class="kw">if</span> <span class="op">(!</span>messageBatch<span class="op">.</span><span class="fu">TryAddMessage</span><span class="op">(</span>message<span class="op">))</span></span>
+<span id="cb11-43"><a href="#cb11-43" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span></span>
+<span id="cb11-44"><a href="#cb11-44" aria-hidden="true" tabindex="-1"></a>                    <span class="co">// Batch full, send and start new</span></span>
+<span id="cb11-45"><a href="#cb11-45" aria-hidden="true" tabindex="-1"></a>                    await _sender<span class="op">.</span><span class="fu">SendMessagesAsync</span><span class="op">(</span>messageBatch<span class="op">);</span></span>
+<span id="cb11-46"><a href="#cb11-46" aria-hidden="true" tabindex="-1"></a>                    sentBatches<span class="op">++;</span></span>
+<span id="cb11-47"><a href="#cb11-47" aria-hidden="true" tabindex="-1"></a>                    messageBatch <span class="op">=</span> await _sender<span class="op">.</span><span class="fu">CreateMessageBatchAsync</span><span class="op">();</span></span>
+<span id="cb11-48"><a href="#cb11-48" aria-hidden="true" tabindex="-1"></a>                    messageBatch<span class="op">.</span><span class="fu">TryAddMessage</span><span class="op">(</span>message<span class="op">);</span></span>
+<span id="cb11-49"><a href="#cb11-49" aria-hidden="true" tabindex="-1"></a>                <span class="op">}</span></span>
+<span id="cb11-50"><a href="#cb11-50" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb11-51"><a href="#cb11-51" aria-hidden="true" tabindex="-1"></a>                totalClaims<span class="op">++;</span></span>
+<span id="cb11-52"><a href="#cb11-52" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb11-53"><a href="#cb11-53" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb11-54"><a href="#cb11-54" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Send remaining messages</span></span>
+<span id="cb11-55"><a href="#cb11-55" aria-hidden="true" tabindex="-1"></a>            <span class="kw">if</span> <span class="op">(</span>messageBatch<span class="op">.</span><span class="fu">Count</span> <span class="op">&gt;</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb11-56"><a href="#cb11-56" aria-hidden="true" tabindex="-1"></a>            <span class="op">{</span></span>
+<span id="cb11-57"><a href="#cb11-57" aria-hidden="true" tabindex="-1"></a>                await _sender<span class="op">.</span><span class="fu">SendMessagesAsync</span><span class="op">(</span>messageBatch<span class="op">);</span></span>
+<span id="cb11-58"><a href="#cb11-58" aria-hidden="true" tabindex="-1"></a>                sentBatches<span class="op">++;</span></span>
+<span id="cb11-59"><a href="#cb11-59" aria-hidden="true" tabindex="-1"></a>            <span class="op">}</span></span>
+<span id="cb11-60"><a href="#cb11-60" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb11-61"><a href="#cb11-61" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span></span>
+<span id="cb11-62"><a href="#cb11-62" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;Batch {BatchId}: Sent {TotalClaims} claims in {Batches} batches&quot;</span><span class="op">,</span></span>
+<span id="cb11-63"><a href="#cb11-63" aria-hidden="true" tabindex="-1"></a>                batchId<span class="op">,</span> totalClaims<span class="op">,</span> sentBatches<span class="op">);</span></span>
+<span id="cb11-64"><a href="#cb11-64" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb11-65"><a href="#cb11-65" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-66"><a href="#cb11-66" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Track batch status</span></span>
+<span id="cb11-67"><a href="#cb11-67" aria-hidden="true" tabindex="-1"></a>        await _batchTracker<span class="op">.</span><span class="fu">CreateBatchAsync</span><span class="op">(</span><span class="kw">new</span> BatchStatus</span>
+<span id="cb11-68"><a href="#cb11-68" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb11-69"><a href="#cb11-69" aria-hidden="true" tabindex="-1"></a>            BatchId <span class="op">=</span> batchId<span class="op">,</span></span>
+<span id="cb11-70"><a href="#cb11-70" aria-hidden="true" tabindex="-1"></a>            TotalClaims <span class="op">=</span> totalClaims<span class="op">,</span></span>
+<span id="cb11-71"><a href="#cb11-71" aria-hidden="true" tabindex="-1"></a>            ProcessedClaims <span class="op">=</span> <span class="dv">0</span><span class="op">,</span></span>
+<span id="cb11-72"><a href="#cb11-72" aria-hidden="true" tabindex="-1"></a>            Status <span class="op">=</span> BatchState<span class="op">.</span><span class="fu">Processing</span><span class="op">,</span></span>
+<span id="cb11-73"><a href="#cb11-73" aria-hidden="true" tabindex="-1"></a>            StartedAt <span class="op">=</span> DateTimeOffset<span class="op">.</span><span class="fu">UtcNow</span></span>
+<span id="cb11-74"><a href="#cb11-74" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb11-75"><a href="#cb11-75" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-76"><a href="#cb11-76" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> <span class="kw">new</span> BatchImportResult</span>
+<span id="cb11-77"><a href="#cb11-77" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb11-78"><a href="#cb11-78" aria-hidden="true" tabindex="-1"></a>            BatchId <span class="op">=</span> batchId<span class="op">,</span></span>
+<span id="cb11-79"><a href="#cb11-79" aria-hidden="true" tabindex="-1"></a>            TotalClaims <span class="op">=</span> totalClaims<span class="op">,</span></span>
+<span id="cb11-80"><a href="#cb11-80" aria-hidden="true" tabindex="-1"></a>            EstimatedCompletionTime <span class="op">=</span> <span class="fu">EstimateCompletion</span><span class="op">(</span>totalClaims<span class="op">)</span></span>
+<span id="cb11-81"><a href="#cb11-81" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb11-82"><a href="#cb11-82" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-83"><a href="#cb11-83" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-84"><a href="#cb11-84" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> TimeSpan <span class="fu">EstimateCompletion</span><span class="op">(</span><span class="dt">int</span> claimCount<span class="op">)</span></span>
+<span id="cb11-85"><a href="#cb11-85" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb11-86"><a href="#cb11-86" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Assume 1000 claims/sec with full scale-out</span></span>
+<span id="cb11-87"><a href="#cb11-87" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> seconds <span class="op">=</span> claimCount <span class="op">/</span> <span class="fl">1000.0</span><span class="op">;</span></span>
+<span id="cb11-88"><a href="#cb11-88" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Add buffer for scale-out time</span></span>
+<span id="cb11-89"><a href="#cb11-89" aria-hidden="true" tabindex="-1"></a>        seconds <span class="op">+=</span> <span class="dv">60</span><span class="op">;</span></span>
+<span id="cb11-90"><a href="#cb11-90" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> TimeSpan<span class="op">.</span><span class="fu">FromSeconds</span><span class="op">(</span>seconds<span class="op">);</span></span>
+<span id="cb11-91"><a href="#cb11-91" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-92"><a href="#cb11-92" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="batch-progress-tracking">Batch Progress Tracking</h3>
+<p><strong>User Monitoring Flow (every 5 seconds):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Dashboard</td>
+<td>Status API</td>
+<td>GET /batches/{batchId}/status</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Status API</td>
+<td>Cosmos DB</td>
+<td>Query batch status</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Cosmos DB</td>
+<td>Status API</td>
+<td>Return status document</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Status API</td>
+<td>Dashboard</td>
+<td>Return progress response</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Background Tracker (every 30 seconds):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Progress Tracker</td>
+<td>Service Bus</td>
+<td>Get queue metrics</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Service Bus</td>
+<td>Progress Tracker</td>
+<td>Return messages remaining</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Progress Tracker</td>
+<td>Cosmos DB</td>
+<td>Update processed count</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result:</strong> Progress: 450,000 / 500,000 (90%)</p>
+<hr />
+<h2 id="scaling-scenarios">Scaling Scenarios</h2>
+<h3 id="scenario-1-daily-batch-load">Scenario 1: Daily Batch Load</h3>
+<p><strong>Daily Batch Processing Timeline (500K Claims):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Time</th>
+<th>Phase</th>
+<th>Event</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>6:00 AM</td>
+<td>Morning Load</td>
+<td>Batch uploaded, queue fills to 500K</td>
+</tr>
+<tr>
+<td>6:05 AM</td>
+<td>Morning Load</td>
+<td>KEDA detects load, scale-out begins</td>
+</tr>
+<tr>
+<td>6:10 AM</td>
+<td>Morning Load</td>
+<td>30 replicas running, processing at 1500/sec</td>
+</tr>
+<tr>
+<td>6:10-7:00 AM</td>
+<td>Processing</td>
+<td>Steady-state processing, queue draining</td>
+</tr>
+<tr>
+<td>7:00 AM</td>
+<td>Completion</td>
+<td>Queue nearly empty</td>
+</tr>
+<tr>
+<td>7:05 AM</td>
+<td>Completion</td>
+<td>Scale-in begins</td>
+</tr>
+<tr>
+<td>7:30 AM</td>
+<td>Completion</td>
+<td>Back to 3 replicas, batch complete</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scenario-2-real-time-streaming">Scenario 2: Real-Time
+Streaming</h3>
+<p><strong>24-Hour Real-Time Claim Flow:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Hour</th>
+<th>Incoming (claims/min)</th>
+<th>Capacity (claims/min)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>50</td>
+<td>150</td>
+</tr>
+<tr>
+<td>4</td>
+<td>30</td>
+<td>150</td>
+</tr>
+<tr>
+<td>8</td>
+<td>200</td>
+<td>150 → scales up</td>
+</tr>
+<tr>
+<td>12</td>
+<td>400</td>
+<td>300</td>
+</tr>
+<tr>
+<td>16</td>
+<td>350</td>
+<td>300</td>
+</tr>
+<tr>
+<td>20</td>
+<td>150</td>
+<td>150</td>
+</tr>
+<tr>
+<td>24</td>
+<td>50</td>
+<td>150</td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Time Period</th>
+<th>Incoming Rate</th>
+<th>Replicas</th>
+<th>Capacity</th>
+<th>Queue Depth</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>12:00-6:00 AM</td>
+<td>50/min</td>
+<td>3</td>
+<td>9,000/min</td>
+<td>~0</td>
+</tr>
+<tr>
+<td>6:00-8:00 AM</td>
+<td>200/min</td>
+<td>3</td>
+<td>9,000/min</td>
+<td>~0</td>
+</tr>
+<tr>
+<td>8:00 AM-12:00 PM</td>
+<td>400/min</td>
+<td>5</td>
+<td>15,000/min</td>
+<td>~0</td>
+</tr>
+<tr>
+<td>12:00-6:00 PM</td>
+<td>350/min</td>
+<td>5</td>
+<td>15,000/min</td>
+<td>~0</td>
+</tr>
+<tr>
+<td>6:00-12:00 AM</td>
+<td>150/min</td>
+<td>3</td>
+<td>9,000/min</td>
+<td>~0</td>
+</tr>
+</tbody>
+</table>
+<h3 id="scenario-3-month-end-surge">Scenario 3: Month-End Surge</h3>
+<p><strong>Month-End Surge Handling:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Metric</th>
+<th>Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Normal Day</strong></td>
+<td>Rate</td>
+<td>200 claims/min</td>
+</tr>
+<tr>
+<td></td>
+<td>Replicas</td>
+<td>3</td>
+</tr>
+<tr>
+<td><strong>Month-End Surge</strong></td>
+<td>Rate</td>
+<td>2000 claims/min (10x normal)</td>
+</tr>
+<tr>
+<td></td>
+<td>Queue Spike</td>
+<td>50,000 messages</td>
+</tr>
+<tr>
+<td></td>
+<td>KEDA Response</td>
+<td>Scales to 50 replicas</td>
+</tr>
+<tr>
+<td></td>
+<td>Processing</td>
+<td>2,500/sec</td>
+</tr>
+<tr>
+<td></td>
+<td>Backlog Clear</td>
+<td>~20 minutes</td>
+</tr>
+<tr>
+<td><strong>Recovery</strong></td>
+<td>Scale-in</td>
+<td>5-10 minutes</td>
+</tr>
+<tr>
+<td></td>
+<td>Final State</td>
+<td>Return to 3 replicas</td>
+</tr>
+</tbody>
+</table>
+<pre><code>Normal Day (200/min, 3 replicas) → Month-End (2000/min, 50 replicas) → Recovery (3 replicas)</code></pre>
+<hr />
+<h2 id="cost-optimization">Cost Optimization</h2>
+<h3 id="cost-model">Cost Model</h3>
+<p><strong>Monthly Cost Distribution (Production):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>% of Total</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Container Compute</td>
+<td>45%</td>
+</tr>
+<tr>
+<td>Reserved Capacity</td>
+<td>20%</td>
+</tr>
+<tr>
+<td>Service Bus</td>
+<td>15%</td>
+</tr>
+<tr>
+<td>Application Insights</td>
+<td>10%</td>
+</tr>
+<tr>
+<td>Container Registry</td>
+<td>5%</td>
+</tr>
+<tr>
+<td>Blob Storage</td>
+<td>5%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="optimization-strategies">Optimization Strategies</h3>
+<table>
+<colgroup>
+<col style="width: 29%" />
+<col style="width: 44%" />
+<col style="width: 26%" />
+</colgroup>
+<thead>
+<tr>
+<th>Strategy</th>
+<th>Implementation</th>
+<th>Savings</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Scale to Zero</strong></td>
+<td><code>min_replicas = 0</code> in Dev/QAE</td>
+<td>~80% in non-prod</td>
+</tr>
+<tr>
+<td><strong>Reserved Instances</strong></td>
+<td>Pre-pay for baseline 3 replicas</td>
+<td>~30% on baseline</td>
+</tr>
+<tr>
+<td><strong>Spot Instances</strong></td>
+<td>Burst workers use spot pricing</td>
+<td>~60% on burst capacity</td>
+</tr>
+<tr>
+<td><strong>Right-sizing</strong></td>
+<td>Monitor and adjust CPU/memory</td>
+<td>~20%</td>
+</tr>
+<tr>
+<td><strong>Scheduled Scaling</strong></td>
+<td>Scale down overnight</td>
+<td>~15%</td>
+</tr>
+</tbody>
+</table>
+<h3 id="environment-specific-configuration">Environment-Specific
+Configuration</h3>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Min Replicas</th>
+<th>Max Replicas</th>
+<th>CPU</th>
+<th>Memory</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Development</strong></td>
+<td>0</td>
+<td>2</td>
+<td>1.0</td>
+<td>2Gi</td>
+</tr>
+<tr>
+<td><strong>QA Environment</strong></td>
+<td>0</td>
+<td>5</td>
+<td>2.0</td>
+<td>4Gi</td>
+</tr>
+<tr>
+<td><strong>UAT</strong></td>
+<td>1</td>
+<td>10</td>
+<td>2.0</td>
+<td>4Gi</td>
+</tr>
+<tr>
+<td><strong>Production</strong></td>
+<td>3</td>
+<td>50</td>
+<td>2.0</td>
+<td>4Gi</td>
+</tr>
+</tbody>
+</table>
+<h3 id="cost-calculator">Cost Calculator</h3>
+<pre class="hcl"><code>locals {
+  # Container Apps pricing (approximate)
+  container_cost_per_vcpu_hour   = 0.000024
+  container_cost_per_gib_hour    = 0.000003
+  
+  # Calculate baseline cost
+  baseline_replicas = local.is_production ? 3 : 1
+  vcpu_per_replica  = 2.0
+  memory_per_replica = 4  # GiB
+  
+  hours_per_month = 730
+  
+  baseline_cost = (
+    (baseline_replicas * vcpu_per_replica * container_cost_per_vcpu_hour * hours_per_month) +
+    (baseline_replicas * memory_per_replica * container_cost_per_gib_hour * hours_per_month)
+  )
+  
+  # Estimate burst cost (assume 10% of month at max scale)
+  burst_hours = hours_per_month * 0.10
+  max_replicas = local.is_production ? 50 : 5
+  
+  burst_cost = (
+    (max_replicas * vcpu_per_replica * container_cost_per_vcpu_hour * burst_hours) +
+    (max_replicas * memory_per_replica * container_cost_per_gib_hour * burst_hours)
+  )
+  
+  estimated_monthly_cost = local.baseline_cost + local.burst_cost
+}</code></pre>
+<hr />
+<h2 id="monitoring-and-alerting">Monitoring and Alerting</h2>
+<h3 id="key-metrics-dashboard">Key Metrics Dashboard</h3>
+<p><strong>Key Performance Metrics:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Metric</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>claims_priced_total</td>
+<td>Counter</td>
+</tr>
+<tr>
+<td></td>
+<td>claims_priced_per_second</td>
+<td>Gauge</td>
+</tr>
+<tr>
+<td><strong>Latency</strong></td>
+<td>pricing_duration_ms</td>
+<td>Histogram</td>
+</tr>
+<tr>
+<td></td>
+<td>queue_wait_time_ms</td>
+<td>Histogram</td>
+</tr>
+<tr>
+<td><strong>Health</strong></td>
+<td>queue_depth</td>
+<td>Gauge</td>
+</tr>
+<tr>
+<td></td>
+<td>active_replicas</td>
+<td>Gauge</td>
+</tr>
+<tr>
+<td></td>
+<td>error_rate</td>
+<td>Gauge</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dashboard Mapping:</strong> - Operations Dashboard ←
+Throughput, Health metrics - Performance Dashboard ← Latency metrics -
+Cost Dashboard ← Health metrics</p>
+<h3 id="alert-rules">Alert Rules</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 30%" />
+<col style="width: 27%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>Alert</th>
+<th>Condition</th>
+<th>Severity</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Queue Backup</strong></td>
+<td>Queue depth &gt; 10,000 for 5 min</td>
+<td>Warning</td>
+<td>Page on-call</td>
+</tr>
+<tr>
+<td><strong>Processing Failure</strong></td>
+<td>Error rate &gt; 5%</td>
+<td>Critical</td>
+<td>Page on-call</td>
+</tr>
+<tr>
+<td><strong>High Latency</strong></td>
+<td>p95 &gt; 1 second</td>
+<td>Warning</td>
+<td>Investigate</td>
+</tr>
+<tr>
+<td><strong>Scale Limit</strong></td>
+<td>At max replicas for 10 min</td>
+<td>Warning</td>
+<td>Consider limit increase</td>
+</tr>
+<tr>
+<td><strong>Dead Letters</strong></td>
+<td>DLQ &gt; 100 messages</td>
+<td>Critical</td>
+<td>Investigate failures</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-insights-queries">Application Insights Queries</h3>
+<pre class="kusto"><code>// Claims processed per minute (last hour)
+customMetrics
+| where name == &quot;claims_priced_total&quot;
+| where timestamp &gt; ago(1h)
+| summarize count = sum(valueCount) by bin(timestamp, 1m)
+| render timechart
+
+// Processing time percentiles
+customMetrics
+| where name == &quot;pricing_duration_ms&quot;
+| where timestamp &gt; ago(1h)
+| summarize 
+    p50 = percentile(value, 50),
+    p95 = percentile(value, 95),
+    p99 = percentile(value, 99)
+    by bin(timestamp, 5m)
+| render timechart
+
+// Replica count over time
+performanceCounters
+| where name == &quot;active_replicas&quot;
+| where timestamp &gt; ago(24h)
+| summarize replicas = avg(value) by bin(timestamp, 15m)
+| render timechart
+
+// Error rate by claim type
+customEvents
+| where name == &quot;PricingFailed&quot;
+| where timestamp &gt; ago(24h)
+| summarize errors = count() by tostring(customDimensions.ClaimType)
+| render piechart</code></pre>
+<hr />
+<h2 id="capacity-planning">Capacity Planning</h2>
+<h3 id="sizing-guidelines">Sizing Guidelines</h3>
+<table>
+<thead>
+<tr>
+<th>Deployment Size</th>
+<th>Claims/Day</th>
+<th>Min Replicas</th>
+<th>Max Replicas</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Small</strong></td>
+<td>&lt; 1M</td>
+<td>3</td>
+<td>10</td>
+<td>Standard deployment</td>
+</tr>
+<tr>
+<td><strong>Medium</strong></td>
+<td>1M - 10M</td>
+<td>5</td>
+<td>30</td>
+<td>Standard deployment</td>
+</tr>
+<tr>
+<td><strong>Large</strong></td>
+<td>10M - 100M</td>
+<td>10</td>
+<td>100</td>
+<td>Standard deployment</td>
+</tr>
+<tr>
+<td><strong>Enterprise</strong></td>
+<td>&gt; 100M</td>
+<td>-</td>
+<td>-</td>
+<td>Multi-region deployment</td>
+</tr>
+</tbody>
+</table>
+<h3 id="capacity-formula">Capacity Formula</h3>
+<pre><code>Required Replicas = (Peak Claims/Hour) / (Claims/Hour/Replica)
+                  = (Peak Claims/Hour) / (180,000)
+
+Buffer = Required Replicas * 1.5 (50% headroom)
+
+Max Replicas = Buffer * 2 (for sudden spikes)</code></pre>
+<p><strong>Example:</strong> - Peak load: 5 million claims/hour -
+Required: 5,000,000 / 180,000 = 28 replicas - With buffer: 28 * 1.5 = 42
+replicas - Max setting: 42 * 2 = 84 replicas (round to 100)</p>
+<hr />
+<h2 id="summary">Summary</h2>
+<p>The containerized repricing solution provides enterprise-grade
+scalability through:</p>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 41%" />
+<col style="width: 25%" />
+</colgroup>
+<thead>
+<tr>
+<th>Capability</th>
+<th>Implementation</th>
+<th>Benefit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Horizontal Scaling</strong></td>
+<td>KEDA + Container Apps</td>
+<td>Automatic scale-out/in</td>
+</tr>
+<tr>
+<td><strong>Queue Distribution</strong></td>
+<td>Service Bus competing consumers</td>
+<td>Even load distribution</td>
+</tr>
+<tr>
+<td><strong>Partitioning</strong></td>
+<td>Multiple queues by program</td>
+<td>Isolation and optimization</td>
+</tr>
+<tr>
+<td><strong>Batch Processing</strong></td>
+<td>Session-based queuing</td>
+<td>Efficient bulk loads</td>
+</tr>
+<tr>
+<td><strong>Cost Optimization</strong></td>
+<td>Scale to zero, reserved instances</td>
+<td>30-80% savings</td>
+</tr>
+<tr>
+<td><strong>Observability</strong></td>
+<td>Application Insights</td>
+<td>Real-time monitoring</td>
+</tr>
+</tbody>
+</table>
+<h3 id="performance-guarantees">Performance Guarantees</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>SLA</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Throughput</strong></td>
+<td>Up to 2,500 claims/second</td>
+</tr>
+<tr>
+<td><strong>Daily Capacity</strong></td>
+<td>200+ million claims</td>
+</tr>
+<tr>
+<td><strong>Latency (p95)</strong></td>
+<td>&lt; 500 ms</td>
+</tr>
+<tr>
+<td><strong>Availability</strong></td>
+<td>99.9%</td>
+</tr>
+<tr>
+<td><strong>Scale-out Time</strong></td>
+<td>&lt; 2 minutes</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="01-REPRICING-MASTER-PLAN.html">01-REPRICING-MASTER-PLAN.md</a> -
+Overall strategy</li>
+<li><a
+href="03-CONTAINERIZATION-STRATEGY.html">03-CONTAINERIZATION-STRATEGY.md</a>
+- Container architecture</li>
+<li><a
+href="05-INTEGRATION-WITH-PEM.html">05-INTEGRATION-WITH-PEM.md</a> - PEM
+integration</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete<br />
+<strong>Last Updated:</strong> January 16, 2026</p>
+</body>
+</html>

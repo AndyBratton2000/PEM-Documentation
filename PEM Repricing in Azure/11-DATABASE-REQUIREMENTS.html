@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>11-DATABASE-REQUIREMENTS</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="database-requirements-for-containerized-repricing">Database
+Requirements for Containerized Repricing</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Deep-Dive Technical Reference</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document catalogs all database tables, reference data, and data
+access patterns required for the containerized repricing engine.
+Understanding these dependencies is critical for determining: 1. What
+data must be accessible from the container 2. What data can be embedded
+vs. queried at runtime 3. What caching strategies to employ</p>
+<hr />
+<h2 id="database-architecture">1. Database Architecture</h2>
+<h3 id="current-production-environment">Current Production
+Environment</h3>
+<p><strong>Database Hierarchy:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Databases</th>
+<th>Size/Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Primary SQL Server</strong></td>
+<td>CBO_Global</td>
+<td>235 GB</td>
+</tr>
+<tr>
+<td></td>
+<td>Global_Contract_DB</td>
+<td>24 GB</td>
+</tr>
+<tr>
+<td><strong>Support Databases</strong></td>
+<td>CodeCorrect</td>
+<td>Code Sets</td>
+</tr>
+<tr>
+<td></td>
+<td>CC_CORE</td>
+<td>Revenue Codes</td>
+</tr>
+<tr>
+<td></td>
+<td>IMACS_Automation</td>
+<td>Jobs</td>
+</tr>
+<tr>
+<td><strong>Client Databases</strong></td>
+<td>RMT_*</td>
+<td>Per-Client</td>
+</tr>
+<tr>
+<td></td>
+<td>ClientFacility_*</td>
+<td>Per-Facility</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Dependencies:</strong> Global_Contract_DB → CBO_Global →
+CodeCorrect, CC_CORE</p>
+<h3 id="container-access-patterns">Container Access Patterns</h3>
+<table>
+<colgroup>
+<col style="width: 28%" />
+<col style="width: 40%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Description</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Embedded</strong></td>
+<td>Data baked into container image</td>
+<td>Static reference data (DRG weights)</td>
+</tr>
+<tr>
+<td><strong>Cached</strong></td>
+<td>Loaded at startup, refreshed periodically</td>
+<td>Fee schedules, rates</td>
+</tr>
+<tr>
+<td><strong>Runtime Query</strong></td>
+<td>Real-time database access</td>
+<td>Contract lookup, debrief</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="drg-weight-tables">2. DRG Weight Tables</h2>
+<h3 id="federal-medicare-drg-weights">Federal Medicare DRG Weights</h3>
+<p><strong>Table:</strong> <code>MCRFEDRG</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MCRFEDRG (</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    DRG_CODE        <span class="dt">VARCHAR</span>(<span class="dv">4</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    DRG_VERSION     <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    WEIGHT          <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">4</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    ARITHMETIC_LOS  <span class="dt">DECIMAL</span>(<span class="dv">6</span>,<span class="dv">2</span>),</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    GEOMETRIC_LOS   <span class="dt">DECIMAL</span>(<span class="dv">6</span>,<span class="dv">2</span>),</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    OUTLIER_THRESH  <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">2</span>),</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    DESCRIPTION     <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    MDC             <span class="dt">VARCHAR</span>(<span class="dv">2</span>),</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">TYPE</span>            <span class="dt">VARCHAR</span>(<span class="dv">1</span>),  <span class="co">-- &#39;M&#39;=Medical, &#39;S&#39;=Surgical, &#39;P&#39;=Procedural</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>    TERMINATION_DATE <span class="dt">DATE</span>,</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (DRG_CODE, DRG_VERSION)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~80,000 (all versions)<br />
+<strong>Current Versions:</strong> v40.0, v41.0, v42.0, v43.0<br />
+<strong>Refresh Frequency:</strong> Annually (October)</p>
+<h3 id="state-specific-drg-weights">State-Specific DRG Weights</h3>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>State</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MCAFEDRG</code></td>
+<td>Florida</td>
+<td>FL Medicaid DRG weights</td>
+</tr>
+<tr>
+<td><code>MCATXAPRDRG</code></td>
+<td>Texas</td>
+<td>TX Medicaid APR-DRG</td>
+</tr>
+<tr>
+<td><code>MCANYDRG</code></td>
+<td>New York</td>
+<td>NY Medicaid DRG</td>
+</tr>
+<tr>
+<td><code>MCAILDRG</code></td>
+<td>Illinois</td>
+<td>IL Medicaid DRG</td>
+</tr>
+<tr>
+<td><code>MCAMNJ_ICD10_DRG</code></td>
+<td>New Jersey</td>
+<td>NJ Medicaid DRG</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-strategy">Container Strategy</h3>
+<div class="sourceCode" id="cb2"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">Reference</span> <span class="er">data</span> <span class="er">manifest</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;drgWeights&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;versions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;v42.0&quot;</span><span class="ot">,</span> <span class="st">&quot;v43.0&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;refreshCycle&quot;</span><span class="fu">:</span> <span class="st">&quot;annually&quot;</span><span class="fu">,</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;format&quot;</span><span class="fu">:</span> <span class="st">&quot;json&quot;</span><span class="fu">,</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~5 MB&quot;</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="apceapg-tables">3. APC/EAPG Tables</h2>
+<h3 id="apc-fee-schedule">APC Fee Schedule</h3>
+<p><strong>Table:</strong> <code>APCFEE</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> APCFEE (</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    APC_CODE        <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    APC_VERSION     <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    PAYMENT_RATE    <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    RELATIVE_WEIGHT <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">4</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    STATUS_IND      <span class="dt">VARCHAR</span>(<span class="dv">2</span>),      <span class="co">-- &#39;S&#39;, &#39;T&#39;, &#39;V&#39;, &#39;X&#39;, &#39;N&#39;, etc.</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>    DESCRIPTION     <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    TERMINATION_DATE <span class="dt">DATE</span>,</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (APC_CODE, APC_VERSION)</span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~50,000<br />
+<strong>Refresh Frequency:</strong> Quarterly (CMS updates)</p>
+<h3 id="eapg-weights">EAPG Weights</h3>
+<p><strong>Table:</strong> <code>EapgWeights</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> EapgWeights (</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    EAPG_CODE       <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    EAPG_VERSION    <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    WEIGHT          <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">4</span>),</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    DESCRIPTION     <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    PAYMENT_POLICY  <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (EAPG_CODE, EAPG_VERSION)</span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h3 id="container-strategy-1">Container Strategy</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;apcData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;versions&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;2024Q4&quot;</span><span class="ot">,</span> <span class="st">&quot;2025Q1&quot;</span><span class="ot">,</span> <span class="st">&quot;2025Q2&quot;</span><span class="ot">,</span> <span class="st">&quot;2025Q3&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;refreshCycle&quot;</span><span class="fu">:</span> <span class="st">&quot;quarterly&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;format&quot;</span><span class="fu">:</span> <span class="st">&quot;json&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~10 MB&quot;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="medicare-pricer-tables">4. Medicare Pricer Tables</h2>
+<h3 id="wage-index-labor-data">Wage Index / Labor Data</h3>
+<p><strong>Table:</strong> <code>MCRIPWIACUTE</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MCRIPWIACUTE (</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    CBSA_CODE       <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>    FISCAL_YEAR     <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    WAGE_INDEX      <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    GAF             <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),  <span class="co">-- Geographic Adjustment Factor</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    RECLASSIFIED    <span class="dt">VARCHAR</span>(<span class="dv">1</span>),    <span class="co">-- &#39;Y&#39;/&#39;N&#39;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (CBSA_CODE, FISCAL_YEAR)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~15,000<br />
+<strong>Related Tables:</strong> <code>MCRIPWILTC</code>,
+<code>MCRIPWIPSYCH</code>, <code>MCRIPWIREHAB</code>,
+<code>MCRIPWISN</code>, <code>MCRIPWISNF</code></p>
+<h3 id="hospital-specific-rates">Hospital-Specific Rates</h3>
+<p><strong>Table:</strong> <code>MCRIPHSPRATES</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MCRIPHSPRATES (</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    PROVIDER_ID     <span class="dt">VARCHAR</span>(<span class="dv">10</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    FISCAL_YEAR     <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    OPERATING_RATE  <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    CAPITAL_RATE    <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    IME_FACTOR      <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    DSH_FACTOR      <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    LABOR_SHARE     <span class="dt">DECIMAL</span>(<span class="dv">6</span>,<span class="dv">4</span>),</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (PROVIDER_ID, FISCAL_YEAR)</span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~25,000</p>
+<h3 id="federal-base-rates">Federal Base Rates</h3>
+<p><strong>Table:</strong> <code>MCRIPFEDRATES</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MCRIPFEDRATES (</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    FISCAL_YEAR     <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    RATE_TYPE       <span class="dt">VARCHAR</span>(<span class="dv">20</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,  <span class="co">-- &#39;OPERATING&#39;, &#39;CAPITAL&#39;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    BASE_RATE       <span class="dt">DECIMAL</span>(<span class="dv">12</span>,<span class="dv">2</span>),</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    LABOR_SHARE     <span class="dt">DECIMAL</span>(<span class="dv">6</span>,<span class="dv">4</span>),</span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    NONLABOR_SHARE  <span class="dt">DECIMAL</span>(<span class="dv">6</span>,<span class="dv">4</span>),</span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (FISCAL_YEAR, RATE_TYPE)</span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h3 id="container-strategy-2">Container Strategy</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;medicareIpData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;wageIndex&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;fiscalYears&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2024</span><span class="ot">,</span> <span class="dv">2025</span><span class="ot">,</span> <span class="dv">2026</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~2 MB&quot;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;baseRates&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;fiscalYears&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2024</span><span class="ot">,</span> <span class="dv">2025</span><span class="ot">,</span> <span class="dv">2026</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~1 KB&quot;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;providerRates&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;cacheSize&quot;</span><span class="fu">:</span> <span class="st">&quot;~5 MB&quot;</span><span class="fu">,</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;refreshCycle&quot;</span><span class="fu">:</span> <span class="st">&quot;daily&quot;</span><span class="fu">,</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;reason&quot;</span><span class="fu">:</span> <span class="st">&quot;Hospital-specific, may change&quot;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="medicare-physician-fee-schedule-tables">5. Medicare Physician
+Fee Schedule Tables</h2>
+<h3 id="rvu-relative-value-units">RVU (Relative Value Units)</h3>
+<p><strong>Table:</strong> <code>RBRVS_RVU</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> RBRVS_RVU (</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>    HCPCS_CODE      <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    MODIFIER        <span class="dt">VARCHAR</span>(<span class="dv">2</span>),</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>            <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    WORK_RVU        <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    PE_FAC_RVU      <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),    <span class="co">-- Practice Expense (Facility)</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    PE_NONFAC_RVU   <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),    <span class="co">-- Practice Expense (Non-Facility)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    MP_RVU          <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),    <span class="co">-- Malpractice</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>    TOTAL_FAC       <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>    TOTAL_NONFAC    <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>    GLOBAL_PERIOD   <span class="dt">VARCHAR</span>(<span class="dv">3</span>),</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    STATUS_CODE     <span class="dt">VARCHAR</span>(<span class="dv">1</span>),</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (HCPCS_CODE, <span class="dt">YEAR</span>, MODIFIER)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~500,000 (all years)<br />
+<strong>Refresh Frequency:</strong> Annually (January)</p>
+<h3 id="gpci-geographic-practice-cost-index">GPCI (Geographic Practice
+Cost Index)</h3>
+<p><strong>Table:</strong> <code>MCRGPCI</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MCRGPCI (</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    CARRIER         <span class="dt">VARCHAR</span>(<span class="dv">5</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    LOCALITY        <span class="dt">VARCHAR</span>(<span class="dv">2</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>            <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    WORK_GPCI       <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    PE_GPCI         <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    MP_GPCI         <span class="dt">DECIMAL</span>(<span class="dv">8</span>,<span class="dv">4</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (CARRIER, LOCALITY, <span class="dt">YEAR</span>)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Row Count:</strong> ~15,000</p>
+<h3 id="conversion-factors">Conversion Factors</h3>
+<p><strong>Table:</strong> <code>MPFSCONVFACTORS</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> MPFSCONVFACTORS (</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">YEAR</span>            <span class="dt">INT</span> <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    CONV_FACTOR     <span class="dt">DECIMAL</span>(<span class="dv">10</span>,<span class="dv">4</span>),</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>    NOTES           <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (<span class="dt">YEAR</span>)</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<p><strong>Current Values:</strong> - 2024: $33.2875 - 2025: $32.7442 -
+2026: $32.35 (estimated)</p>
+<h3 id="container-strategy-3">Container Strategy</h3>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;mpfsData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;rvu&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;years&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2024</span><span class="ot">,</span> <span class="dv">2025</span><span class="ot">,</span> <span class="dv">2026</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~25 MB&quot;</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;gpci&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;years&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2024</span><span class="ot">,</span> <span class="dv">2025</span><span class="ot">,</span> <span class="dv">2026</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~500 KB&quot;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;conversionFactors&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;years&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="dv">2024</span><span class="ot">,</span> <span class="dv">2025</span><span class="ot">,</span> <span class="dv">2026</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~1 KB&quot;</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="state-medicaid-tables">6. State Medicaid Tables</h2>
+<h3 id="state-fee-schedules">State Fee Schedules</h3>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Table</th>
+<th>Size</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Arizona</td>
+<td><code>MCAPFS</code></td>
+<td>~200K rows</td>
+<td>AHCCCS rates</td>
+</tr>
+<tr>
+<td>Florida</td>
+<td><code>MCAFLLAB</code></td>
+<td>~50K rows</td>
+<td>Lab fees</td>
+</tr>
+<tr>
+<td>Illinois</td>
+<td><code>MCAIL_RATES</code></td>
+<td>~100K rows</td>
+<td>APR-DRG rates</td>
+</tr>
+<tr>
+<td>Indiana</td>
+<td><code>IN_MCA_FEE_RATE</code></td>
+<td>~80K rows</td>
+<td>Fee schedule</td>
+</tr>
+<tr>
+<td>New York</td>
+<td><code>MCANYOAFS</code></td>
+<td>~150K rows</td>
+<td>Multiple programs</td>
+</tr>
+<tr>
+<td>Ohio</td>
+<td><code>MCAOHER</code></td>
+<td>~100K rows</td>
+<td>Hospital rates</td>
+</tr>
+<tr>
+<td>Pennsylvania</td>
+<td><code>MCAPAFPFEE</code></td>
+<td>~100K rows</td>
+<td>Facility fees</td>
+</tr>
+<tr>
+<td>South Carolina</td>
+<td><code>MCASC_OP_FEE</code></td>
+<td>~80K rows</td>
+<td>Outpatient</td>
+</tr>
+<tr>
+<td>Texas</td>
+<td><code>MCATXOPCTC</code></td>
+<td>~120K rows</td>
+<td>Complex rules</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-strategy-4">Container Strategy</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;medicaidData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;strategy&quot;</span><span class="fu">:</span> <span class="st">&quot;by-state&quot;</span><span class="fu">,</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;states&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;AZ&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~5 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;IL&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~3 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;IN&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~2 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;NY&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~4 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;OH&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~3 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;PA&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~3 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;SC&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~2 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;TX&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;cached&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~4 MB&quot;</span> <span class="fu">}</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;refreshCycle&quot;</span><span class="fu">:</span> <span class="st">&quot;weekly&quot;</span><span class="fu">,</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;reason&quot;</span><span class="fu">:</span> <span class="st">&quot;State updates vary&quot;</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="code-reference-tables">7. Code Reference Tables</h2>
+<h3 id="icd-10-diagnosis-codes">ICD-10 Diagnosis Codes</h3>
+<p><strong>Source:</strong> <code>CodeCorrect</code> database<br />
+<strong>Access Pattern:</strong> Lookup only, not pricing-dependent</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- Accessed via synonym</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> snICD10CM <span class="kw">WHERE</span> CODE <span class="op">=</span> @DiagCode</span></code></pre></div>
+<h3 id="icd-10-procedure-codes">ICD-10 Procedure Codes</h3>
+<p><strong>Source:</strong> <code>CodeCorrect</code> database</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> snICD10PCS <span class="kw">WHERE</span> CODE <span class="op">=</span> @ProcCode</span></code></pre></div>
+<h3 id="cpthcpcs-codes">CPT/HCPCS Codes</h3>
+<p><strong>Source:</strong> <code>CodeCorrect</code> database</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> snCPT <span class="kw">WHERE</span> CODE <span class="op">=</span> @CptCode</span></code></pre></div>
+<h3 id="revenue-codes">Revenue Codes</h3>
+<p><strong>Source:</strong> <code>CC_CORE</code> database</p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> <span class="op">*</span> <span class="kw">FROM</span> snREVCODE <span class="kw">WHERE</span> REVCODE <span class="op">=</span> @RevCode</span></code></pre></div>
+<h3 id="container-strategy-5">Container Strategy</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;codeReference&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;embedded&quot;</span><span class="fu">,</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;format&quot;</span><span class="fu">:</span> <span class="st">&quot;json&quot;</span><span class="fu">,</span></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;icd10cm&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;rows&quot;</span><span class="fu">:</span> <span class="st">&quot;~72,000&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~8 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;icd10pcs&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;rows&quot;</span><span class="fu">:</span> <span class="st">&quot;~78,000&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~10 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;cpt&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;rows&quot;</span><span class="fu">:</span> <span class="st">&quot;~12,000&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~2 MB&quot;</span> <span class="fu">},</span></span>
+<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;revenueCodes&quot;</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">&quot;rows&quot;</span><span class="fu">:</span> <span class="st">&quot;~600&quot;</span><span class="fu">,</span> <span class="dt">&quot;size&quot;</span><span class="fu">:</span> <span class="st">&quot;~50 KB&quot;</span> <span class="fu">}</span></span>
+<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;refreshCycle&quot;</span><span class="fu">:</span> <span class="st">&quot;annually&quot;</span><span class="fu">,</span></span>
+<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;reason&quot;</span><span class="fu">:</span> <span class="st">&quot;Code sets updated annually&quot;</span></span>
+<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="contract-tables">8. Contract Tables</h2>
+<h3 id="contract-master">Contract Master</h3>
+<p><strong>Table:</strong> <code>CONTRACT</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> CONTRACT (</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>    SYSKEY          <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    TAC_ID          <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>    TAC_DESC        <span class="dt">VARCHAR</span>(<span class="dv">255</span>),</span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    PAYER_NAME      <span class="dt">VARCHAR</span>(<span class="dv">100</span>),</span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    CONTRACT_TYPE   <span class="dt">VARCHAR</span>(<span class="dv">20</span>),</span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    STATUS          <span class="dt">VARCHAR</span>(<span class="dv">10</span>),</span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>    MDATE           DATETIME,</span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>    MUSER           <span class="dt">VARCHAR</span>(<span class="dv">50</span>),</span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (SYSKEY)</span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h3 id="contract-effective-dates">Contract Effective Dates</h3>
+<p><strong>Table:</strong> <code>CONEFF</code> (CBO_Global)</p>
+<div class="sourceCode" id="cb21"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="kw">CREATE</span> <span class="kw">TABLE</span> CONEFF (</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>    SYSKEY          <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    CONTRACT_SYSKEY <span class="dt">VARCHAR</span>(<span class="dv">50</span>) <span class="kw">NOT</span> <span class="kw">NULL</span>,</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    EFFECTIVE_DATE  <span class="dt">DATE</span>,</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>    TERMINATION_DATE <span class="dt">DATE</span>,</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>    VERSION         <span class="dt">INT</span>,</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>    STATUS          <span class="dt">VARCHAR</span>(<span class="dv">10</span>),</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>    TAC_DEFINITION  XML,           <span class="co">-- Terms &amp; Conditions blob</span></span>
+<span id="cb21-9"><a href="#cb21-9" aria-hidden="true" tabindex="-1"></a>    <span class="kw">PRIMARY</span> <span class="kw">KEY</span> (SYSKEY),</span>
+<span id="cb21-10"><a href="#cb21-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">FOREIGN</span> <span class="kw">KEY</span> (CONTRACT_SYSKEY) <span class="kw">REFERENCES</span> CONTRACT(SYSKEY)</span>
+<span id="cb21-11"><a href="#cb21-11" aria-hidden="true" tabindex="-1"></a>);</span></code></pre></div>
+<h3 id="container-strategy-6">Container Strategy</h3>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;contractData&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;access&quot;</span><span class="fu">:</span> <span class="st">&quot;runtime-query&quot;</span><span class="fu">,</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pattern&quot;</span><span class="fu">:</span> <span class="st">&quot;lookup-by-key&quot;</span><span class="fu">,</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;caching&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;enabled&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;ttl&quot;</span><span class="fu">:</span> <span class="st">&quot;5 minutes&quot;</span><span class="fu">,</span></span>
+<span id="cb22-8"><a href="#cb22-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;maxEntries&quot;</span><span class="fu">:</span> <span class="dv">1000</span></span>
+<span id="cb22-9"><a href="#cb22-9" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;reason&quot;</span><span class="fu">:</span> <span class="st">&quot;Contracts updated frequently, need latest&quot;</span></span>
+<span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="data-size-summary">9. Data Size Summary</h2>
+<h3 id="embedded-data-requirements">Embedded Data Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Tables</th>
+<th>Total Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Weights</td>
+<td>MCRFEDRG + state</td>
+<td>~15 MB</td>
+</tr>
+<tr>
+<td>APC Data</td>
+<td>APCFEE, EapgWeights</td>
+<td>~10 MB</td>
+</tr>
+<tr>
+<td>Medicare Pricer</td>
+<td>Wage index, base rates</td>
+<td>~5 MB</td>
+</tr>
+<tr>
+<td>MPFS</td>
+<td>RVU, GPCI, CF</td>
+<td>~26 MB</td>
+</tr>
+<tr>
+<td>Code Reference</td>
+<td>ICD, CPT, Rev</td>
+<td>~20 MB</td>
+</tr>
+<tr>
+<td><strong>Total Embedded</strong></td>
+<td></td>
+<td><strong>~76 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<h3 id="cached-data-requirements">Cached Data Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Size</th>
+<th>Refresh</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Provider Rates</td>
+<td>~5 MB</td>
+<td>Daily</td>
+</tr>
+<tr>
+<td>Medicaid Fee Schedules</td>
+<td>~26 MB</td>
+<td>Weekly</td>
+</tr>
+<tr>
+<td>Contract Cache</td>
+<td>~10 MB</td>
+<td>On-demand</td>
+</tr>
+<tr>
+<td><strong>Total Cached</strong></td>
+<td><strong>~41 MB</strong></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="runtime-query-requirements">Runtime Query Requirements</h3>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>Frequency</th>
+<th>Tables</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Contract Lookup</td>
+<td>Per-claim</td>
+<td>CONTRACT, CONEFF</td>
+</tr>
+<tr>
+<td>Provider Details</td>
+<td>Per-claim</td>
+<td>MCRPROV, MCRFAC</td>
+</tr>
+<tr>
+<td>Debrief Write</td>
+<td>Per-claim</td>
+<td>Various output tables</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="data-access-layer-design">10. Data Access Layer Design</h2>
+<h3 id="embedded-data-loader">Embedded Data Loader</h3>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ReferenceDataLoader.cs</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ReferenceDataLoader</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">LoadEmbeddedDataAsync</span><span class="op">(</span><span class="dt">string</span> dataPath<span class="op">)</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load from JSON files embedded in container</span></span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        _drgWeights <span class="op">=</span> await LoadJsonAsync<span class="op">&lt;</span>Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> DrgWeight<span class="op">&gt;&gt;(</span></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>            Path<span class="op">.</span><span class="fu">Combine</span><span class="op">(</span>dataPath<span class="op">,</span> <span class="st">&quot;drg-weights.json&quot;</span><span class="op">));</span></span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        _apcRates <span class="op">=</span> await LoadJsonAsync<span class="op">&lt;</span>Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> ApcRate<span class="op">&gt;&gt;(</span></span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>            Path<span class="op">.</span><span class="fu">Combine</span><span class="op">(</span>dataPath<span class="op">,</span> <span class="st">&quot;apc-rates.json&quot;</span><span class="op">));</span></span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        _rvuTable <span class="op">=</span> await LoadJsonAsync<span class="op">&lt;</span>Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> RvuData<span class="op">&gt;&gt;(</span></span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>            Path<span class="op">.</span><span class="fu">Combine</span><span class="op">(</span>dataPath<span class="op">,</span> <span class="st">&quot;rvu-table.json&quot;</span><span class="op">));</span></span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>        _gpciTable <span class="op">=</span> await LoadJsonAsync<span class="op">&lt;</span>Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> GpciData<span class="op">&gt;&gt;(</span></span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>            Path<span class="op">.</span><span class="fu">Combine</span><span class="op">(</span>dataPath<span class="op">,</span> <span class="st">&quot;gpci-table.json&quot;</span><span class="op">));</span></span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> DrgWeight <span class="fu">GetDrgWeight</span><span class="op">(</span><span class="dt">string</span> drgCode<span class="op">,</span> <span class="dt">string</span> version<span class="op">)</span></span>
+<span id="cb23-21"><a href="#cb23-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb23-22"><a href="#cb23-22" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> key <span class="op">=</span> $<span class="st">&quot;{drgCode}|{version}&quot;</span><span class="op">;</span></span>
+<span id="cb23-23"><a href="#cb23-23" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> _drgWeights<span class="op">.</span><span class="fu">TryGetValue</span><span class="op">(</span>key<span class="op">,</span> <span class="kw">out</span> <span class="dt">var</span> weight<span class="op">)</span> <span class="op">?</span> weight <span class="op">:</span> <span class="kw">null</span><span class="op">;</span></span>
+<span id="cb23-24"><a href="#cb23-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb23-25"><a href="#cb23-25" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="cached-data-manager">Cached Data Manager</h3>
+<div class="sourceCode" id="cb24"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CachedDataManager.cs</span></span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CachedDataManager</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IMemoryCache _cache<span class="op">;</span></span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ISqlConnection _db<span class="op">;</span></span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>ProviderRates<span class="op">&gt;</span> <span class="fu">GetProviderRatesAsync</span><span class="op">(</span></span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> providerId<span class="op">,</span> </span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> fiscalYear<span class="op">)</span></span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> key <span class="op">=</span> $<span class="st">&quot;rates:{providerId}:{fiscalYear}&quot;</span><span class="op">;</span></span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>_cache<span class="op">.</span><span class="fu">TryGetValue</span><span class="op">(</span>key<span class="op">,</span> <span class="kw">out</span> ProviderRates rates<span class="op">))</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> rates<span class="op">;</span></span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Query database</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a>        rates <span class="op">=</span> await _db<span class="op">.</span><span class="fu">QueryFirstOrDefaultAsync</span><span class="op">&lt;</span>ProviderRates<span class="op">&gt;(</span></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a>            <span class="st">&quot;SELECT * FROM MCRIPHSPRATES WHERE PROVIDER_ID = @ProviderId AND FISCAL_YEAR = @FiscalYear&quot;</span><span class="op">,</span></span>
+<span id="cb24-19"><a href="#cb24-19" aria-hidden="true" tabindex="-1"></a>            <span class="kw">new</span> <span class="op">{</span> ProviderId <span class="op">=</span> providerId<span class="op">,</span> FiscalYear <span class="op">=</span> fiscalYear <span class="op">});</span></span>
+<span id="cb24-20"><a href="#cb24-20" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-21"><a href="#cb24-21" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Cache for 24 hours</span></span>
+<span id="cb24-22"><a href="#cb24-22" aria-hidden="true" tabindex="-1"></a>        _cache<span class="op">.</span><span class="fu">Set</span><span class="op">(</span>key<span class="op">,</span> rates<span class="op">,</span> TimeSpan<span class="op">.</span><span class="fu">FromHours</span><span class="op">(</span><span class="dv">24</span><span class="op">));</span></span>
+<span id="cb24-23"><a href="#cb24-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb24-24"><a href="#cb24-24" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> rates<span class="op">;</span></span>
+<span id="cb24-25"><a href="#cb24-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb24-26"><a href="#cb24-26" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="connection-string-configuration">Connection String
+Configuration</h3>
+<div class="sourceCode" id="cb25"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">appsettings.json</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ConnectionStrings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;CboGlobal&quot;</span><span class="fu">:</span> <span class="st">&quot;Server=${DB_SERVER};Database=CBO_Global;Trusted_Connection=True;&quot;</span><span class="fu">,</span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;CodeCorrect&quot;</span><span class="fu">:</span> <span class="st">&quot;Server=${DB_SERVER};Database=CodeCorrect;Trusted_Connection=True;&quot;</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;DataPaths&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Embedded&quot;</span><span class="fu">:</span> <span class="st">&quot;/app/data&quot;</span><span class="fu">,</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Cache&quot;</span><span class="fu">:</span> <span class="st">&quot;/app/cache&quot;</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;CacheSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb25-12"><a href="#cb25-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;ProviderRatesTtlHours&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span></span>
+<span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;ContractCacheTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb25-14"><a href="#cb25-14" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;MedicaidDataTtlHours&quot;</span><span class="fu">:</span> <span class="dv">168</span></span>
+<span id="cb25-15"><a href="#cb25-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb25-16"><a href="#cb25-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="data-synchronization">11. Data Synchronization</h2>
+<h3 id="embedded-data-build-pipeline">Embedded Data Build Pipeline</h3>
+<div class="sourceCode" id="cb26"><pre
+class="sourceCode yaml"><code class="sourceCode yaml"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># azure-pipelines-data.yml</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">trigger</span><span class="kw">:</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">paths</span><span class="kw">:</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">include</span><span class="kw">:</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> data-exports/**</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="fu">stages</span><span class="kw">:</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> ExportData</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> ExportReferenceData</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SqlAzure@3</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;scripts/export-drg-weights.sql&#39;</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">outputPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;$(Build.ArtifactStagingDirectory)/drg-weights.json&#39;</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SqlAzure@3</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;scripts/export-apc-rates.sql&#39;</span></span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">outputPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;$(Build.ArtifactStagingDirectory)/apc-rates.json&#39;</span></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> SqlAzure@3</span></span>
+<span id="cb26-23"><a href="#cb26-23" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb26-24"><a href="#cb26-24" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">scriptPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;scripts/export-rvu-table.sql&#39;</span></span>
+<span id="cb26-25"><a href="#cb26-25" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">outputPath</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;$(Build.ArtifactStagingDirectory)/rvu-table.json&#39;</span></span>
+<span id="cb26-26"><a href="#cb26-26" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb26-27"><a href="#cb26-27" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">publish</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;$(Build.ArtifactStagingDirectory)&#39;</span></span>
+<span id="cb26-28"><a href="#cb26-28" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">artifact</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;reference-data&#39;</span></span>
+<span id="cb26-29"><a href="#cb26-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-30"><a href="#cb26-30" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="fu">stage</span><span class="kw">:</span><span class="at"> BuildContainer</span></span>
+<span id="cb26-31"><a href="#cb26-31" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">dependsOn</span><span class="kw">:</span><span class="at"> ExportData</span></span>
+<span id="cb26-32"><a href="#cb26-32" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">jobs</span><span class="kw">:</span></span>
+<span id="cb26-33"><a href="#cb26-33" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> </span><span class="fu">job</span><span class="kw">:</span><span class="at"> BuildPricingWorker</span></span>
+<span id="cb26-34"><a href="#cb26-34" aria-hidden="true" tabindex="-1"></a><span class="at">        </span><span class="fu">steps</span><span class="kw">:</span></span>
+<span id="cb26-35"><a href="#cb26-35" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">download</span><span class="kw">:</span><span class="at"> current</span></span>
+<span id="cb26-36"><a href="#cb26-36" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">artifact</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;reference-data&#39;</span></span>
+<span id="cb26-37"><a href="#cb26-37" aria-hidden="true" tabindex="-1"></a><span class="at">          </span></span>
+<span id="cb26-38"><a href="#cb26-38" aria-hidden="true" tabindex="-1"></a><span class="at">          </span><span class="kw">-</span><span class="at"> </span><span class="fu">task</span><span class="kw">:</span><span class="at"> Docker@2</span></span>
+<span id="cb26-39"><a href="#cb26-39" aria-hidden="true" tabindex="-1"></a><span class="at">            </span><span class="fu">inputs</span><span class="kw">:</span></span>
+<span id="cb26-40"><a href="#cb26-40" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">command</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;build&#39;</span></span>
+<span id="cb26-41"><a href="#cb26-41" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">Dockerfile</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;docker/Dockerfile.pricing-worker&#39;</span></span>
+<span id="cb26-42"><a href="#cb26-42" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">buildContext</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;.&#39;</span></span>
+<span id="cb26-43"><a href="#cb26-43" aria-hidden="true" tabindex="-1"></a><span class="at">              </span><span class="fu">arguments</span><span class="kw">:</span><span class="at"> </span><span class="st">&#39;--build-arg DATA_PATH=$(Pipeline.Workspace)/reference-data&#39;</span></span></code></pre></div>
+<h3 id="export-sql-script-example">Export SQL Script Example</h3>
+<div class="sourceCode" id="cb27"><pre
+class="sourceCode sql"><code class="sourceCode sql"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co">-- scripts/export-drg-weights.sql</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a><span class="kw">SELECT</span> </span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>    DRG_CODE,</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>    DRG_VERSION,</span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a>    WEIGHT,</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>    ARITHMETIC_LOS,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>    GEOMETRIC_LOS,</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>    OUTLIER_THRESH,</span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>    MDC,</span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">TYPE</span>,</span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>    DESCRIPTION</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> MCRFEDRG</span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a><span class="kw">WHERE</span> DRG_VERSION <span class="kw">IN</span> (<span class="st">&#39;v42.0&#39;</span>, <span class="st">&#39;v43.0&#39;</span>)</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a><span class="cf">FOR</span> JSON PATH</span></code></pre></div>
+<hr />
+<h2 id="container-dockerfile-updates">12. Container Dockerfile
+Updates</h2>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dockerfile.pricing-worker</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="kw">FROM</span> mcr.microsoft.com/windows/servercore:ltsc2022</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="co"># ... runtime setup ...</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="kw">WORKDIR</span> /app</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy embedded reference data</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> data/drg-weights.json /app/data/</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> data/apc-rates.json /app/data/</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> data/rvu-table.json /app/data/</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> data/gpci-table.json /app/data/</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> data/code-reference.json /app/data/</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy pricing components</span></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> artifacts/pricing-bridge/ /app/bin/</span>
+<span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> artifacts/worker/ /app/worker/</span>
+<span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/ /app/grouper/</span>
+<span id="cb28-19"><a href="#cb28-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-20"><a href="#cb28-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Environment variables for data paths</span></span>
+<span id="cb28-21"><a href="#cb28-21" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> REFERENCE_DATA_PATH=C:\app\data</span>
+<span id="cb28-22"><a href="#cb28-22" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> GROUPER_PATH=C:\app\grouper</span>
+<span id="cb28-23"><a href="#cb28-23" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> CACHE_PATH=C:\app\cache</span>
+<span id="cb28-24"><a href="#cb28-24" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-25"><a href="#cb28-25" aria-hidden="true" tabindex="-1"></a><span class="kw">ENTRYPOINT</span> [<span class="st">&quot;C:\\app\\worker\\CboPricingWorker.exe&quot;</span>]</span></code></pre></div>
+<hr />
+<h2 id="network-and-security">13. Network and Security</h2>
+<h3 id="database-access-from-container">Database Access from
+Container</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ AZURE                                                                        │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ VIRTUAL NETWORK                                                         │ │
+│  │                                                                         │ │
+│  │  ┌─────────────────────────┐       ┌─────────────────────────────────┐ │ │
+│  │  │ Pricing Container       │──────→│ Private Link                    │ │ │
+│  │  │ (Container Apps)        │       │  ┌───────────────────────────┐  │ │ │
+│  │  └─────────────────────────┘       │  │ Azure SQL (CBO_Global)    │  │ │ │
+│  │                                     │  └───────────────────────────┘  │ │ │
+│  │                                     └─────────────────────────────────┘ │ │
+│  └────────────────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Connection: Container → Private Endpoint → Azure SQL</code></pre>
+<h3 id="connection-security">Connection Security</h3>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Secure connection with Managed Identity</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a><span class="dt">var</span> connectionString <span class="op">=</span> <span class="kw">new</span> SqlConnectionStringBuilder</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>    DataSource <span class="op">=</span> <span class="st">&quot;sql-cbo-prod.database.windows.net&quot;</span><span class="op">,</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    InitialCatalog <span class="op">=</span> <span class="st">&quot;CBO_Global&quot;</span><span class="op">,</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>    Authentication <span class="op">=</span> SqlAuthenticationMethod<span class="op">.</span><span class="fu">ActiveDirectoryManagedIdentity</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="op">}.</span><span class="fu">ConnectionString</span><span class="op">;</span></span></code></pre></div>
+<hr />
+<h2 id="summary">Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Data Category</th>
+<th>Access Pattern</th>
+<th>Location</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Weights</td>
+<td>Embedded</td>
+<td>Container image</td>
+<td>15 MB</td>
+</tr>
+<tr>
+<td>APC/EAPG</td>
+<td>Embedded</td>
+<td>Container image</td>
+<td>10 MB</td>
+</tr>
+<tr>
+<td>Medicare Pricer</td>
+<td>Embedded + Cached</td>
+<td>Image + Redis</td>
+<td>10 MB</td>
+</tr>
+<tr>
+<td>MPFS (RVU/GPCI)</td>
+<td>Embedded</td>
+<td>Container image</td>
+<td>26 MB</td>
+</tr>
+<tr>
+<td>Code Reference</td>
+<td>Embedded</td>
+<td>Container image</td>
+<td>20 MB</td>
+</tr>
+<tr>
+<td>Medicaid Rates</td>
+<td>Cached</td>
+<td>Redis</td>
+<td>26 MB</td>
+</tr>
+<tr>
+<td>Provider Rates</td>
+<td>Cached</td>
+<td>Redis</td>
+<td>5 MB</td>
+</tr>
+<tr>
+<td>Contracts</td>
+<td>Runtime Query</td>
+<td>Azure SQL</td>
+<td>N/A</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td></td>
+<td><strong>~112 MB</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>Document Version History:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-01-16</td>
+<td>Andy Bratton</td>
+<td>Initial database requirements</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

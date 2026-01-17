@@ -1,0 +1,60 @@
+<!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+<!-- Prism theme (choose one theme below) -->
+<link
+  rel="stylesheet"
+  href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+/>
+
+<!-- Core Prism library -->
+<script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+<!-- Add languages you need -->
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+<!-- Automatically highlight code after page load -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (window.Prism) {
+      Prism.highlightAll();
+    }
+  });
+</script>
+
+<!-- ========== Mermaid Rendering ========== -->
+
+<!-- Use stable UMD build -->
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Find code blocks that came from ```mermaid fences
+    const mermaidCodeBlocks = document.querySelectorAll(
+      'pre.mermaid > code, pre > code.language-mermaid'
+    );
+
+    mermaidCodeBlocks.forEach(code => {
+      const pre = code.parentElement;
+      const parent = pre?.parentElement;
+      if (!pre || !parent) return;
+
+      const text = (code.textContent || '').trim();
+      if (!text) return;
+
+      // Replace <pre><code> with <div class="mermaid">...</div>
+      const div = document.createElement('div');
+      div.className = 'mermaid';
+      div.textContent = text;
+
+      parent.replaceChild(div, pre);
+    });
+
+    mermaid.initialize({
+      startOnLoad: true
+    });
+  });
+</script>

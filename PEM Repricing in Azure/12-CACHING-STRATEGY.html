@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>12-CACHING-STRATEGY</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="caching-strategy-for-containerized-repricing">Caching Strategy
+for Containerized Repricing</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Phase 1 Enhancement</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document details how caching can be implemented to
+<strong>eliminate database polling</strong> during claim repricing. The
+key insight is that caching can be implemented <strong>at the .NET
+wrapper layer</strong> without modifying the native C++ DLLs.</p>
+<h3 id="why-this-works">Why This Works</h3>
+<p>The native pricing DLLs don’t directly query the database during
+pricing. Instead, they: 1. <strong>DRG Grouper</strong> - Uses embedded
+data files (<code>.dat</code>, <code>.bin</code>) already in the
+container 2. <strong>Medicare Pricers</strong> - Receive rate data via
+initialization calls 3. <strong>TAC Engine</strong> - Receives
+contract/term data as parameters</p>
+<p>The .NET wrapper layer can <strong>pre-load and cache</strong> all
+reference data, then <strong>inject it</strong> into the native DLLs via
+the bridge interface.</p>
+<hr />
+<h2 id="current-vs.-cached-architecture">1. Current vs. Cached
+Architecture</h2>
+<h3 id="current-state-database-polling">Current State (Database
+Polling)</h3>
+<p><strong>Sequence (Database hit on EVERY claim):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pricing Worker</td>
+<td>Native Bridge</td>
+<td>Price claim</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Native Bridge</td>
+<td>SQL Server</td>
+<td>Query DRG weights</td>
+</tr>
+<tr>
+<td>3</td>
+<td>SQL Server</td>
+<td>Native Bridge</td>
+<td>Return DRG weights</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Native Bridge</td>
+<td>SQL Server</td>
+<td>Query provider rates</td>
+</tr>
+<tr>
+<td>5</td>
+<td>SQL Server</td>
+<td>Native Bridge</td>
+<td>Return provider rates</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Native Bridge</td>
+<td>SQL Server</td>
+<td>Query fee schedules</td>
+</tr>
+<tr>
+<td>7</td>
+<td>SQL Server</td>
+<td>Native Bridge</td>
+<td>Return fee schedules</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Native Bridge</td>
+<td>Pricing DLLs</td>
+<td>Initialize with data</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Pricing DLLs</td>
+<td>Pricing DLLs</td>
+<td>Group &amp; price</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Pricing DLLs</td>
+<td>Native Bridge</td>
+<td>Result</td>
+</tr>
+<tr>
+<td>11</td>
+<td>Native Bridge</td>
+<td>Pricing Worker</td>
+<td>Result</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Problem:</strong> Database hit on EVERY claim</p>
+<h3 id="target-state-cached">Target State (Cached)</h3>
+<p><strong>On Container Startup:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pricing Worker</td>
+<td>Azure Redis Cache</td>
+<td>Load reference data</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Redis Cache</td>
+<td>Pricing Worker</td>
+<td>Cached data (or miss → DB)</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Pricing Worker</td>
+<td>In-Memory Cache</td>
+<td>Populate local cache</td>
+</tr>
+</tbody>
+</table>
+<p><strong>On Each Claim (Zero DB Hits):</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>From</th>
+<th>To</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Pricing Worker</td>
+<td>In-Memory Cache</td>
+<td>Get provider rates</td>
+</tr>
+<tr>
+<td>2</td>
+<td>In-Memory Cache</td>
+<td>Pricing Worker</td>
+<td>Cached data</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Pricing Worker</td>
+<td>Native Bridge</td>
+<td>Price claim + cached data</td>
+</tr>
+<tr>
+<td>4</td>
+<td>Native Bridge</td>
+<td>Pricing DLLs</td>
+<td>Initialize with data</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Pricing DLLs</td>
+<td>Pricing DLLs</td>
+<td>Group &amp; price</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Pricing DLLs</td>
+<td>Native Bridge</td>
+<td>Result</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Native Bridge</td>
+<td>Pricing Worker</td>
+<td>Result</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Result:</strong> Zero database queries per claim</p>
+<hr />
+<h2 id="caching-layers">2. Caching Layers</h2>
+<h3 id="layer-1-container-embedded-data-static">Layer 1:
+Container-Embedded Data (Static)</h3>
+<p>Data that <strong>never changes during container lifetime</strong> -
+baked into the image:</p>
+<table>
+<colgroup>
+<col style="width: 14%" />
+<col style="width: 14%" />
+<col style="width: 35%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>Data</th>
+<th>Size</th>
+<th>Refresh Cycle</th>
+<th>Update Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Grouper files (<code>.dat</code>, <code>.bin</code>)</td>
+<td>~150 MB</td>
+<td>Annually</td>
+<td>Container rebuild</td>
+</tr>
+<tr>
+<td>ICD-10 code reference</td>
+<td>~18 MB</td>
+<td>Annually</td>
+<td>Container rebuild</td>
+</tr>
+<tr>
+<td>CPT/HCPCS reference</td>
+<td>~2 MB</td>
+<td>Annually</td>
+<td>Container rebuild</td>
+</tr>
+<tr>
+<td>Revenue code reference</td>
+<td>~50 KB</td>
+<td>Annually</td>
+<td>Container rebuild</td>
+</tr>
+</tbody>
+</table>
+<p><strong>No caching needed</strong> - data is already in container
+filesystem.</p>
+<h3 id="layer-2-in-memory-cache-per-container">Layer 2: In-Memory Cache
+(Per Container)</h3>
+<p>Data loaded at <strong>container startup</strong> and held in
+memory:</p>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Size</th>
+<th>TTL</th>
+<th>Source</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Weights (all versions)</td>
+<td>~15 MB</td>
+<td>24 hours</td>
+<td>Redis → SQL</td>
+</tr>
+<tr>
+<td>APC Rates (current quarters)</td>
+<td>~10 MB</td>
+<td>6 hours</td>
+<td>Redis → SQL</td>
+</tr>
+<tr>
+<td>RVU Tables (current year)</td>
+<td>~25 MB</td>
+<td>24 hours</td>
+<td>Redis → SQL</td>
+</tr>
+<tr>
+<td>GPCI Tables</td>
+<td>~500 KB</td>
+<td>24 hours</td>
+<td>Redis → SQL</td>
+</tr>
+<tr>
+<td>Conversion Factors</td>
+<td>~1 KB</td>
+<td>24 hours</td>
+<td>Redis → SQL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="layer-3-redis-distributed-cache-shared">Layer 3: Redis
+Distributed Cache (Shared)</h3>
+<p>Data shared across <strong>all container instances</strong>:</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 23%" />
+<col style="width: 19%" />
+<col style="width: 34%" />
+</colgroup>
+<thead>
+<tr>
+<th>Data</th>
+<th>Size</th>
+<th>TTL</th>
+<th>Pattern</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Provider Rates (by provider)</td>
+<td>~5 MB total</td>
+<td>1 hour</td>
+<td>On-demand with LRU</td>
+</tr>
+<tr>
+<td>Fee Schedules (by state)</td>
+<td>~26 MB total</td>
+<td>6 hours</td>
+<td>Pre-loaded</td>
+</tr>
+<tr>
+<td>Contract Definitions</td>
+<td>Variable</td>
+<td>5 minutes</td>
+<td>On-demand</td>
+</tr>
+<tr>
+<td>Medicaid Rates (by state)</td>
+<td>~4 MB/state</td>
+<td>12 hours</td>
+<td>Pre-loaded</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="implementation-architecture">3. Implementation Architecture</h2>
+<h3 id="caching-components">Caching Components</h3>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ PRICING CONTAINER                                                            │
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ .NET 10 WRAPPER LAYER                                                   │ │
+│  │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────────────┐ │ │
+│  │  │ PricingWorker   │→ │ CacheManager    │→ │ IMemoryCache (In-Proc)  │ │ │
+│  │  └────────┬────────┘  └────────┬────────┘  └─────────────────────────┘ │ │
+│  │           │                    │           ┌─────────────────────────┐ │ │
+│  │           │                    └──────────→│ IDistributedCache       │ │ │
+│  │           │                                │ (Redis)                 │ │ │
+│  │           │                                └───────────────┬─────────┘ │ │
+│  └───────────┼────────────────────────────────────────────────┼───────────┘ │
+│              │                                                │             │
+│  ┌───────────┼────────────────────────────────────────────────┼───────────┐ │
+│  │ DATA PROVIDERS                                             │           │ │
+│  │  • DrgWeightProvider        • ProviderRateProvider         │           │ │
+│  │  • ApcRateProvider          • FeeScheduleProvider          │           │ │
+│  │  • RvuProvider                                             │           │ │
+│  └────────────────────────────────────────────────────────────┼───────────┘ │
+│              │                                                │             │
+│  ┌───────────▼───────────────────────────────────────────────┐│             │
+│  │ NATIVE BRIDGE: CboPricingBridge.dll                       ││             │
+│  └───────────────────────────────────────────────────────────┘│             │
+└───────────────────────────────────────────────────────────────┼─────────────┘
+                                                                │
+┌───────────────────────────────────────────────────────────────▼─────────────┐
+│ AZURE SERVICES                                                               │
+│  ┌─────────────────────────────┐  ┌─────────────────────────────┐           │
+│  │ Azure Redis Cache           │  │ Azure SQL                   │           │
+│  └─────────────────────────────┘  └─────────────────────────────┘           │
+└─────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<pre><code>RATE_PROV -.-&gt;|Cache Miss| SQL
+FEE_PROV -.-&gt;|Cache Miss| SQL</code></pre>
+<pre><code>
+### Data Provider Interface
+
+```csharp
+// IReferenceDataProvider.cs
+public interface IReferenceDataProvider&lt;T&gt;
+{
+    Task&lt;T&gt; GetAsync(string key, CancellationToken ct = default);
+    Task PreloadAsync(CancellationToken ct = default);
+    Task InvalidateAsync(string key, CancellationToken ct = default);
+    Task RefreshAsync(CancellationToken ct = default);
+}</code></pre>
+<h3 id="cache-manager">Cache Manager</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CacheManager.cs</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CacheManager <span class="op">:</span> ICacheManager<span class="op">,</span> IHostedService</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IMemoryCache _memoryCache<span class="op">;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IDistributedCache _distributedCache<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IServiceProvider _services<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> CacheOptions _options<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ILogger<span class="op">&lt;</span>CacheManager<span class="op">&gt;</span> _logger<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">StartAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Initializing pricing cache...&quot;</span><span class="op">);</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Pre-load critical reference data at startup</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> tasks <span class="op">=</span> <span class="kw">new</span> List<span class="op">&lt;</span>Task<span class="op">&gt;</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">PreloadDrgWeightsAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>            <span class="fu">PreloadApcRatesAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a>            <span class="fu">PreloadRvuTablesAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb4-20"><a href="#cb4-20" aria-hidden="true" tabindex="-1"></a>            <span class="fu">PreloadGpciTablesAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb4-21"><a href="#cb4-21" aria-hidden="true" tabindex="-1"></a>            <span class="fu">PreloadConversionFactorsAsync</span><span class="op">(</span>ct<span class="op">)</span></span>
+<span id="cb4-22"><a href="#cb4-22" aria-hidden="true" tabindex="-1"></a>        <span class="op">};</span></span>
+<span id="cb4-23"><a href="#cb4-23" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-24"><a href="#cb4-24" aria-hidden="true" tabindex="-1"></a>        await Task<span class="op">.</span><span class="fu">WhenAll</span><span class="op">(</span>tasks<span class="op">);</span></span>
+<span id="cb4-25"><a href="#cb4-25" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-26"><a href="#cb4-26" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Pricing cache initialized. Memory usage: {Size} MB&quot;</span><span class="op">,</span></span>
+<span id="cb4-27"><a href="#cb4-27" aria-hidden="true" tabindex="-1"></a>            GC<span class="op">.</span><span class="fu">GetTotalMemory</span><span class="op">(</span><span class="kw">false</span><span class="op">)</span> <span class="op">/</span> <span class="op">(</span><span class="dv">1024</span> <span class="op">*</span> <span class="dv">1024</span><span class="op">));</span></span>
+<span id="cb4-28"><a href="#cb4-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-29"><a href="#cb4-29" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-30"><a href="#cb4-30" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> async Task <span class="fu">PreloadDrgWeightsAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb4-31"><a href="#cb4-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-32"><a href="#cb4-32" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Try distributed cache first</span></span>
+<span id="cb4-33"><a href="#cb4-33" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> cacheKey <span class="op">=</span> <span class="st">&quot;drg-weights:all&quot;</span><span class="op">;</span></span>
+<span id="cb4-34"><a href="#cb4-34" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> cached <span class="op">=</span> await _distributedCache<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>cacheKey<span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb4-35"><a href="#cb4-35" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-36"><a href="#cb4-36" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>cached <span class="op">!=</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb4-37"><a href="#cb4-37" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-38"><a href="#cb4-38" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> weights <span class="op">=</span> <span class="fu">DeserializeDrgWeights</span><span class="op">(</span>cached<span class="op">);</span></span>
+<span id="cb4-39"><a href="#cb4-39" aria-hidden="true" tabindex="-1"></a>            _memoryCache<span class="op">.</span><span class="fu">Set</span><span class="op">(</span>cacheKey<span class="op">,</span> weights<span class="op">,</span> _options<span class="op">.</span><span class="fu">DrgWeightsTtl</span><span class="op">);</span></span>
+<span id="cb4-40"><a href="#cb4-40" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;DRG weights loaded from Redis: {Count} entries&quot;</span><span class="op">,</span> </span>
+<span id="cb4-41"><a href="#cb4-41" aria-hidden="true" tabindex="-1"></a>                weights<span class="op">.</span><span class="fu">Count</span><span class="op">);</span></span>
+<span id="cb4-42"><a href="#cb4-42" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span><span class="op">;</span></span>
+<span id="cb4-43"><a href="#cb4-43" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-44"><a href="#cb4-44" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-45"><a href="#cb4-45" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Cache miss - load from database</span></span>
+<span id="cb4-46"><a href="#cb4-46" aria-hidden="true" tabindex="-1"></a>        <span class="kw">using</span> <span class="dt">var</span> scope <span class="op">=</span> _services<span class="op">.</span><span class="fu">CreateScope</span><span class="op">();</span></span>
+<span id="cb4-47"><a href="#cb4-47" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> provider <span class="op">=</span> scope<span class="op">.</span><span class="fu">ServiceProvider</span><span class="op">.</span><span class="fu">GetRequiredService</span><span class="op">&lt;</span>IDrgWeightProvider<span class="op">&gt;();</span></span>
+<span id="cb4-48"><a href="#cb4-48" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> weights <span class="op">=</span> await provider<span class="op">.</span><span class="fu">LoadAllAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb4-49"><a href="#cb4-49" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-50"><a href="#cb4-50" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Store in distributed cache</span></span>
+<span id="cb4-51"><a href="#cb4-51" aria-hidden="true" tabindex="-1"></a>        await _distributedCache<span class="op">.</span><span class="fu">SetAsync</span><span class="op">(</span>cacheKey<span class="op">,</span> <span class="fu">SerializeDrgWeights</span><span class="op">(</span>weights<span class="op">),</span></span>
+<span id="cb4-52"><a href="#cb4-52" aria-hidden="true" tabindex="-1"></a>            <span class="kw">new</span> DistributedCacheEntryOptions <span class="op">{</span> AbsoluteExpirationRelativeToNow <span class="op">=</span> TimeSpan<span class="op">.</span><span class="fu">FromHours</span><span class="op">(</span><span class="dv">24</span><span class="op">)</span> <span class="op">},</span></span>
+<span id="cb4-53"><a href="#cb4-53" aria-hidden="true" tabindex="-1"></a>            ct<span class="op">);</span></span>
+<span id="cb4-54"><a href="#cb4-54" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-55"><a href="#cb4-55" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Store in memory cache</span></span>
+<span id="cb4-56"><a href="#cb4-56" aria-hidden="true" tabindex="-1"></a>        _memoryCache<span class="op">.</span><span class="fu">Set</span><span class="op">(</span>cacheKey<span class="op">,</span> weights<span class="op">,</span> _options<span class="op">.</span><span class="fu">DrgWeightsTtl</span><span class="op">);</span></span>
+<span id="cb4-57"><a href="#cb4-57" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-58"><a href="#cb4-58" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;DRG weights loaded from database: {Count} entries&quot;</span><span class="op">,</span> </span>
+<span id="cb4-59"><a href="#cb4-59" aria-hidden="true" tabindex="-1"></a>            weights<span class="op">.</span><span class="fu">Count</span><span class="op">);</span></span>
+<span id="cb4-60"><a href="#cb4-60" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-61"><a href="#cb4-61" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb4-62"><a href="#cb4-62" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Get with fallback pattern</span></span>
+<span id="cb4-63"><a href="#cb4-63" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>T<span class="op">?&gt;</span> GetAsync<span class="op">&lt;</span>T<span class="op">&gt;(</span><span class="dt">string</span> cacheKey<span class="op">,</span> </span>
+<span id="cb4-64"><a href="#cb4-64" aria-hidden="true" tabindex="-1"></a>        Func<span class="op">&lt;</span>Task<span class="op">&lt;</span>T<span class="op">&gt;&gt;</span> factory<span class="op">,</span> </span>
+<span id="cb4-65"><a href="#cb4-65" aria-hidden="true" tabindex="-1"></a>        TimeSpan<span class="op">?</span> memoryTtl <span class="op">=</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb4-66"><a href="#cb4-66" aria-hidden="true" tabindex="-1"></a>        TimeSpan<span class="op">?</span> distributedTtl <span class="op">=</span> <span class="kw">null</span><span class="op">,</span></span>
+<span id="cb4-67"><a href="#cb4-67" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct <span class="op">=</span> <span class="kw">default</span><span class="op">)</span> where T <span class="op">:</span> <span class="kw">class</span></span>
+<span id="cb4-68"><a href="#cb4-68" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb4-69"><a href="#cb4-69" aria-hidden="true" tabindex="-1"></a>        <span class="co">// L1: Check in-memory cache</span></span>
+<span id="cb4-70"><a href="#cb4-70" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>_memoryCache<span class="op">.</span><span class="fu">TryGetValue</span><span class="op">&lt;</span>T<span class="op">&gt;(</span>cacheKey<span class="op">,</span> <span class="kw">out</span> <span class="dt">var</span> memValue<span class="op">))</span></span>
+<span id="cb4-71"><a href="#cb4-71" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-72"><a href="#cb4-72" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> memValue<span class="op">;</span></span>
+<span id="cb4-73"><a href="#cb4-73" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-74"><a href="#cb4-74" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-75"><a href="#cb4-75" aria-hidden="true" tabindex="-1"></a>        <span class="co">// L2: Check distributed cache</span></span>
+<span id="cb4-76"><a href="#cb4-76" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> distValue <span class="op">=</span> await _distributedCache<span class="op">.</span><span class="fu">GetAsync</span><span class="op">(</span>cacheKey<span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb4-77"><a href="#cb4-77" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>distValue <span class="op">!=</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb4-78"><a href="#cb4-78" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-79"><a href="#cb4-79" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> value <span class="op">=</span> Deserialize<span class="op">&lt;</span>T<span class="op">&gt;(</span>distValue<span class="op">);</span></span>
+<span id="cb4-80"><a href="#cb4-80" aria-hidden="true" tabindex="-1"></a>            _memoryCache<span class="op">.</span><span class="fu">Set</span><span class="op">(</span>cacheKey<span class="op">,</span> value<span class="op">,</span> memoryTtl <span class="op">??</span> _options<span class="op">.</span><span class="fu">DefaultMemoryTtl</span><span class="op">);</span></span>
+<span id="cb4-81"><a href="#cb4-81" aria-hidden="true" tabindex="-1"></a>            <span class="kw">return</span> value<span class="op">;</span></span>
+<span id="cb4-82"><a href="#cb4-82" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-83"><a href="#cb4-83" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-84"><a href="#cb4-84" aria-hidden="true" tabindex="-1"></a>        <span class="co">// L3: Load from source</span></span>
+<span id="cb4-85"><a href="#cb4-85" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> loaded <span class="op">=</span> await <span class="fu">factory</span><span class="op">();</span></span>
+<span id="cb4-86"><a href="#cb4-86" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>loaded <span class="op">!=</span> <span class="kw">null</span><span class="op">)</span></span>
+<span id="cb4-87"><a href="#cb4-87" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb4-88"><a href="#cb4-88" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Store in L2</span></span>
+<span id="cb4-89"><a href="#cb4-89" aria-hidden="true" tabindex="-1"></a>            await _distributedCache<span class="op">.</span><span class="fu">SetAsync</span><span class="op">(</span>cacheKey<span class="op">,</span> <span class="fu">Serialize</span><span class="op">(</span>loaded<span class="op">),</span></span>
+<span id="cb4-90"><a href="#cb4-90" aria-hidden="true" tabindex="-1"></a>                <span class="kw">new</span> DistributedCacheEntryOptions </span>
+<span id="cb4-91"><a href="#cb4-91" aria-hidden="true" tabindex="-1"></a>                <span class="op">{</span> </span>
+<span id="cb4-92"><a href="#cb4-92" aria-hidden="true" tabindex="-1"></a>                    AbsoluteExpirationRelativeToNow <span class="op">=</span> distributedTtl <span class="op">??</span> _options<span class="op">.</span><span class="fu">DefaultDistributedTtl</span> </span>
+<span id="cb4-93"><a href="#cb4-93" aria-hidden="true" tabindex="-1"></a>                <span class="op">},</span></span>
+<span id="cb4-94"><a href="#cb4-94" aria-hidden="true" tabindex="-1"></a>                ct<span class="op">);</span></span>
+<span id="cb4-95"><a href="#cb4-95" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb4-96"><a href="#cb4-96" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Store in L1</span></span>
+<span id="cb4-97"><a href="#cb4-97" aria-hidden="true" tabindex="-1"></a>            _memoryCache<span class="op">.</span><span class="fu">Set</span><span class="op">(</span>cacheKey<span class="op">,</span> loaded<span class="op">,</span> memoryTtl <span class="op">??</span> _options<span class="op">.</span><span class="fu">DefaultMemoryTtl</span><span class="op">);</span></span>
+<span id="cb4-98"><a href="#cb4-98" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb4-99"><a href="#cb4-99" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb4-100"><a href="#cb4-100" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> loaded<span class="op">;</span></span>
+<span id="cb4-101"><a href="#cb4-101" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb4-102"><a href="#cb4-102" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="data-provider-implementations">4. Data Provider
+Implementations</h2>
+<h3 id="drg-weight-provider">DRG Weight Provider</h3>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co">// DrgWeightProvider.cs</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DrgWeightProvider <span class="op">:</span> IDrgWeightProvider</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ICacheManager _cache<span class="op">;</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IDbConnection _db<span class="op">;</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span><span class="dt">decimal</span><span class="op">?&gt;</span> <span class="fu">GetWeightAsync</span><span class="op">(</span><span class="dt">string</span> drgCode<span class="op">,</span> <span class="dt">string</span> version<span class="op">,</span> CancellationToken ct<span class="op">)</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> key <span class="op">=</span> $<span class="st">&quot;drg:{version}:{drgCode}&quot;</span><span class="op">;</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> await _cache<span class="op">.</span><span class="fu">GetAsync</span><span class="op">&lt;</span>DrgWeight<span class="op">&gt;(</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>            key<span class="op">,</span></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a>            <span class="fu">async</span> <span class="op">()</span> <span class="op">=&gt;</span> await <span class="fu">LoadFromDatabaseAsync</span><span class="op">(</span>drgCode<span class="op">,</span> version<span class="op">,</span> ct<span class="op">),</span></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>            memoryTtl<span class="op">:</span> TimeSpan<span class="op">.</span><span class="fu">FromHours</span><span class="op">(</span><span class="dv">24</span><span class="op">),</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>            distributedTtl<span class="op">:</span> TimeSpan<span class="op">.</span><span class="fu">FromHours</span><span class="op">(</span><span class="dv">48</span><span class="op">),</span></span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>            ct</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>Dictionary<span class="op">&lt;</span><span class="dt">string</span><span class="op">,</span> DrgWeight<span class="op">&gt;&gt;</span> <span class="fu">LoadAllAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load all current DRG versions in one query</span></span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> sql <span class="op">=</span> @<span class="st">&quot;</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>            SELECT DRG_CODE<span class="op">,</span> DRG_VERSION<span class="op">,</span> WEIGHT<span class="op">,</span> MDC<span class="op">,</span> TYPE<span class="op">,</span> DESCRIPTION</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>            FROM MCRFEDRG </span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>            WHERE DRG_VERSION <span class="fu">IN</span> <span class="op">(</span>&#39;v42<span class="fl">.0</span>&#39;<span class="op">,</span> &#39;v43<span class="fl">.0</span>&#39;<span class="op">)</span><span class="st">&quot;;</span></span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> results <span class="op">=</span> await _db<span class="op">.</span><span class="fu">QueryAsync</span><span class="op">&lt;</span>DrgWeight<span class="op">&gt;(</span>sql<span class="op">);</span></span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> results<span class="op">.</span><span class="fu">ToDictionary</span><span class="op">(</span>d <span class="op">=&gt;</span> $<span class="st">&quot;{d.Version}:{d.Code}&quot;</span><span class="op">);</span></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="provider-rate-provider-on-demand-cache">Provider Rate Provider
+(On-Demand Cache)</h3>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co">// ProviderRateProvider.cs</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> ProviderRateProvider <span class="op">:</span> IProviderRateProvider</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ICacheManager _cache<span class="op">;</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IDbConnection _db<span class="op">;</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>ProviderRates<span class="op">?&gt;</span> <span class="fu">GetRatesAsync</span><span class="op">(</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> providerId<span class="op">,</span> </span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> fiscalYear<span class="op">,</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct<span class="op">)</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> key <span class="op">=</span> $<span class="st">&quot;provider-rates:{providerId}:{fiscalYear}&quot;</span><span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Shorter TTL for provider-specific data (may change)</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> await _cache<span class="op">.</span><span class="fu">GetAsync</span><span class="op">&lt;</span>ProviderRates<span class="op">&gt;(</span></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>            key<span class="op">,</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>            <span class="fu">async</span> <span class="op">()</span> <span class="op">=&gt;</span> await <span class="fu">LoadFromDatabaseAsync</span><span class="op">(</span>providerId<span class="op">,</span> fiscalYear<span class="op">,</span> ct<span class="op">),</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>            memoryTtl<span class="op">:</span> TimeSpan<span class="op">.</span><span class="fu">FromMinutes</span><span class="op">(</span><span class="dv">30</span><span class="op">),</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>            distributedTtl<span class="op">:</span> TimeSpan<span class="op">.</span><span class="fu">FromHours</span><span class="op">(</span><span class="dv">1</span><span class="op">),</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>            ct</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> async Task<span class="op">&lt;</span>ProviderRates<span class="op">?&gt;</span> <span class="fu">LoadFromDatabaseAsync</span><span class="op">(</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>        <span class="dt">string</span> providerId<span class="op">,</span> </span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>        <span class="dt">int</span> fiscalYear<span class="op">,</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct<span class="op">)</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> sql <span class="op">=</span> @<span class="st">&quot;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>            SELECT PROVIDER_ID<span class="op">,</span> FISCAL_YEAR<span class="op">,</span> OPERATING_RATE<span class="op">,</span> CAPITAL_RATE<span class="op">,</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>                   IME_FACTOR<span class="op">,</span> DSH_FACTOR<span class="op">,</span> LABOR_SHARE</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a>            FROM MCRIPHSPRATES </span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a>            WHERE PROVIDER_ID <span class="op">=</span> @ProviderId AND FISCAL_YEAR <span class="op">=</span> @FiscalYear<span class="st">&quot;;</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> await _db<span class="op">.</span><span class="fu">QueryFirstOrDefaultAsync</span><span class="op">&lt;</span>ProviderRates<span class="op">&gt;(</span></span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a>            sql<span class="op">,</span> </span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a>            <span class="kw">new</span> <span class="op">{</span> ProviderId <span class="op">=</span> providerId<span class="op">,</span> FiscalYear <span class="op">=</span> fiscalYear <span class="op">});</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="native-bridge-integration">5. Native Bridge Integration</h2>
+<p>The key insight: <strong>Native DLLs receive data through function
+parameters, not database queries.</strong></p>
+<h3 id="modified-bridge-interface">Modified Bridge Interface</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CboPricingBridge.h - Enhanced with cached data injection</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="ex">__declspec(dllexport)</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>HRESULT InitializePricingContext<span class="op">(</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR drgWeightsJson<span class="op">,</span>    <span class="co">// Pre-loaded DRG weights</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR apcRatesJson<span class="op">,</span>       <span class="co">// Pre-loaded APC rates</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR providerRatesJson   <span class="co">// Provider-specific rates</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="ex">__declspec(dllexport)</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>HRESULT PriceEpisodeWithContext<span class="op">(</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR episodeJson<span class="op">,</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR contractJson<span class="op">,</span>       <span class="co">// Pre-loaded contract definition</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    _In_ LPCWSTR feeScheduleJson<span class="op">,</span>    <span class="co">// Pre-loaded fee schedule</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>    _Out_ LPWSTR<span class="op">*</span> resultJson<span class="op">,</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>    _Out_ DWORD<span class="op">*</span> resultLength</span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span></code></pre></div>
+<h3 id="net-bridge-wrapper">.NET Bridge Wrapper</h3>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co">// NativePricingBridge.cs</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> NativePricingBridge <span class="op">:</span> IPricingBridge<span class="op">,</span> IDisposable</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> ICacheManager _cache<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="dt">bool</span> _initialized <span class="op">=</span> <span class="kw">false</span><span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">InitializeAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load all reference data from cache</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> drgWeights <span class="op">=</span> await _cache<span class="op">.</span><span class="fu">GetAllDrgWeightsAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> apcRates <span class="op">=</span> await _cache<span class="op">.</span><span class="fu">GetAllApcRatesAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Inject into native layer</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> result <span class="op">=</span> NativeMethods<span class="op">.</span><span class="fu">InitializePricingContext</span><span class="op">(</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>            JsonSerializer<span class="op">.</span><span class="fu">Serialize</span><span class="op">(</span>drgWeights<span class="op">),</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>            JsonSerializer<span class="op">.</span><span class="fu">Serialize</span><span class="op">(</span>apcRates<span class="op">),</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>            <span class="kw">null</span>  <span class="co">// Provider rates loaded per-claim</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>result <span class="op">!=</span> <span class="dv">0</span><span class="op">)</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="kw">throw</span> <span class="kw">new</span> <span class="fu">PricingBridgeException</span><span class="op">(</span>$<span class="st">&quot;Initialization failed: {result}&quot;</span><span class="op">);</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>        _initialized <span class="op">=</span> <span class="kw">true</span><span class="op">;</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task<span class="op">&lt;</span>PricingResult<span class="op">&gt;</span> <span class="fu">PriceAsync</span><span class="op">(</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>        ClaimInput claim<span class="op">,</span> </span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>        CancellationToken ct<span class="op">)</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load claim-specific cached data</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> providerRates <span class="op">=</span> await _cache<span class="op">.</span><span class="fu">GetProviderRatesAsync</span><span class="op">(</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            claim<span class="op">.</span><span class="fu">ProviderId</span><span class="op">,</span> </span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            claim<span class="op">.</span><span class="fu">FiscalYear</span><span class="op">,</span> </span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>            ct<span class="op">);</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> contract <span class="op">=</span> await _cache<span class="op">.</span><span class="fu">GetContractAsync</span><span class="op">(</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>            claim<span class="op">.</span><span class="fu">ContractId</span><span class="op">,</span> </span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>            ct<span class="op">);</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> feeSchedule <span class="op">=</span> await _cache<span class="op">.</span><span class="fu">GetFeeScheduleAsync</span><span class="op">(</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>            claim<span class="op">.</span><span class="fu">FeeScheduleId</span><span class="op">,</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>            ct<span class="op">);</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Call native pricer with all data injected</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> result <span class="op">=</span> NativeMethods<span class="op">.</span><span class="fu">PriceEpisodeWithContext</span><span class="op">(</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>            JsonSerializer<span class="op">.</span><span class="fu">Serialize</span><span class="op">(</span>claim<span class="op">),</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>            JsonSerializer<span class="op">.</span><span class="fu">Serialize</span><span class="op">(</span>contract<span class="op">),</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>            JsonSerializer<span class="op">.</span><span class="fu">Serialize</span><span class="op">(</span>feeSchedule<span class="op">),</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>            <span class="kw">out</span> IntPtr resultPtr<span class="op">,</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>            <span class="kw">out</span> <span class="dt">uint</span> resultLength</span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Parse result...</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="cache-warming-strategy">6. Cache Warming Strategy</h2>
+<h3 id="container-startup-sequence">Container Startup Sequence</h3>
+<p><strong>Startup Flow:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>Action</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Container Start → CacheManager</td>
+<td>StartAsync()</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Parallel Pre-load</strong></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>CacheManager → Redis</td>
+<td>Get DRG weights (Hit/Miss)</td>
+</tr>
+<tr>
+<td></td>
+<td>CacheManager → Redis</td>
+<td>Get APC rates (Hit/Miss)</td>
+</tr>
+<tr>
+<td></td>
+<td>CacheManager → Redis</td>
+<td>Get RVU tables (Hit/Miss)</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>If Cache Miss</strong></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>CacheManager → SQL Database</td>
+<td>Query reference data</td>
+</tr>
+<tr>
+<td></td>
+<td>SQL Database → CacheManager</td>
+<td>Return data</td>
+</tr>
+<tr>
+<td></td>
+<td>CacheManager → Redis</td>
+<td>Store in cache</td>
+</tr>
+<tr>
+<td>4</td>
+<td>CacheManager</td>
+<td>Load into memory</td>
+</tr>
+<tr>
+<td>5</td>
+<td>CacheManager → Container</td>
+<td>Ready</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Container → Health Check</td>
+<td>Mark Ready</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Health Check → Container</td>
+<td>Accept traffic</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pre-warming-script">Pre-warming Script</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CacheWarmingService.cs</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CacheWarmingService <span class="op">:</span> BackgroundService</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> async Task <span class="fu">ExecuteAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> sw <span class="op">=</span> Stopwatch<span class="op">.</span><span class="fu">StartNew</span><span class="op">();</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Starting cache warming...&quot;</span><span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Critical path - must complete before accepting traffic</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>        await <span class="fu">WarmCriticalCacheAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>        _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Critical cache warmed in {Elapsed}ms&quot;</span><span class="op">,</span> </span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>            sw<span class="op">.</span><span class="fu">ElapsedMilliseconds</span><span class="op">);</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Mark container as ready</span></span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>        _readinessProbe<span class="op">.</span><span class="fu">MarkReady</span><span class="op">();</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Background - non-blocking population</span></span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>        _ <span class="op">=</span> <span class="fu">WarmBackgroundCacheAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> async Task <span class="fu">WarmCriticalCacheAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb9-24"><a href="#cb9-24" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-25"><a href="#cb9-25" aria-hidden="true" tabindex="-1"></a>        await Task<span class="op">.</span><span class="fu">WhenAll</span><span class="op">(</span></span>
+<span id="cb9-26"><a href="#cb9-26" aria-hidden="true" tabindex="-1"></a>            _cache<span class="op">.</span><span class="fu">PreloadDrgWeightsAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb9-27"><a href="#cb9-27" aria-hidden="true" tabindex="-1"></a>            _cache<span class="op">.</span><span class="fu">PreloadApcRatesAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb9-28"><a href="#cb9-28" aria-hidden="true" tabindex="-1"></a>            _cache<span class="op">.</span><span class="fu">PreloadRvuTablesAsync</span><span class="op">(</span>ct<span class="op">),</span></span>
+<span id="cb9-29"><a href="#cb9-29" aria-hidden="true" tabindex="-1"></a>            _cache<span class="op">.</span><span class="fu">PreloadGpciAsync</span><span class="op">(</span>ct<span class="op">)</span></span>
+<span id="cb9-30"><a href="#cb9-30" aria-hidden="true" tabindex="-1"></a>        <span class="op">);</span></span>
+<span id="cb9-31"><a href="#cb9-31" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-32"><a href="#cb9-32" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-33"><a href="#cb9-33" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> async Task <span class="fu">WarmBackgroundCacheAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb9-34"><a href="#cb9-34" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb9-35"><a href="#cb9-35" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Load state Medicaid data in background</span></span>
+<span id="cb9-36"><a href="#cb9-36" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> states <span class="op">=</span> <span class="kw">new</span><span class="op">[]</span> <span class="op">{</span> <span class="st">&quot;AZ&quot;</span><span class="op">,</span> <span class="st">&quot;IL&quot;</span><span class="op">,</span> <span class="st">&quot;IN&quot;</span><span class="op">,</span> <span class="st">&quot;NY&quot;</span><span class="op">,</span> <span class="st">&quot;OH&quot;</span><span class="op">,</span> <span class="st">&quot;PA&quot;</span><span class="op">,</span> <span class="st">&quot;SC&quot;</span><span class="op">,</span> <span class="st">&quot;TX&quot;</span> <span class="op">};</span></span>
+<span id="cb9-37"><a href="#cb9-37" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb9-38"><a href="#cb9-38" aria-hidden="true" tabindex="-1"></a>        <span class="kw">foreach</span> <span class="op">(</span><span class="dt">var</span> state <span class="kw">in</span> states<span class="op">)</span></span>
+<span id="cb9-39"><a href="#cb9-39" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb9-40"><a href="#cb9-40" aria-hidden="true" tabindex="-1"></a>            await _cache<span class="op">.</span><span class="fu">PreloadMedicaidRatesAsync</span><span class="op">(</span>state<span class="op">,</span> ct<span class="op">);</span></span>
+<span id="cb9-41"><a href="#cb9-41" aria-hidden="true" tabindex="-1"></a>            await Task<span class="op">.</span><span class="fu">Delay</span><span class="op">(</span><span class="dv">100</span><span class="op">,</span> ct<span class="op">);</span> <span class="co">// Throttle DB load</span></span>
+<span id="cb9-42"><a href="#cb9-42" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb9-43"><a href="#cb9-43" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb9-44"><a href="#cb9-44" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="cache-invalidation">7. Cache Invalidation</h2>
+<h3 id="invalidation-triggers">Invalidation Triggers</h3>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Scope</th>
+<th>Method</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>CMS rate update (Oct 1)</td>
+<td>All DRG/APC</td>
+<td>Scheduled job</td>
+</tr>
+<tr>
+<td>Contract change</td>
+<td>Specific contract</td>
+<td>Event-driven</td>
+</tr>
+<tr>
+<td>Provider rate update</td>
+<td>Specific provider</td>
+<td>Event-driven</td>
+</tr>
+<tr>
+<td>Fee schedule update</td>
+<td>Specific payer</td>
+<td>Event-driven</td>
+</tr>
+</tbody>
+</table>
+<h3 id="event-driven-invalidation">Event-Driven Invalidation</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">// CacheInvalidationHandler.cs</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CacheInvalidationHandler</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IDistributedCache _cache<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IHubContext<span class="op">&lt;</span>CacheHub<span class="op">&gt;</span> _hubContext<span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">HandleContractChangedAsync</span><span class="op">(</span>ContractChangedEvent evt<span class="op">)</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Invalidate specific contract in Redis</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> key <span class="op">=</span> $<span class="st">&quot;contract:{evt.ContractId}&quot;</span><span class="op">;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>        await _cache<span class="op">.</span><span class="fu">RemoveAsync</span><span class="op">(</span>key<span class="op">);</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Notify all container instances</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>        await _hubContext<span class="op">.</span><span class="fu">Clients</span><span class="op">.</span><span class="fu">All</span><span class="op">.</span><span class="fu">SendAsync</span><span class="op">(</span><span class="st">&quot;InvalidateCache&quot;</span><span class="op">,</span> <span class="kw">new</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>            Type <span class="op">=</span> <span class="st">&quot;contract&quot;</span><span class="op">,</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>            Key <span class="op">=</span> key</span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> async Task <span class="fu">HandleAnnualRateUpdateAsync</span><span class="op">(</span>AnnualRateUpdateEvent evt<span class="op">)</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Invalidate all DRG weights for new fiscal year</span></span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> pattern <span class="op">=</span> $<span class="st">&quot;drg:{evt.NewVersion}:*&quot;</span><span class="op">;</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>        await <span class="fu">InvalidateByPatternAsync</span><span class="op">(</span>pattern<span class="op">);</span></span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        <span class="co">// Trigger re-warm</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        await _cacheWarmer<span class="op">.</span><span class="fu">WarmDrgWeightsAsync</span><span class="op">(</span>evt<span class="op">.</span><span class="fu">NewVersion</span><span class="op">);</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="signalr-for-real-time-invalidation">SignalR for Real-Time
+Invalidation</h3>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co">// In PricingWorker</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> CacheInvalidationListener <span class="op">:</span> BackgroundService</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> HubConnection _hubConnection<span class="op">;</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">private</span> <span class="kw">readonly</span> IMemoryCache _memoryCache<span class="op">;</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> async Task <span class="fu">ExecuteAsync</span><span class="op">(</span>CancellationToken ct<span class="op">)</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>        _hubConnection<span class="op">.</span><span class="fu">On</span><span class="op">&lt;</span>InvalidationMessage<span class="op">&gt;(</span><span class="st">&quot;InvalidateCache&quot;</span><span class="op">,</span> msg <span class="op">=&gt;</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogInformation</span><span class="op">(</span><span class="st">&quot;Cache invalidation received: {Type} - {Key}&quot;</span><span class="op">,</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>                msg<span class="op">.</span><span class="fu">Type</span><span class="op">,</span> msg<span class="op">.</span><span class="fu">Key</span><span class="op">);</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Remove from local memory cache</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>            _memoryCache<span class="op">.</span><span class="fu">Remove</span><span class="op">(</span>msg<span class="op">.</span><span class="fu">Key</span><span class="op">);</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>        <span class="op">});</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>        await _hubConnection<span class="op">.</span><span class="fu">StartAsync</span><span class="op">(</span>ct<span class="op">);</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<hr />
+<h2 id="performance-comparison">8. Performance Comparison</h2>
+<h3 id="before-database-polling">Before (Database Polling)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Avg latency per claim</td>
+<td>150-250 ms</td>
+<td>3-5 DB roundtrips</td>
+</tr>
+<tr>
+<td>DB connections per container</td>
+<td>10-20</td>
+<td>Connection pool</td>
+</tr>
+<tr>
+<td>Throughput per container</td>
+<td>50-75 claims/sec</td>
+<td>I/O bound</td>
+</tr>
+<tr>
+<td>DB load</td>
+<td>High</td>
+<td>Linear with claims</td>
+</tr>
+</tbody>
+</table>
+<h3 id="after-cached">After (Cached)</h3>
+<table>
+<thead>
+<tr>
+<th>Metric</th>
+<th>Value</th>
+<th>Improvement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Avg latency per claim</td>
+<td>15-30 ms</td>
+<td><strong>85-90% faster</strong></td>
+</tr>
+<tr>
+<td>DB connections per container</td>
+<td>0-1</td>
+<td>Cache refresh only</td>
+</tr>
+<tr>
+<td>Throughput per container</td>
+<td>200-400 claims/sec</td>
+<td><strong>4-8x increase</strong></td>
+</tr>
+<tr>
+<td>DB load</td>
+<td>Minimal</td>
+<td>Decoupled from claim volume</td>
+</tr>
+</tbody>
+</table>
+<h3 id="memory-footprint">Memory Footprint</h3>
+<pre><code>In-Memory Cache (per container):
+  DRG Weights:     ~15 MB
+  APC Rates:       ~10 MB
+  RVU Tables:      ~25 MB
+  GPCI:            ~500 KB
+  Conv Factors:    ~1 KB
+  ─────────────────────────
+  Total Static:    ~51 MB
+
+  Provider Rates (LRU):  ~5 MB
+  Contracts (LRU):       ~10 MB
+  Fee Schedules (LRU):   ~10 MB
+  ─────────────────────────
+  Total Dynamic:   ~25 MB
+  
+  TOTAL:           ~76 MB per container</code></pre>
+<hr />
+<h2 id="azure-redis-configuration">9. Azure Redis Configuration</h2>
+<h3 id="terraform">Terraform</h3>
+<pre class="hcl"><code>resource &quot;azurerm_redis_cache&quot; &quot;pem_pricing&quot; {
+  name                = &quot;redis-pem-pricing-${var.environment}&quot;
+  location            = azurerm_resource_group.pem.location
+  resource_group_name = azurerm_resource_group.pem.name
+  
+  capacity            = 1  # 1GB for Standard
+  family              = &quot;C&quot;
+  sku_name            = &quot;Standard&quot;
+  
+  enable_non_ssl_port = false
+  minimum_tls_version = &quot;1.2&quot;
+  
+  redis_configuration {
+    maxmemory_reserved = 50
+    maxmemory_policy   = &quot;allkeys-lru&quot;
+  }
+  
+  tags = local.common_tags
+}
+
+# Private endpoint for VNet access
+resource &quot;azurerm_private_endpoint&quot; &quot;redis&quot; {
+  name                = &quot;pe-redis-pem-pricing&quot;
+  location            = azurerm_resource_group.pem.location
+  resource_group_name = azurerm_resource_group.pem.name
+  subnet_id           = azurerm_subnet.private_endpoints.id
+  
+  private_service_connection {
+    name                           = &quot;redis-connection&quot;
+    private_connection_resource_id = azurerm_redis_cache.pem_pricing.id
+    is_manual_connection           = false
+    subresource_names              = [&quot;redisCache&quot;]
+  }
+}</code></pre>
+<h3 id="connection-configuration">Connection Configuration</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">appsettings.json</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;ConnectionStrings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Redis&quot;</span><span class="fu">:</span> <span class="st">&quot;${REDIS_CONNECTION_STRING}&quot;</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;CacheSettings&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;InstanceName&quot;</span><span class="fu">:</span> <span class="st">&quot;PemPricing_&quot;</span><span class="fu">,</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;DefaultMemoryTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">60</span><span class="fu">,</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;DefaultDistributedTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">360</span><span class="fu">,</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;DrgWeights&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MemoryTtlHours&quot;</span><span class="fu">:</span> <span class="dv">24</span><span class="fu">,</span></span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;DistributedTtlHours&quot;</span><span class="fu">:</span> <span class="dv">48</span><span class="fu">,</span></span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;PreloadOnStartup&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;ApcRates&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MemoryTtlHours&quot;</span><span class="fu">:</span> <span class="dv">6</span><span class="fu">,</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;DistributedTtlHours&quot;</span><span class="fu">:</span> <span class="dv">12</span><span class="fu">,</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;PreloadOnStartup&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;ProviderRates&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MemoryTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">30</span><span class="fu">,</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;DistributedTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">60</span><span class="fu">,</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MaxEntriesInMemory&quot;</span><span class="fu">:</span> <span class="dv">10000</span></span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;Contracts&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MemoryTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb14-28"><a href="#cb14-28" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;DistributedTtlMinutes&quot;</span><span class="fu">:</span> <span class="dv">15</span><span class="fu">,</span></span>
+<span id="cb14-29"><a href="#cb14-29" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;MaxEntriesInMemory&quot;</span><span class="fu">:</span> <span class="dv">1000</span></span>
+<span id="cb14-30"><a href="#cb14-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb14-31"><a href="#cb14-31" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb14-32"><a href="#cb14-32" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="summary-what-goes-where">10. Summary: What Goes Where</h2>
+<p><strong>Data Location Summary:</strong></p>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 27%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>Location</th>
+<th>Data</th>
+<th>Size</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Container - Embedded Files</strong></td>
+<td>.dat/.bin files → .NET Wrapper</td>
+<td>Static</td>
+</tr>
+<tr>
+<td><strong>Container - In-Memory Cache</strong></td>
+<td>Reference data → .NET Wrapper</td>
+<td>~76 MB</td>
+</tr>
+<tr>
+<td><strong>Azure - Redis Cache</strong></td>
+<td>Distributed cache → In-Memory</td>
+<td>~500 MB</td>
+</tr>
+<tr>
+<td><strong>Azure - SQL Database</strong></td>
+<td>Source of truth (cache miss only) → Redis</td>
+<td>-</td>
+</tr>
+</tbody>
+</table>
+<pre><code>SQL Database ─(cache miss only)─→ Redis Cache ─→ In-Memory Cache ─→ .NET Wrapper
+                                                 Embedded Files ────→ .NET Wrapper</code></pre>
+<p><strong>No changes to native DLLs required</strong></p>
+<h3 id="implementation-scope-for-phase-1">Implementation Scope for Phase
+1</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Changes Required</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Native DLLs</td>
+<td><strong>None</strong></td>
+<td>0 days</td>
+</tr>
+<tr>
+<td>Native Bridge</td>
+<td>Minor (accept JSON params)</td>
+<td>2-3 days</td>
+</tr>
+<tr>
+<td>.NET Wrapper</td>
+<td>New caching layer</td>
+<td>5-7 days</td>
+</tr>
+<tr>
+<td>Redis Setup</td>
+<td>Terraform + config</td>
+<td>1-2 days</td>
+</tr>
+<tr>
+<td>Cache Providers</td>
+<td>New components</td>
+<td>3-5 days</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>11-17 days</strong></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><strong>This caching enhancement is 100% feasible for Phase
+1</strong> and provides: - ✅ 85-90% latency reduction - ✅ 4-8x
+throughput improvement - ✅ Zero changes to native DLLs - ✅ Decoupled
+database load - ✅ Horizontal scaling enablement</p>
+<hr />
+<p><strong>Document Version History:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-01-16</td>
+<td>Andy Bratton</td>
+<td>Initial caching strategy</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

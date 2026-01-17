@@ -1,0 +1,20 @@
+{
+  "navigationFallback": {
+    "rewrite": "/00-README.html"
+  },
+  "routes": [
+    {
+      "route": "/",
+      "redirect": "/00-README.html",
+      "statusCode": 301
+    }
+  ],
+  "mimeTypes": {
+    ".html": "text/html",
+    ".css": "text/css",
+    ".js": "text/javascript"
+  },
+  "globalHeaders": {
+    "cache-control": "public, max-age=3600"
+  }
+}

@@ -1,0 +1,1604 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>08-DLL-DEPENDENCY-INVENTORY</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="dll-dependency-inventory-for-containerization">DLL Dependency
+Inventory for Containerization</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Deep-Dive Technical Reference</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document provides a comprehensive inventory of all DLLs, native
+libraries, and runtime dependencies required to containerize the CBO
+repricing engine. These components must be packaged into the Windows
+container for pricing operations to function correctly.</p>
+<hr />
+<h2 id="drg-grouper-medicare-inpatient">1. DRG Grouper (Medicare
+Inpatient)</h2>
+<h3 id="primary-dll">Primary DLL</h3>
+<table>
+<colgroup>
+<col style="width: 19%" />
+<col style="width: 32%" />
+<col style="width: 19%" />
+<col style="width: 29%" />
+</colgroup>
+<thead>
+<tr>
+<th>File</th>
+<th>Location</th>
+<th>Size</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hadgrp.dll</code></td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>~2 MB</td>
+<td>Main DRG grouper interface DLL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="entry-point">Entry Point</h3>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">// From hadgrpcp.h</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">short</span> IRPEXTCALL HADGRP02<span class="op">(</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> HADGRP_DATA <span class="op">*</span>hadgrp_data_ptr</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span></code></pre></div>
+<h3 id="version-specific-modules-federal-drg">Version-Specific Modules
+(Federal DRG)</h3>
+<p>These DLLs contain the grouping logic for specific CMS fiscal
+years:</p>
+<table>
+<colgroup>
+<col style="width: 42%" />
+<col style="width: 30%" />
+<col style="width: 27%" />
+</colgroup>
+<thead>
+<tr>
+<th>File Pattern</th>
+<th>Versions</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HADF10C1.DLL</code> - <code>HADF39C1.DLL</code></td>
+<td>v10-v39</td>
+<td>Federal DRG versions (legacy)</td>
+</tr>
+<tr>
+<td><code>haf391c1.dll</code> - <code>haf430c1.dll</code></td>
+<td>v39.1-v43.0</td>
+<td>MS-DRG versions (current)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="currently-supported-versions">Currently Supported Versions</h3>
+<pre><code>haf391c1.dll  - MS-DRG v39.1 (FY2022)
+haf400c1.dll  - MS-DRG v40.0 (FY2023 Oct-Sep)
+haf401c1.dll  - MS-DRG v40.1 (FY2023 update)
+haf410c1.dll  - MS-DRG v41.0 (FY2024 Oct-Sep)
+haf411c1.dll  - MS-DRG v41.1 (FY2024 update)
+haf420c1.dll  - MS-DRG v42.0 (FY2025 Oct-Sep)
+haf421c1.dll  - MS-DRG v42.1 (FY2025 update)
+haf430c1.dll  - MS-DRG v43.0 (FY2026 Oct-Sep) [CURRENT]</code></pre>
+<h3 id="data-files-required">Data Files Required</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>hadf*wt.dat</code></td>
+<td>DRG weight tables</td>
+</tr>
+<tr>
+<td><code>hadf*dr.dat</code></td>
+<td>DRG definitions</td>
+</tr>
+<tr>
+<td><code>hadf*md.dat</code></td>
+<td>MDC (Major Diagnostic Category) mappings</td>
+</tr>
+<tr>
+<td><code>hadrmpt0.bin</code></td>
+<td>Remapping tables (ICD code mapping)</td>
+</tr>
+<tr>
+<td><code>hadrmptb.bin</code></td>
+<td>Additional remapping data</td>
+</tr>
+<tr>
+<td><code>hadgrp.ini</code></td>
+<td>Grouper configuration settings</td>
+</tr>
+</tbody>
+</table>
+<h3 id="total-size-estimate">Total Size Estimate</h3>
+<pre><code>DRG Grouper Complete: ~150-200 MB
+  - Main DLL: ~2 MB
+  - Version DLLs (all versions): ~100 MB
+  - Data files: ~50 MB</code></pre>
+<h3 id="container-deployment">Container Deployment</h3>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy DRG Grouper files</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/hadgrp.dll /app/grouper/</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/haf*.dll /app/grouper/</span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/*.dat /app/grouper/</span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/*.bin /app/grouper/</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/DRG\ Grouper/hadgrp.ini /app/grouper/</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Set environment variable for grouper path</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> DRG_GROUPER_PATH=C:\app\grouper</span></code></pre></div>
+<hr />
+<h2 id="apc-grouper-medicare-outpatient">2. APC Grouper (Medicare
+Outpatient)</h2>
+<h3 id="nuget-packages">NuGet Packages</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FinThrive.APCGrouper.Core</code></td>
+<td>2025.11.6.1</td>
+<td>Core APC grouping logic</td>
+</tr>
+<tr>
+<td><code>FinThrive.APCGrouper.Client.Interface.Classes</code></td>
+<td>2025.11.6.1</td>
+<td>Client interface classes</td>
+</tr>
+<tr>
+<td><code>FinThrive.APCGrouper.Distribution</code></td>
+<td>2025.10.7.1</td>
+<td>Distribution package</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-dlls-from-nuget">Key DLLs (from NuGet)</h3>
+<pre><code>lib/FinThrive.APCGrouper.Core.2025.11.6.1/
+  - FinThrive.APCGrouper.Core.dll
+  - FinThrive.APCGrouper.Core.pdb
+
+lib/FinThrive.APCGrouper.Client.Interface.Classes.2025.11.6.1/
+  - FinThrive.APCGrouper.Client.Interface.Classes.dll
+  - FinThrive.APCGrouper.Client.Interface.Classes.pdb
+
+lib/FinThrive.APCGrouper.Distribution.2025.10.7.1/
+  - FinThrive.APCGrouper.Distribution.dll</code></pre>
+<h3 id="external-service-option">External Service Option</h3>
+<p>The APC Grouper can also run as an HTTP service:</p>
+<pre><code>Endpoint: http://cmservices-apc-local.nthrive.com/api/1
+Protocol: HTTP POST with JSON
+Timeout: 90 seconds (configurable)</code></pre>
+<h3 id="container-deployment-1">Container Deployment</h3>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Copy APC Grouper from NuGet restore</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/FinThrive.APCGrouper.Core.*/lib/net48/*.dll /app/apc/</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/FinThrive.APCGrouper.Client.Interface.Classes.*/lib/net48/*.dll /app/apc/</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/FinThrive.APCGrouper.Distribution.*/lib/net48/*.dll /app/apc/</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> APC_GROUPER_PATH=C:\app\apc</span></code></pre></div>
+<hr />
+<h2 id="medicare-inpatient-pricer">3. Medicare Inpatient Pricer</h2>
+<h3 id="nuget-packages-1">NuGet Packages</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.Medicare.Inpatient.Client.InterfaceClasses</code></td>
+<td>2025.11.6.1</td>
+<td>Client interface classes</td>
+</tr>
+<tr>
+<td><code>nThrive.Medicare.Inpatient.Native.Pricer.redist</code></td>
+<td>2025.11.6.1</td>
+<td>Native pricer DLL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-dlls">Key DLLs</h3>
+<pre><code>lib/nThrive.Medicare.Inpatient.Client.InterfaceClasses.2025.11.6.1/
+  lib/native/x86/
+    - Medicare.Inpatient.Client.InterfaceClasses.dll
+    - mcrip.dll (native pricer)
+    
+lib/nThrive.Medicare.Inpatient.Native.Pricer.redist.2025.11.6.1/
+  runtimes/win-x86/native/
+    - MCRIP_Native.dll
+    - MCRIP_Data.dll</code></pre>
+<h3 id="source-integration">Source Integration</h3>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">// From source code</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&quot;MedicareInpatientServiceInvoker.h&quot;</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> MedicareInpatientServiceInvoker</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span><span class="op">:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="co">// DLL-based pricing (primary)</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    HRESULT PriceEpisodeDLL<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">);</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Service-based pricing (failover)</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    HRESULT PriceEpisodeService<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>shared_ptr<span class="op">&lt;</span>HEpisode<span class="op">&gt;&amp;</span> episode<span class="op">);</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h3 id="container-deployment-2">Container Deployment</h3>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Medicare Inpatient Pricer</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Medicare.Inpatient.*/lib/native/x86/*.dll /app/medicare-ip/</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Medicare.Inpatient.Native.*/runtimes/win-x86/native/*.dll /app/medicare-ip/</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> MEDICARE_IP_PRICER_PATH=C:\app\medicare-ip</span></code></pre></div>
+<hr />
+<h2 id="medicare-outpatient-pricer">4. Medicare Outpatient Pricer</h2>
+<h3 id="nuget-packages-2">NuGet Packages</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.Medicare.Outpatient.Interface.Classes</code></td>
+<td>2025.11.11.1</td>
+<td>Interface classes</td>
+</tr>
+<tr>
+<td><code>nThrive.Medicare.Outpatient.Native.Pricer.redist</code></td>
+<td>2025.11.12.1</td>
+<td>Native OPPS pricer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-dlls-1">Key DLLs</h3>
+<pre><code>lib/nThrive.Medicare.Outpatient.Interface.Classes.2025.11.11.1/
+  lib/native/x86/
+    - Medicare.Outpatient.Interface.Classes.dll
+    - mcrop.dll (native OPPS pricer)
+    
+lib/nThrive.Medicare.Outpatient.Native.Pricer.redist.2025.11.12.1/
+  runtimes/win-x86/native/
+    - MCROP_Native.dll
+    - MCROP_Data.dll</code></pre>
+<h3 id="container-deployment-3">Container Deployment</h3>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Medicare Outpatient Pricer</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Medicare.Outpatient.*/lib/native/x86/*.dll /app/medicare-op/</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Medicare.Outpatient.Native.*/runtimes/win-x86/native/*.dll /app/medicare-op/</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> MEDICARE_OP_PRICER_PATH=C:\app\medicare-op</span></code></pre></div>
+<hr />
+<h2 id="medicare-physician-fee-schedule">5. Medicare Physician Fee
+Schedule</h2>
+<h3 id="nuget-packages-3">NuGet Packages</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.MedicarePhysiciansFeeSchedule.Core</code></td>
+<td>2025.11.7.1</td>
+<td>Core MPFS logic</td>
+</tr>
+<tr>
+<td><code>nThrive.MedicarePhysiciansFeeSchedule.Interface.Classes</code></td>
+<td>2025.11.7.1</td>
+<td>Interface classes</td>
+</tr>
+<tr>
+<td><code>nThrive.MedicarePhysiciansFeeSchedule.Native.Pricer.redist</code></td>
+<td>2025.11.12.1</td>
+<td>Native MPFS pricer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="key-dlls-2">Key DLLs</h3>
+<pre><code>lib/nThrive.MedicarePhysiciansFeeSchedule.Core.2025.11.7.1/
+  lib/net48/
+    - nThrive.MedicarePhysiciansFeeSchedule.Core.dll
+    
+lib/nThrive.MedicarePhysiciansFeeSchedule.Interface.Classes.2025.11.7.1/
+  lib/native/x86/
+    - MedicarePhysiciansFeeSchedule.Interface.Classes.dll
+    
+lib/nThrive.MedicarePhysiciansFeeSchedule.Native.Pricer.redist.2025.11.12.1/
+  runtimes/win-x86/native/
+    - MPFS_Native.dll</code></pre>
+<h3 id="container-deployment-4">Container Deployment</h3>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Medicare Physician Fee Schedule</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.MedicarePhysiciansFeeSchedule.Core.*/lib/net48/*.dll /app/mpfs/</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.MedicarePhysiciansFeeSchedule.Interface.Classes.*/lib/native/x86/*.dll /app/mpfs/</span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.MedicarePhysiciansFeeSchedule.Native.*/runtimes/win-x86/native/*.dll /app/mpfs/</span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> MPFS_PRICER_PATH=C:\app\mpfs</span></code></pre></div>
+<hr />
+<h2 id="state-medicaid-pricers">6. State Medicaid Pricers</h2>
+<h3 id="arizona-medicaid">Arizona Medicaid</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 33%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Arizona.Medicaid.Pricer.dll</code></td>
+<td>Built locally</td>
+<td>Arizona Medicaid pricing</td>
+</tr>
+<tr>
+<td><code>Arizona.Medicaid.Core.dll</code></td>
+<td>Built locally</td>
+<td>Core logic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Source Project:</strong>
+<code>lib-arizona-medicaid/</code></p>
+<h3 id="south-carolina-medicaid">South Carolina Medicaid</h3>
+<table>
+<colgroup>
+<col style="width: 36%" />
+<col style="width: 33%" />
+<col style="width: 30%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>South.Carolina.Medicaid.Pricer.dll</code></td>
+<td>Built locally</td>
+<td>SC Medicaid pricing</td>
+</tr>
+<tr>
+<td><code>South.Carolina.Medicaid.Core.dll</code></td>
+<td>Built locally</td>
+<td>Core logic</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Source Project:</strong>
+<code>lib-south-carolina-medicaid/</code></p>
+<h3 id="other-state-pricers">Other State Pricers</h3>
+<p>The following states have specialized pricing rules implemented in
+<code>source/Cbo.Core/</code>:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Implementation</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Illinois</td>
+<td><code>TacTermILMedicaidDRG.cpp</code></td>
+<td>APR-DRG based</td>
+</tr>
+<tr>
+<td>Indiana</td>
+<td><code>TacTermINMedicaid.cpp</code></td>
+<td>Custom fee schedules</td>
+</tr>
+<tr>
+<td>New York</td>
+<td><code>TacTermNYMedicaid.cpp</code></td>
+<td>Complex rate schedules</td>
+</tr>
+<tr>
+<td>Ohio</td>
+<td><code>TacTermOHMedicaid.cpp</code></td>
+<td>Multiple programs</td>
+</tr>
+<tr>
+<td>Pennsylvania</td>
+<td><code>TacTermPAMedicaid.cpp</code></td>
+<td>Multiple programs</td>
+</tr>
+<tr>
+<td>Texas</td>
+<td><code>TacTermTXMedicaid.cpp</code></td>
+<td>Complex rules</td>
+</tr>
+<tr>
+<td>Florida</td>
+<td><code>TacTermFLMedicaid.cpp</code></td>
+<td>Complex rules</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-deployment-5">Container Deployment</h3>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># State Medicaid Pricers</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> artifacts/medicaid/*.dll /app/medicaid/</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> MEDICAID_PRICER_PATH=C:\app\medicaid</span></code></pre></div>
+<hr />
+<h2 id="m-gp-services-apr-drg-eapg-tricare">7. 3M GP Services (APR-DRG,
+EAPG, TRICARE)</h2>
+<h3 id="nuget-packages-4">NuGet Packages</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Gp.Services.3M.Common</code></td>
+<td>16.6.0.255</td>
+<td>Common 3M GP interfaces</td>
+</tr>
+</tbody>
+</table>
+<h3 id="http-service-endpoints">HTTP Service Endpoints</h3>
+<p>These groupers are accessed via HTTP services rather than local
+DLLs:</p>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 35%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Service</th>
+<th>Endpoint</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>APR-DRG</td>
+<td><code>http://cmservices-apr-local.nthrive.com/1</code></td>
+<td>APR-DRG grouping</td>
+</tr>
+<tr>
+<td>EAPG</td>
+<td><code>http://cmservices-eapg-local.nthrive.com/1</code></td>
+<td>Enhanced APG grouping</td>
+</tr>
+<tr>
+<td>TRICARE IP</td>
+<td><code>http://cmservices-tricareip-local.nthrive.com/1</code></td>
+<td>TRICARE inpatient grouping</td>
+</tr>
+<tr>
+<td>TRICARE OPPS</td>
+<td><code>http://cmservices-tricareopps-local.nthrive.com/1</code></td>
+<td>TRICARE outpatient</td>
+</tr>
+</tbody>
+</table>
+<h3 id="configuration">Configuration</h3>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;3mGpServices&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;aprDrg&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;endpoint&quot;</span><span class="fu">:</span> <span class="st">&quot;${GP_APR_DRG_ENDPOINT}&quot;</span><span class="fu">,</span></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">90</span><span class="fu">,</span></span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;retries&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;eapg&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;endpoint&quot;</span><span class="fu">:</span> <span class="st">&quot;${GP_EAPG_ENDPOINT}&quot;</span><span class="fu">,</span></span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">90</span><span class="fu">,</span></span>
+<span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;retries&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb16-12"><a href="#cb16-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">},</span></span>
+<span id="cb16-13"><a href="#cb16-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;tricareIp&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb16-14"><a href="#cb16-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;endpoint&quot;</span><span class="fu">:</span> <span class="st">&quot;${GP_TRICARE_IP_ENDPOINT}&quot;</span><span class="fu">,</span></span>
+<span id="cb16-15"><a href="#cb16-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;timeout&quot;</span><span class="fu">:</span> <span class="dv">90</span><span class="fu">,</span></span>
+<span id="cb16-16"><a href="#cb16-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;retries&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb16-17"><a href="#cb16-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb16-18"><a href="#cb16-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb16-19"><a href="#cb16-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="container-deployment-6">Container Deployment</h3>
+<p>The 3M services are external; the container needs network access:</p>
+<div class="sourceCode" id="cb17"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 3M GP Service client libraries</span></span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/Gp.Services.3M.Common.*/lib/net48/*.dll /app/3m/</span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> GP_APR_DRG_ENDPOINT=http://cmservices-apr.internal/1</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> GP_EAPG_ENDPOINT=http://cmservices-eapg.internal/1</span></code></pre></div>
+<hr />
+<h2 id="workers-compensation-pricers">8. Workers Compensation
+Pricers</h2>
+<h3 id="pennsylvania-workers-comp">Pennsylvania Workers Comp</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.Pennsylvania.WorkersComp.Client.Interface.Classes</code></td>
+<td>2025.11.6.1</td>
+<td>PA WC interface</td>
+</tr>
+<tr>
+<td><code>nThrive.Pennsylvania.WorkersComp.Native.Pricer.redist</code></td>
+<td>2025.11.6.1</td>
+<td>Native PA WC pricer</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-deployment-7">Container Deployment</h3>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pennsylvania Workers Comp</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Pennsylvania.WorkersComp.*/lib/native/x86/*.dll /app/workcomp/</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> PA_WORKCOMP_PATH=C:\app\workcomp</span></code></pre></div>
+<hr />
+<h2 id="support-libraries">9. Support Libraries</h2>
+<h3 id="nthrive-common-libraries">nThrive Common Libraries</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.Business.Objects.cpp</code></td>
+<td>2025.11.6.1</td>
+<td>Core business objects</td>
+</tr>
+<tr>
+<td><code>nThrive.JSON.Helpers</code></td>
+<td>2025.11.6.1</td>
+<td>JSON serialization helpers</td>
+</tr>
+<tr>
+<td><code>nThrive.Hmsfx32</code></td>
+<td>2025.10.14.1</td>
+<td>MFC utilities</td>
+</tr>
+<tr>
+<td><code>nThrive.Hmsfx32.redist</code></td>
+<td>2025.10.14.1</td>
+<td>MFC redistributable</td>
+</tr>
+<tr>
+<td><code>nThrive.ODBCClassLibrary</code></td>
+<td>2025.8.14.1</td>
+<td>ODBC database access</td>
+</tr>
+</tbody>
+</table>
+<h3 id="c-rest-sdk">C++ REST SDK</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>cpprestsdk.v141</code></td>
+<td>2.10.12.1</td>
+<td>HTTP client for service calls</td>
+</tr>
+</tbody>
+</table>
+<h3 id="test-libraries-not-needed-in-production-container">Test
+Libraries (Not needed in production container)</h3>
+<table>
+<thead>
+<tr>
+<th>Package</th>
+<th>Version</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>nThrive.gtest</code></td>
+<td>2023.8.17.1</td>
+<td>Google Test framework</td>
+</tr>
+<tr>
+<td><code>nThrive.gmock</code></td>
+<td>2023.8.17.1</td>
+<td>Google Mock framework</td>
+</tr>
+<tr>
+<td><code>nThrive.Test.Helpers</code></td>
+<td>2025.10.10.1</td>
+<td>Test utilities</td>
+</tr>
+</tbody>
+</table>
+<h3 id="container-deployment-8">Container Deployment</h3>
+<div class="sourceCode" id="cb19"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Support Libraries</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Business.Objects.cpp.*/lib/native/x86/*.dll /app/lib/</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.JSON.Helpers.*/lib/net48/*.dll /app/lib/</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/nThrive.Hmsfx32.redist.*/runtimes/win-x86/native/*.dll /app/lib/</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a><span class="kw">COPY</span> lib/cpprestsdk.v141.*/build/native/bin/x86/Release/*.dll /app/lib/</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="kw">ENV</span> SUPPORT_LIB_PATH=C:\app\lib</span></code></pre></div>
+<hr />
+<h2 id="runtime-dependencies">10. Runtime Dependencies</h2>
+<h3 id="visual-c-redistributable">Visual C++ Redistributable</h3>
+<p><strong>Required Version:</strong> VC++ 2015-2022 Redistributable
+(x86)</p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install VC++ Redistributable</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">powershell</span> <span class="at">-Command</span> <span class="dt">\</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>    Invoke-WebRequest <span class="at">-Uri</span> https://aka.ms/vs/17/release/vc_redist.x86.exe <span class="dt">\</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">-OutFile</span> C:<span class="dt">\v</span>c_redist.x86.exe<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Start-Process</span> <span class="at">-FilePath</span> C:<span class="dt">\v</span>c_redist.x86.exe <span class="dt">\</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">-ArgumentList</span> <span class="st">&#39;/install&#39;</span>, <span class="st">&#39;/quiet&#39;</span>, <span class="st">&#39;/norestart&#39;</span> <span class="at">-Wait</span><span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Remove-Item</span> C:<span class="dt">\v</span>c_redist.x86.exe</span></code></pre></div>
+<p><strong>Key DLLs Provided:</strong></p>
+<pre><code>vcruntime140.dll
+vcruntime140_1.dll
+msvcp140.dll
+msvcp140_1.dll
+msvcp140_2.dll
+mfc140u.dll (if MFC is used)
+mfcm140u.dll</code></pre>
+<h3 id="net-runtime">.NET Runtime</h3>
+<p><strong>Required:</strong> .NET 10.0 Runtime (x86 or x64)</p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install .NET 10 Runtime</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">powershell</span> <span class="at">-Command</span> <span class="dt">\</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    Invoke-WebRequest <span class="at">-Uri</span> https://dotnetcli.azureedge.net/dotnet/Runtime/10.0.0/dotnet-runtime-10.0.0-win-x64.exe <span class="dt">\</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">-OutFile</span> C:<span class="dt">\d</span>otnet-runtime.exe<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Start-Process</span> <span class="at">-FilePath</span> C:<span class="dt">\d</span>otnet-runtime.exe <span class="dt">\</span></span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a>        <span class="at">-ArgumentList</span> <span class="st">&#39;/install&#39;</span>, <span class="st">&#39;/quiet&#39;</span>, <span class="st">&#39;/norestart&#39;</span> <span class="at">-Wait</span><span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb22-7"><a href="#cb22-7" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Remove-Item</span> C:<span class="dt">\d</span>otnet-runtime.exe</span></code></pre></div>
+<h3 id="odbc-driver">ODBC Driver</h3>
+<p><strong>Required for database access:</strong> SQL Server ODBC Driver
+17/18</p>
+<div class="sourceCode" id="cb23"><pre
+class="sourceCode dockerfile"><code class="sourceCode dockerfile"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Install ODBC Driver 18</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="kw">RUN</span> <span class="ex">powershell</span> <span class="at">-Command</span> <span class="dt">\</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    Invoke-WebRequest <span class="at">-Uri</span> https://go.microsoft.com/fwlink/<span class="pp">?</span>linkid=2223304 <span class="dt">\</span></span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">-OutFile</span> C:<span class="dt">\m</span>sodbcsql.msi<span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Start-Process</span> msiexec.exe <span class="at">-ArgumentList</span> <span class="st">&#39;/i&#39;</span>, <span class="st">&#39;C:\msodbcsql.msi&#39;</span>, <span class="st">&#39;/quiet&#39;</span>, <span class="st">&#39;IACCEPTMSODBCSQLLICENSE=YES&#39;</span> <span class="at">-Wait</span><span class="kw">;</span> <span class="dt">\</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>    <span class="ex">Remove-Item</span> C:<span class="dt">\m</span>sodbcsql.msi</span></code></pre></div>
+<hr />
+<h2 id="complete-container-dependency-matrix">11. Complete Container
+Dependency Matrix</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ WINDOWS CONTAINER DEPENDENCIES                                               │
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ RUNTIME LAYER                                                           │ │
+│  │  • VC++ 2015-2022 Redistributable                                      │ │
+│  │  • .NET 10 Runtime                                                      │ │
+│  │  • ODBC Driver 18                                                       │ │
+│  └────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│  ┌────────────────────────────────────────────────────────────────────────┐ │
+│  │ CORE PRICING DLLs                                                       │ │
+│  │  • CboPricingBridge.dll (Custom - must build)                          │ │
+│  │  • EpisodeSerializer (Part of bridge)                                   │ │
+│  └────────────────────────────────────────────────────────────────────────┘ │
+│                                                                              │
+│  ┌───────────────────────────────┐  ┌───────────────────────────────────┐  │
+│  │ GROUPER DLLs                  │  │ PRICER DLLs                       │  │
+│  │  • hadgrp.dll + versions      │  │  • Medicare IP (~20MB)            │  │
+│  │    (~200MB)                   │  │  • Medicare OP (~20MB)            │  │
+│  │  • FinThrive.APCGrouper       │  │  • Medicare PFS (~15MB)           │  │
+│  │    (~50MB)                    │  │  • State Medicaid (~30MB)         │  │
+│  └───────────────────────────────┘  │  • Workers Comp (~10MB)           │  │
+│                                      └───────────────────────────────────┘  │
+│  ┌───────────────────────────────┐  ┌───────────────────────────────────┐  │
+│  │ SUPPORT LIBRARIES             │  │ EXTERNAL SERVICES                 │  │
+│  │  • nThrive.*.dll (~30MB)      │  │  • 3M GP Services (HTTP)          │  │
+│  │  • cpprestsdk (~10MB)         │  │                                   │  │
+│  └───────────────────────────────┘  └───────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────┘
+
+Dependencies: CboPricingBridge → VC++ Runtime, all Groupers &amp; Pricers
+              DRG/MCRIP/MCROP → VC++ Runtime</code></pre>
+<pre><code>BRIDGE --&gt; GP3M</code></pre>
+<pre><code>
+---
+
+## 12. Size Estimates
+
+### Container Image Layers
+
+| Layer | Size Estimate | Notes |
+|-------|---------------|-------|
+| Base Image (Windows Server Core 2022) | ~5.5 GB | Compressed: ~2 GB |
+| VC++ Redistributable | ~50 MB | Required |
+| .NET 10 Runtime | ~200 MB | Required |
+| ODBC Driver | ~30 MB | Required for DB access |
+| DRG Grouper | ~200 MB | All versions |
+| APC Grouper | ~50 MB | NuGet packages |
+| Medicare Pricers | ~55 MB | IP + OP + MPFS |
+| Medicaid Pricers | ~30 MB | State-specific |
+| Workers Comp | ~10 MB | PA + others |
+| Support Libraries | ~40 MB | nThrive + cpprest |
+| Pricing Bridge | ~20 MB | Custom build |
+| **Total Image Size** | **~6.2 GB** | Compressed: ~2.5 GB |
+
+### Optimization Opportunities
+
+1. **Use multi-stage builds** to exclude build tools from final image
+2. **Remove unused grouper versions** (keep only 2-3 current versions)
+3. **Consider Windows Nano Server** if possible (requires testing)
+4. **Use Azure Container Registry layer caching**
+
+---
+
+## 13. Build and Packaging Script
+
+### PowerShell Script: `gather-container-deps.ps1`
+
+```powershell
+# gather-container-deps.ps1
+# Gathers all DLL dependencies for container build
+
+param(
+    [string]$OutputPath = &quot;.\container-deps&quot;,
+    [string]$Configuration = &quot;Release&quot;
+)
+
+$ErrorActionPreference = &quot;Stop&quot;
+
+# Create output directories
+$dirs = @(&quot;grouper&quot;, &quot;apc&quot;, &quot;medicare-ip&quot;, &quot;medicare-op&quot;, &quot;mpfs&quot;, &quot;medicaid&quot;, &quot;workcomp&quot;, &quot;lib&quot;, &quot;bridge&quot;)
+foreach ($dir in $dirs) {
+    New-Item -ItemType Directory -Force -Path &quot;$OutputPath\$dir&quot; | Out-Null
+}
+
+Write-Host &quot;Gathering DRG Grouper...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\DRG Grouper\hadgrp.dll&quot; &quot;$OutputPath\grouper\&quot;
+Copy-Item &quot;lib\DRG Grouper\haf*.dll&quot; &quot;$OutputPath\grouper\&quot;
+Copy-Item &quot;lib\DRG Grouper\*.dat&quot; &quot;$OutputPath\grouper\&quot;
+Copy-Item &quot;lib\DRG Grouper\*.bin&quot; &quot;$OutputPath\grouper\&quot;
+Copy-Item &quot;lib\DRG Grouper\hadgrp.ini&quot; &quot;$OutputPath\grouper\&quot;
+
+Write-Host &quot;Gathering APC Grouper...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\FinThrive.APCGrouper.Core.*\lib\net48\*.dll&quot; &quot;$OutputPath\apc\&quot;
+Copy-Item &quot;lib\FinThrive.APCGrouper.Client.Interface.Classes.*\lib\net48\*.dll&quot; &quot;$OutputPath\apc\&quot;
+
+Write-Host &quot;Gathering Medicare IP Pricer...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\nThrive.Medicare.Inpatient.*\lib\native\x86\*.dll&quot; &quot;$OutputPath\medicare-ip\&quot;
+Copy-Item &quot;lib\nThrive.Medicare.Inpatient.Native.*\runtimes\win-x86\native\*.dll&quot; &quot;$OutputPath\medicare-ip\&quot;
+
+Write-Host &quot;Gathering Medicare OP Pricer...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\nThrive.Medicare.Outpatient.*\lib\native\x86\*.dll&quot; &quot;$OutputPath\medicare-op\&quot;
+Copy-Item &quot;lib\nThrive.Medicare.Outpatient.Native.*\runtimes\win-x86\native\*.dll&quot; &quot;$OutputPath\medicare-op\&quot;
+
+Write-Host &quot;Gathering MPFS Pricer...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\nThrive.MedicarePhysiciansFeeSchedule.*\lib\net48\*.dll&quot; &quot;$OutputPath\mpfs\&quot;
+Copy-Item &quot;lib\nThrive.MedicarePhysiciansFeeSchedule.Native.*\runtimes\win-x86\native\*.dll&quot; &quot;$OutputPath\mpfs\&quot;
+
+Write-Host &quot;Gathering Support Libraries...&quot; -ForegroundColor Cyan
+Copy-Item &quot;lib\nThrive.Business.Objects.cpp.*\lib\native\x86\*.dll&quot; &quot;$OutputPath\lib\&quot;
+Copy-Item &quot;lib\nThrive.JSON.Helpers.*\lib\net48\*.dll&quot; &quot;$OutputPath\lib\&quot;
+Copy-Item &quot;lib\nThrive.Hmsfx32.redist.*\runtimes\win-x86\native\*.dll&quot; &quot;$OutputPath\lib\&quot;
+Copy-Item &quot;lib\cpprestsdk.v141.*\build\native\bin\x86\Release\*.dll&quot; &quot;$OutputPath\lib\&quot;
+
+Write-Host &quot;Gathering Pricing Bridge (build output)...&quot; -ForegroundColor Cyan
+Copy-Item &quot;source\x86\$Configuration\CboPricingBridge.dll&quot; &quot;$OutputPath\bridge\&quot;
+Copy-Item &quot;source\CboPricingWorker\bin\$Configuration\net10.0\*&quot; &quot;$OutputPath\bridge\&quot; -Recurse
+
+Write-Host &quot;Dependency gathering complete!&quot; -ForegroundColor Green
+Write-Host &quot;Total size: $((Get-ChildItem $OutputPath -Recurse | Measure-Object -Property Length -Sum).Sum / 1MB) MB&quot;</code></pre>
+<hr />
+<h2 id="licensing-considerations">14. Licensing Considerations</h2>
+<h3 id="third-party-dll-licensing">Third-Party DLL Licensing</h3>
+<table>
+<colgroup>
+<col style="width: 20%" />
+<col style="width: 15%" />
+<col style="width: 30%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Vendor</th>
+<th>License Status</th>
+<th>Cloud Deployment</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>DRG Grouper (hadgrp.dll)</td>
+<td>FinThrive (in-house)</td>
+<td>✅ Internal</td>
+<td>✅ Allowed</td>
+</tr>
+<tr>
+<td>APC Grouper</td>
+<td>FinThrive (in-house)</td>
+<td>✅ Internal</td>
+<td>✅ Allowed</td>
+</tr>
+<tr>
+<td>Medicare Pricers</td>
+<td>FinThrive (in-house)</td>
+<td>✅ Internal</td>
+<td>✅ Allowed</td>
+</tr>
+<tr>
+<td>3M GP Services</td>
+<td>3M Health</td>
+<td>⚠️ Licensed</td>
+<td>🔍 Review Required</td>
+</tr>
+<tr>
+<td>cpprestsdk</td>
+<td>Microsoft</td>
+<td>✅ MIT License</td>
+<td>✅ Allowed</td>
+</tr>
+</tbody>
+</table>
+<h3 id="action-items-for-3m-licensing">Action Items for 3M
+Licensing</h3>
+<ol type="1">
+<li>Review existing 3M licensing agreement for cloud deployment</li>
+<li>Contact 3M licensing team if unclear</li>
+<li>Consider migrating to HTTP service-only access (avoids DLL
+embedding)</li>
+</ol>
+<hr />
+<h2 id="next-steps">Next Steps</h2>
+<ol type="1">
+<li><strong><a
+href="09-GROUPERS-AND-PRICERS.html">09-GROUPERS-AND-PRICERS.md</a></strong>
+- Detailed integration documentation</li>
+<li><strong><a
+href="10-TAC-ENGINE-EXTRACTION.html">10-TAC-ENGINE-EXTRACTION.md</a></strong>
+- Terms and Conditions analysis</li>
+<li><strong><a
+href="11-DATABASE-REQUIREMENTS.html">11-DATABASE-REQUIREMENTS.md</a></strong>
+- Reference data requirements</li>
+</ol>
+<hr />
+<p><strong>Document Version History:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Author</th>
+<th>Changes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1.0</td>
+<td>2026-01-16</td>
+<td>Andy Bratton</td>
+<td>Initial DLL inventory</td>
+</tr>
+</tbody>
+</table>
+</body>
+</html>

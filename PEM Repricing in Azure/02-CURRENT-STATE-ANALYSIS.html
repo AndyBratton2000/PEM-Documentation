@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>02-CURRENT-STATE-ANALYSIS</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="current-state-analysis---contract-manager-repricing">Current
+State Analysis - Contract Manager Repricing</h1>
+<p><strong>Version:</strong> 1.0<br />
+<strong>Last Updated:</strong> January 16, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Complete</p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document analyzes the existing Contract Manager repricing
+components to understand what must be extracted, containerized, or
+rewritten for PEM integration.</p>
+<hr />
+<h2 id="repricing-execution-flow">Repricing Execution Flow</h2>
+<p>The following sequence shows how a claim flows through the Contract
+Manager repricing engine:</p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 44%" />
+<col style="width: 32%" />
+</colgroup>
+<thead>
+<tr>
+<th>Step</th>
+<th>Component</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>Caller (API/UI/Job) → RunCBO.NET</td>
+<td>Submit claim (JSON/-inputFile)</td>
+</tr>
+<tr>
+<td>2</td>
+<td>RunCBO.NET</td>
+<td>Validate credentials, facility</td>
+</tr>
+<tr>
+<td>3</td>
+<td>RunCBO.NET → AdHocRepriceExecutor</td>
+<td>Execute repricing</td>
+</tr>
+<tr>
+<td>4</td>
+<td>AdHocRepriceExecutor → AdHocRepriceEpisodeFactory</td>
+<td>Build HEpisode from JSON</td>
+</tr>
+<tr>
+<td>5</td>
+<td>AdHocRepriceEpisodeFactory</td>
+<td>Validate fields, map codes</td>
+</tr>
+<tr>
+<td>6</td>
+<td>AdHocRepriceExecutor → Repricer</td>
+<td>HJobCreateCarePricerWorkList</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Repricer</td>
+<td>HJobLookupTermsAndConditions</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Repricer</td>
+<td>HJobMatchServiceTypes</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Repricer</td>
+<td>HJobReprice</td>
+</tr>
+<tr>
+<td>10</td>
+<td>Repricer → DRG/APC Grouper</td>
+<td>Group to DRG/APC</td>
+</tr>
+<tr>
+<td>11</td>
+<td>DRG/APC Grouper → Repricer</td>
+<td>DRG/APC assignment</td>
+</tr>
+<tr>
+<td>12</td>
+<td>Repricer → Medicare/Medicaid Pricer</td>
+<td>Calculate expected payment</td>
+</tr>
+<tr>
+<td>13</td>
+<td>Medicare/Medicaid Pricer → Repricer</td>
+<td>Pricing result</td>
+</tr>
+<tr>
+<td>14</td>
+<td>Repricer → Debriefer</td>
+<td>Output results</td>
+</tr>
+<tr>
+<td>15</td>
+<td>Debriefer → Caller</td>
+<td>JSON/SQL/SQLite output</td>
+</tr>
+</tbody>
+</table>
+<pre><code>Caller → RunCBO.NET → AdHocRepriceExecutor → [Factory] → Repricer → [Grouper/Pricer] → Debriefer → Caller</code></pre>
+<hr />
+<h2 id="component-inventory">Component Inventory</h2>
+<h3 id="entry-points">1. Entry Points</h3>
+<table>
+<colgroup>
+<col style="width: 27%" />
+<col style="width: 25%" />
+<col style="width: 25%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Language</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>RunCBO.NET</strong></td>
+<td><code>source/RunCBO.NET/</code></td>
+<td>C# (.NET Framework)</td>
+<td>CLI launcher, credential validation</td>
+</tr>
+<tr>
+<td><strong>AdHocRepriceExecutor</strong></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>C++</td>
+<td>Orchestrates repricing workflow</td>
+</tr>
+<tr>
+<td><strong>Contract Service API</strong></td>
+<td><code>app-contract-service/</code></td>
+<td>C# (.NET)</td>
+<td>REST API for repricing</td>
+</tr>
+</tbody>
+</table>
+<h4 id="key-files">Key Files</h4>
+<pre><code>source/RunCBO.NET/
+├── Startup.cs          # CLI argument parsing
+├── RunCBO.cs           # Launches native cbo.exe
+└── LoginRequest.cs     # Credential model
+
+source/Cbo.Core/
+├── AdHocRepriceExecutor.cpp/.h      # Main orchestrator
+├── AdHocRepriceEpisodeFactory.cpp/.h # JSON → HEpisode
+├── AdHocRepriceEpisodeGenerator.cpp/.h
+└── CboCoreRegistry.cpp               # ObjectFactory setup</code></pre>
+<hr />
+<h3 id="episode-data-model">2. Episode Data Model</h3>
+<p>The <strong>HEpisode</strong> object is the central data structure
+that flows through the pricing pipeline:</p>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 20%" />
+<col style="width: 44%" />
+</colgroup>
+<thead>
+<tr>
+<th>Property</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PatientId</code></td>
+<td>string</td>
+<td>Patient identifier</td>
+</tr>
+<tr>
+<td><code>AdmitDate</code></td>
+<td>date</td>
+<td>Admission date</td>
+</tr>
+<tr>
+<td><code>DischargeDate</code></td>
+<td>date</td>
+<td>Discharge date</td>
+</tr>
+<tr>
+<td><code>BillType</code></td>
+<td>string</td>
+<td>UB bill type (3 chars)</td>
+</tr>
+<tr>
+<td><code>PatientStatus</code></td>
+<td>string</td>
+<td>Discharge status</td>
+</tr>
+<tr>
+<td><code>PrincipalDiagnosis</code></td>
+<td><code>HICDCode</code></td>
+<td>Primary ICD-10-CM</td>
+</tr>
+<tr>
+<td><code>SecondaryDiagnoses</code></td>
+<td><code>HICDCodeList</code></td>
+<td>Additional diagnoses</td>
+</tr>
+<tr>
+<td><code>Procedures</code></td>
+<td><code>HProcedureList</code></td>
+<td>ICD-10-PCS procedures</td>
+</tr>
+<tr>
+<td><code>VisitPackages</code></td>
+<td><code>HVisitPackageList</code></td>
+<td>Service lines (rev codes, charges)</td>
+</tr>
+<tr>
+<td><code>DRGCode</code></td>
+<td>string</td>
+<td>Assigned DRG (after grouping)</td>
+</tr>
+<tr>
+<td><code>APCCodes</code></td>
+<td><code>HAPCList</code></td>
+<td>Assigned APCs (outpatient)</td>
+</tr>
+<tr>
+<td><code>ContractSyskey</code></td>
+<td>string</td>
+<td>Matched contract ID</td>
+</tr>
+<tr>
+<td><code>TACModel</code></td>
+<td><code>HTACModel</code></td>
+<td>Terms &amp; conditions</td>
+</tr>
+<tr>
+<td><code>ExpectedPayment</code></td>
+<td>decimal</td>
+<td>Calculated payment</td>
+</tr>
+</tbody>
+</table>
+<h4 id="serialization">Serialization</h4>
+<ul>
+<li><strong>Input</strong>: JSON via
+<code>AdHocRepriceEpisodeFactory</code></li>
+<li><strong>Internal</strong>: Proprietary binary worklist format</li>
+<li><strong>Output</strong>: JSON via <code>RepriceOutputWriter</code>,
+SQL via <code>Debriefer</code></li>
+</ul>
+<hr />
+<h3 id="hdict-job-pipeline">3. HDict Job Pipeline</h3>
+<p>The repricing pipeline uses <strong>HDict</strong> jobs that pass
+worklist files between stages:</p>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 33%" />
+<col style="width: 42%" />
+</colgroup>
+<thead>
+<tr>
+<th>Job</th>
+<th>Class</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>CreatePatientList</strong></td>
+<td><code>HJobCreateCarePricerWorkList</code></td>
+<td>Serialize HEpisode to worklist</td>
+</tr>
+<tr>
+<td><strong>Lookup TAC</strong></td>
+<td><code>HJobLookupTermsAndConditionsWithProduct</code></td>
+<td>Attach contract/TAC data</td>
+</tr>
+<tr>
+<td><strong>Match Service Types</strong></td>
+<td><code>HJobMatchServiceTypesforRepricing</code></td>
+<td>Map lines to service type tables</td>
+</tr>
+<tr>
+<td><strong>Reprice</strong></td>
+<td><code>HJobReprice</code></td>
+<td>Execute pricing logic</td>
+</tr>
+</tbody>
+</table>
+<h4 id="worklist-format">Worklist Format</h4>
+<p>Worklists are serialized HEpisode objects passed between jobs: -
+In-memory mode: <code>MemFileOutput = Y</code> - File mode:
+<code>source/x86/&lt;Config&gt;/worklists/</code> - Naming:
+<code>{prefix}patientList</code>, <code>{prefix}lookupTerms</code>,
+etc.</p>
+<hr />
+<h3 id="groupers">4. Groupers</h3>
+<h4 id="drg-grouper-medicare-inpatient">DRG Grouper (Medicare
+Inpatient)</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>hadgrp.dll</strong></td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>Main grouper entry point</td>
+</tr>
+<tr>
+<td>**HADF*.DLL**</td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>Federal DRG versions (10-39)</td>
+</tr>
+<tr>
+<td>**haf*.dll**</td>
+<td><code>lib/DRG Grouper/</code></td>
+<td>MS-DRG versions (39.1-43.0)</td>
+</tr>
+<tr>
+<td><strong>HDRGGrouper.cpp</strong></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>C++ wrapper</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interface</strong>:</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="at">extern</span> <span class="st">&quot;C&quot;</span> <span class="dt">void</span> HADGRP02<span class="op">(</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    HADGRP_INPUT<span class="op">*</span> input<span class="op">,</span>    <span class="co">// Diagnoses, procedures, demographics</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    HADGRP_OUTPUT<span class="op">*</span> output   <span class="co">// DRG code, weight, SOI/ROM</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="op">);</span></span></code></pre></div>
+<p><strong>Size</strong>: ~150 MB (all versions)</p>
+<h4 id="apc-grouper-medicare-outpatient">APC Grouper (Medicare
+Outpatient)</h4>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>FinThrive.APCGrouper.Core</strong></td>
+<td>NuGet</td>
+<td>APC grouping logic</td>
+</tr>
+<tr>
+<td><strong>FinThrive.APCGrouper.Distribution</strong></td>
+<td>NuGet</td>
+<td>OPPS data files</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Interface</strong>: .NET assembly, callable via COM interop
+or direct .NET</p>
+<hr />
+<h3 id="pricers">5. Pricers</h3>
+<h4 id="medicare-inpatient-pricer-ipps">Medicare Inpatient Pricer
+(IPPS)</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 25%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>nThrive.Medicare.Inpatient.Core</strong></td>
+<td>NuGet</td>
+<td>IPPS calculation logic</td>
+</tr>
+<tr>
+<td><strong>nThrive.Medicare.Inpatient.Native.Pricer</strong></td>
+<td>NuGet</td>
+<td>Native DLL</td>
+</tr>
+<tr>
+<td><strong>MedicareInpatientServiceInvoker</strong></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Service/DLL invoker</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Calculation</strong>: 1. Apply DRG weight 2. Apply wage index
+adjustment 3. Calculate outlier payments 4. Apply transfer
+adjustments</p>
+<h4 id="medicare-outpatient-pricer-opps">Medicare Outpatient Pricer
+(OPPS)</h4>
+<table>
+<colgroup>
+<col style="width: 34%" />
+<col style="width: 25%" />
+<col style="width: 40%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Source</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>nThrive.Medicare.Outpatient.Core</strong></td>
+<td>NuGet</td>
+<td>OPPS calculation logic</td>
+</tr>
+<tr>
+<td><strong>nThrive.Medicare.Outpatient.Native.Pricer</strong></td>
+<td>NuGet</td>
+<td>Native DLL</td>
+</tr>
+<tr>
+<td><strong>MedicareOutpatientServiceInvoker</strong></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Service/DLL invoker</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Calculation</strong>: 1. Group to APCs 2. Apply packaging
+rules 3. Calculate composite APCs 4. Apply status indicator logic</p>
+<h4 id="state-medicaid-pricers">State Medicaid Pricers</h4>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 39%" />
+<col style="width: 35%" />
+</colgroup>
+<thead>
+<tr>
+<th>State</th>
+<th>Component</th>
+<th>Location</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Arizona</strong></td>
+<td>Arizona.Medicaid.Pricer.dll</td>
+<td><code>lib-medicaid/</code></td>
+</tr>
+<tr>
+<td><strong>South Carolina</strong></td>
+<td>SouthCarolina.Medicaid.Pricer.dll</td>
+<td><code>lib-medicaid/</code></td>
+</tr>
+<tr>
+<td><strong>Other States</strong></td>
+<td>State-specific logic</td>
+<td>Various</td>
+</tr>
+</tbody>
+</table>
+<h4 id="m-gp-services-external">3M GP Services (External)</h4>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Protocol</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>APR-DRG</strong></td>
+<td>REST/JSON</td>
+<td>All Patient Refined DRG</td>
+</tr>
+<tr>
+<td><strong>EAPG</strong></td>
+<td>REST/JSON</td>
+<td>Enhanced Ambulatory Patient Groups</td>
+</tr>
+<tr>
+<td><strong>TRICARE</strong></td>
+<td>REST/JSON</td>
+<td>Military health system pricing</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h3 id="terms-conditions-tac-engine">6. Terms &amp; Conditions (TAC)
+Engine</h3>
+<p>The TAC engine evaluates contract pricing rules:</p>
+<table>
+<colgroup>
+<col style="width: 32%" />
+<col style="width: 29%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Component</th>
+<th>Location</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>TacTermEvaluator</strong></td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Evaluates TAC terms</td>
+</tr>
+<tr>
+<td>**TacTerm*.cpp**</td>
+<td><code>source/Cbo.Core/</code></td>
+<td>Per-term type implementations</td>
+</tr>
+<tr>
+<td><strong>TACMAST</strong></td>
+<td>Database</td>
+<td>TAC model definitions</td>
+</tr>
+<tr>
+<td><strong>TAC_TERM</strong></td>
+<td>Database</td>
+<td>Individual term rules</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Complexity</strong>: Hundreds of term types (DRG-based,
+percent of charges, per diem, etc.)</p>
+<hr />
+<h3 id="outputdebriefers">7. Output/Debriefers</h3>
+<table>
+<thead>
+<tr>
+<th>Debriefer</th>
+<th>Output</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Debriefer</strong></td>
+<td>SQL Server</td>
+<td>Production - updates BILLMAST, TRBOBILL</td>
+</tr>
+<tr>
+<td><strong>SqliteDebriefer</strong></td>
+<td>SQLite file</td>
+<td>Offline/modeling scenarios</td>
+</tr>
+<tr>
+<td><strong>RepriceOutputWriter</strong></td>
+<td>JSON</td>
+<td>API responses, file output</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="dependency-graph">Dependency Graph</h2>
+<pre><code>┌─────────────────────────────────────────────────────────────────────────────┐
+│ ENTRY LAYER                                                                  │
+│  ┌─────────────────────────┐  ┌─────────────────────────┐                   │
+│  │ RunCBO.NET (C#)         │  │ Contract Service API    │                   │
+│  │                         │  │ (C#)                    │                   │
+│  └───────────┬─────────────┘  └───────────┬─────────────┘                   │
+└──────────────┼────────────────────────────┼─────────────────────────────────┘
+               │                            │
+               ▼                            ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ ORCHESTRATION LAYER                                                          │
+│  ┌─────────────────────────┐  ┌─────────────────────────┐                   │
+│  │ AdHocRepriceExecutor    │→ │ HDict Job Engine        │                   │
+│  │ (C++)                   │  │ (C++)                   │                   │
+│  └─────────────────────────┘  └───────────┬─────────────┘                   │
+└───────────────────────────────────────────┼─────────────────────────────────┘
+                                            │
+               ┌────────────────────────────┼────────────────────────────┐
+               ▼                            ▼                            ▼
+┌─────────────────────────────────────────────────────────────────────────────┐
+│ CORE LOGIC                                                                   │
+│  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐              │
+│  │ HEpisode        │  │ TAC Engine      │  │ Repricer        │              │
+│  │ (C++ Data Model)│  │ (C++)           │  │ (C++)           │              │
+│  └─────────────────┘  └─────────────────┘  └────────┬────────┘              │
+└─────────────────────────────────────────────────────┼───────────────────────┘
+                                                      │
+                    ┌─────────────────┬───────────────┼───────────────┬───────────────┐
+                    ▼                 ▼               ▼               ▼               ▼
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│ GROUPERS &amp; PRICERS                                                                     │
+│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐      │
+│  │DRG Grouper  │ │APC Grouper  │ │Medicare IP  │ │Medicare OP  │ │State Medicaid│     │
+│  │(Native DLL) │ │(.NET/NuGet) │ │(Native+.NET)│ │(Native+.NET)│ │(.NET)        │     │
+│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘      │
+│                                                                   ┌─────────────┐      │
+│                                                                   │3M GP Services│     │
+│                                                                   │(REST)        │     │
+│                                                                   └─────────────┘      │
+└───────────────────────────────────────────────────────────────────────────────────────┘
+                                                      │
+                    ┌─────────────────────────────────┼─────────────────────────────────┐
+                    ▼                                 ▼                                 ▼
+┌───────────────────────────────────────────────────────────────────────────────────────┐
+│ OUTPUT LAYER                                                                           │
+│  ┌─────────────────────┐  ┌─────────────────────┐  ┌─────────────────────┐            │
+│  │ SQL Debriefer       │  │ JSON Writer         │  │ SQLite Debriefer    │            │
+│  └─────────────────────┘  └─────────────────────┘  └─────────────────────┘            │
+└───────────────────────────────────────────────────────────────────────────────────────┘</code></pre>
+<hr />
+<h2 id="extraction-strategy">Extraction Strategy</h2>
+<h3 id="phase-1-what-to-extract">Phase 1: What to Extract</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Action</th>
+<th>Effort</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>AdHocRepriceEpisodeFactory</strong></td>
+<td>Extract JSON parsing</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>HEpisode serialization</strong></td>
+<td>Create JSON ↔︎ binary converter</td>
+<td>High</td>
+</tr>
+<tr>
+<td><strong>HDRGGrouper wrapper</strong></td>
+<td>Extract DRG grouper calls</td>
+<td>Low</td>
+</tr>
+<tr>
+<td><strong>Medicare IP/OP invokers</strong></td>
+<td>Extract pricer calls</td>
+<td>Medium</td>
+</tr>
+<tr>
+<td><strong>RepriceOutputWriter</strong></td>
+<td>Reuse for JSON output</td>
+<td>Low</td>
+</tr>
+</tbody>
+</table>
+<h3 id="phase-1-what-to-exclude">Phase 1: What to Exclude</h3>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Reason</th>
+<th>Phase 2?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Full TAC Engine</strong></td>
+<td>Too complex; use contract-level pricing</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>HDict Job orchestration</strong></td>
+<td>Simplify to direct calls</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td><strong>SQL Debriefer</strong></td>
+<td>PEM uses Cosmos DB</td>
+<td>Modified</td>
+</tr>
+<tr>
+<td><strong>MFC UI components</strong></td>
+<td>Not needed for API</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="data-requirements">Data Requirements</h2>
+<h3 id="reference-data-needed">Reference Data Needed</h3>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Source</th>
+<th>Update Frequency</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>DRG Weights</strong></td>
+<td>CMS IPPS Final Rule</td>
+<td>Annual (Oct 1)</td>
+</tr>
+<tr>
+<td><strong>APC Rates</strong></td>
+<td>CMS OPPS Final Rule</td>
+<td>Annual (Jan 1)</td>
+</tr>
+<tr>
+<td><strong>Wage Indices</strong></td>
+<td>CMS IPPS</td>
+<td>Annual</td>
+</tr>
+<tr>
+<td><strong>Code Sets</strong></td>
+<td>ICD-10-CM/PCS, CPT</td>
+<td>Annual + Quarterly</td>
+</tr>
+<tr>
+<td><strong>NCCI Edits</strong></td>
+<td>CMS</td>
+<td>Quarterly</td>
+</tr>
+<tr>
+<td><strong>Fee Schedules</strong></td>
+<td>CMS MPFS</td>
+<td>Annual</td>
+</tr>
+</tbody>
+</table>
+<h3 id="contract-data-needed">Contract Data Needed</h3>
+<table>
+<thead>
+<tr>
+<th>Data</th>
+<th>Source</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Contracts</strong></td>
+<td>CONTRACT table</td>
+<td>Payer agreements</td>
+</tr>
+<tr>
+<td><strong>TAC Models</strong></td>
+<td>TACMAST</td>
+<td>Pricing rules</td>
+</tr>
+<tr>
+<td><strong>Service Types</strong></td>
+<td>TAC_SERVICETYPE</td>
+<td>Line-level matching</td>
+</tr>
+<tr>
+<td><strong>Products</strong></td>
+<td>PRODUCT table</td>
+<td>Plan matching</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="technical-debt-challenges">Technical Debt &amp; Challenges</h2>
+<table>
+<colgroup>
+<col style="width: 35%" />
+<col style="width: 25%" />
+<col style="width: 38%" />
+</colgroup>
+<thead>
+<tr>
+<th>Challenge</th>
+<th>Impact</th>
+<th>Mitigation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>MFC Dependencies</strong></td>
+<td>Requires Windows</td>
+<td>Windows containers</td>
+</tr>
+<tr>
+<td><strong>Binary Worklist Format</strong></td>
+<td>Hard to debug</td>
+<td>JSON intermediate format</td>
+</tr>
+<tr>
+<td><strong>Tight SQL Coupling</strong></td>
+<td>Debriefer expects schema</td>
+<td>Adapter layer</td>
+</tr>
+<tr>
+<td><strong>Global State</strong></td>
+<td>ObjectFactory singletons</td>
+<td>Careful scoping</td>
+</tr>
+<tr>
+<td><strong>COM Interop</strong></td>
+<td>Some groupers use COM</td>
+<td>Maintain compatibility</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="recommendations-for-containerization">Recommendations for
+Containerization</h2>
+<ol type="1">
+<li><strong>Create CboPricingBridge.dll</strong> - Minimal C++ wrapper
+exposing <code>PriceEpisodeFromJson()</code></li>
+<li><strong>Use JSON Throughout</strong> - Avoid binary worklist
+format</li>
+<li><strong>Direct Grouper Calls</strong> - Bypass HDict for
+simplicity</li>
+<li><strong>Stateless Design</strong> - No session/database state in
+container</li>
+<li><strong>Service Bus Integration</strong> - Queue-based scaling</li>
+</ol>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="01-REPRICING-MASTER-PLAN.html">01-REPRICING-MASTER-PLAN.md</a> -
+Overall strategy</li>
+<li><a
+href="03-CONTAINERIZATION-STRATEGY.html">03-CONTAINERIZATION-STRATEGY.md</a>
+- Technical implementation</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete</p>
+</body>
+</html>

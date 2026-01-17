@@ -1,0 +1,2107 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>05-API-DESIGN</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+    <style>
+    /* ========== FinThrive Theme Styles (Embedded) ========== */
+/* Load Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+/* Typography Variables */
+:root {
+  /* Font Families */
+  --font--headlines: 'Plus Jakarta Sans', sans-serif;
+  --font--body-text: 'Plus Jakarta Sans', sans-serif;
+  --font--accent: 'Plus Jakarta Sans', sans-serif;
+  
+  /* Font Weights */
+  --weight--headlines: 500;
+  --weight--body: normal;
+  
+  /* Display Sizes (Responsive) */
+  --d-l: clamp(3.375rem, 4.464vi + 1.232rem, 5.250rem);
+  --d-m: clamp(2.625rem, 5.060vi + 0.196rem, 4.750rem);
+  --d-s: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --d-xs: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  
+  /* Heading Sizes (Responsive) */
+  --h-xxl: clamp(2.375rem, 2.381vi + 1.232rem, 3.375rem);
+  --h-xl: clamp(2.25rem, 0.893vi + 1.821rem, 2.625rem);
+  --h-l: clamp(1.5rem, 1.786vi + 0.643rem, 2.250rem);
+  --h-m: clamp(1.5rem, 0.595vi + 1.214rem, 1.750rem);
+  --h-s: 1.3125rem;
+  --h-xs: 1.125rem;
+  
+  /* Body Text Sizes */
+  --b-l: clamp(1.25rem, 0.298vi + 1.107rem, 1.375rem);
+  --b-m: 1.125rem;
+  --b-s: 1.0rem;
+  --b-xs: 0.875rem;
+  
+  /* Spacing Scale (Responsive) */
+  --s-12: clamp(4.0rem, 20.238vi + -5.714rem, 12.500rem);
+  --s-11: clamp(3.0rem, 16.667vi + -5.000rem, 10.000rem);
+  --s-10: clamp(3.0rem, 11.905vi + -2.714rem, 8.000rem);
+  --s-9: clamp(2.375rem, 8.631vi + -1.768rem, 6.000rem);
+  --s-8: clamp(2.375rem, 3.869vi + 0.518rem, 4.000rem);
+  --s-7: clamp(2.0rem, 2.381vi + 0.857rem, 3.000rem);
+  --s-6: clamp(2.0rem, 0.595vi + 1.714rem, 2.250rem);
+  --s-5: clamp(1.125rem, 0.893vi + 0.696rem, 1.500rem);
+  --s-4: 1.125rem;
+  --s-3: 0.75rem;
+  --s-2: 0.5rem;
+  --s-1: 0.25rem;
+  --s-0: 0.0rem;
+}
+
+/* Light Mode Color Theme (Default) */
+:root,
+.light-mode {
+  /* Primary Colors */
+  --primary: #00E091;
+  --primary--medium: #80F2C3;
+  --primary--light: #C0F9E1;
+  --primary--extra-light: #EBFBF7;
+  --primary--dark: #005654;
+  
+  /* Secondary Colors */
+  --secondary: #FF9B5C;
+  --secondary--medium: #F87A3A;
+  --secondary--light: #FFCA98;
+  --secondary--extra-light: #fff2e5;
+  --secondary--dark: #663E25;
+  
+  /* Tertiary Colors */
+  --tertiary: #3E69FA;
+  --tertiary--medium: #3356CC;
+  --tertiary--light: #CAD6FF;
+  --tertiary--dark: #13204D;
+  
+  /* Accent Color */
+  --accent: #9efb21;
+  
+  /* Neutral Colors */
+  --neutral--black: #005654;
+  --neutral--dark: #005654;
+  --neutral--medium-dark: #545757;
+  --neutral--medium: #A8ABAB;
+  --neutral--medium-light: #D4D6D6;
+  --neutral--light: #F5F5F5;
+  --neutral--white: #FFFFFF;
+  
+  /* Neutral Color Transparency Variants */
+  --neutral--dark-80: rgba(0, 86, 84, 0.8);
+  --neutral--dark-60: rgba(0, 86, 84, 0.6);
+  --neutral--dark-40: rgba(0, 86, 84, 0.4);
+  --neutral--dark-20: rgba(0, 86, 84, 0.2);
+  --neutral--dark-10: rgba(0, 86, 84, 0.1);
+  --neutral--white-80: rgba(255, 255, 255, 0.8);
+  --neutral--white-60: rgba(255, 255, 255, 0.6);
+  --neutral--white-40: rgba(255, 255, 255, 0.4);
+  --neutral--white-20: rgba(255, 255, 255, 0.2);
+  --neutral--white-10: rgba(255, 255, 255, 0.1);
+  
+  /* Card Styles */
+  --card-border: var(--neutral--medium-light);
+  --card-background-light: var(--neutral--white);
+  --card-background-dark: var(--neutral--dark);
+  --card-border-hover: var(--neutral--medium-dark);
+  
+  /* Input Styles */
+  --input--border: var(--neutral--medium);
+  --input--border-focused: var(--inline-links);
+  --input--border-active: var(--neutral--medium-dark);
+  --input--border-disabled: var(--neutral--medium-light);
+  
+  /* Text Colors */
+  --headlines: #005654;
+  --text: #005654;
+  --text--80: rgba(0, 86, 84, 0.8);
+  --text--60: rgba(0, 86, 84, 0.6);
+  --text-input: #005654;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-light);
+  
+  /* Link Colors */
+  --inline-links: #3254c8;
+  --inline-links--hover: #7393FF;
+  --inline-links--visited: #8C3EFA;
+  --menu-links: #005654;
+  --menu-links--hover: #00E091;
+  --menu-links--active: #005654;
+  
+  /* Primary Button */
+  --btn--primary-fg: var(--neutral--white);
+  --btn--primary-fg-hover: var(--neutral--white);
+  --btn--primary-bg: var(--primary);
+  --btn--primary-bg-hover: var(--primary--medium);
+  --btn--primary-stroke: var(--primary--dark);
+  
+  /* Secondary Button */
+  --btn--secondary-fg: var(--neutral--white);
+  --btn--secondary-fg-hover: var(--neutral--white);
+  --btn--secondary-bg: var(--secondary);
+  --btn--secondary-bg-hover: var(--secondary--medium);
+  --btn--secondary-stroke: var(--neutral-dark);
+  
+  /* Tertiary Button */
+  --btn--tertiary-fg: var(--neutral--white);
+  --btn--tertiary-fg-hover: var(--neutral--white);
+  --btn--tertiary-bg: var(--tertiary);
+  --btn--tertiary-bg-hover: var(--tertiary--medium);
+  --btn--tertiary-stroke: var(--neutral-dark);
+  
+  /* White Button */
+  --btn--white-fg: var(--primary);
+  --btn--white-fg-hover: var(--neutral--white);
+  --btn--white-bg: var(--neutral--white);
+  --btn--white-bg-hover: var(--primary);
+  --btn--white-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* Dark Mode Color Theme */
+.dark-mode {
+  /* Text Colors */
+  --headlines: #FFFFFF;
+  --text: #FFFFFF;
+  --text-input: #FFFFFF;
+  
+  /* UI Elements */
+  --hr: var(--neutral--medium-dark);
+  
+  /* Link Colors */
+  --inline-links: #FFFFFF;
+  --inline-links--hover: #70BAFE;
+  --inline-links--visited: #FFFFFF;
+  --menu-links: #FFFFFF;
+  --menu-links--hover: #C0F9E1;
+  --menu-links--active: #FFFFFF;
+  
+  /* Card Styles */
+  --card-border: var(--neutral--white);
+  --card-background-light: var(--neutral--light);
+  --card-border-hover: var(--neutral--white);
+  
+  /* Button Strokes */
+  --btn--primary-stroke: var(--neutral--white);
+  --btn--secondary-stroke: var(--neutral--white);
+  --btn--tertiary-stroke: var(--neutral--white);
+  
+  color: var(--text);
+}
+
+/* ========== Table Styles ========== */
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: var(--s-5) 0;
+  font-size: var(--b-s);
+  font-family: var(--font--body-text);
+  background-color: var(--neutral--white);
+  border: 1px solid var(--neutral--medium-light);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 86, 84, 0.08);
+}
+
+/* Table Header */
+thead {
+  background-color: var(--primary--extra-light);
+}
+
+thead tr {
+  border-bottom: 2px solid var(--primary--medium);
+}
+
+th {
+  padding: var(--s-3) var(--s-4);
+  text-align: left;
+  font-weight: var(--weight--headlines);
+  color: var(--primary--dark);
+  font-size: var(--b-s);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
+/* Table Body */
+tbody tr {
+  border-bottom: 1px solid var(--neutral--medium-light);
+  transition: background-color 0.15s ease;
+}
+
+tbody tr:last-child {
+  border-bottom: none;
+}
+
+/* Zebra Striping */
+tbody tr:nth-child(even) {
+  background-color: var(--neutral--light);
+}
+
+tbody tr:nth-child(odd) {
+  background-color: var(--neutral--white);
+}
+
+/* Row Hover Effect */
+tbody tr:hover {
+  background-color: var(--primary--extra-light);
+}
+
+/* Table Cells */
+td {
+  padding: var(--s-3) var(--s-4);
+  color: var(--text);
+  vertical-align: top;
+  line-height: 1.5;
+}
+
+/* Code in Table Cells */
+td code,
+th code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Bold text in first column */
+td:first-child strong,
+td strong {
+  color: var(--primary--dark);
+  font-weight: 600;
+}
+
+/* Column Groups - ensure proper column widths */
+colgroup col {
+  min-width: 80px;
+}
+
+/* Responsive Table Wrapper */
+@media screen and (max-width: 768px) {
+  table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  th, td {
+    min-width: 120px;
+    padding: var(--s-2) var(--s-3);
+    font-size: var(--b-xs);
+  }
+}
+
+/* Dark Mode Table Styles */
+.dark-mode table {
+  background-color: var(--neutral--dark);
+  border-color: var(--neutral--medium-dark);
+}
+
+.dark-mode thead {
+  background-color: rgba(0, 224, 145, 0.15);
+}
+
+.dark-mode thead tr {
+  border-bottom-color: var(--primary--medium);
+}
+
+.dark-mode th {
+  color: var(--primary--medium);
+}
+
+.dark-mode tbody tr:nth-child(even) {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark-mode tbody tr:nth-child(odd) {
+  background-color: transparent;
+}
+
+.dark-mode tbody tr:hover {
+  background-color: rgba(0, 224, 145, 0.1);
+}
+
+.dark-mode tbody tr {
+  border-bottom-color: var(--neutral--medium-dark);
+}
+
+.dark-mode td {
+  color: var(--text);
+}
+
+.dark-mode td code,
+.dark-mode th code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--primary--light);
+}
+
+/* ========== Additional Layout Styles ========== */
+
+/* Body max-width and padding for readability */
+body {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--s-6) var(--s-5);
+  line-height: 1.6;
+  background-color: var(--neutral--white);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font--headlines);
+  font-weight: var(--weight--headlines);
+  color: var(--headlines);
+  margin-top: var(--s-6);
+  margin-bottom: var(--s-4);
+  line-height: 1.3;
+}
+
+h1 {
+  font-size: var(--h-xxl);
+  color: var(--primary--dark);
+  border-bottom: 3px solid var(--primary);
+  padding-bottom: var(--s-3);
+  margin-bottom: var(--s-5);
+}
+
+h2 {
+  font-size: var(--h-xl);
+  color: var(--primary--dark);
+  border-bottom: 2px solid var(--primary--medium);
+  padding-bottom: var(--s-2);
+}
+
+h3 {
+  font-size: var(--h-l);
+  color: var(--primary--dark);
+}
+
+h4 {
+  font-size: var(--h-m);
+}
+
+h5 {
+  font-size: var(--h-s);
+}
+
+h6 {
+  font-size: var(--h-xs);
+}
+
+/* Horizontal Rules */
+hr {
+  border: none;
+  border-top: 2px solid var(--hr);
+  margin: var(--s-6) 0;
+}
+
+/* Paragraphs */
+p {
+  margin-bottom: var(--s-4);
+  font-size: var(--b-m);
+}
+
+/* Links */
+a {
+  color: var(--inline-links);
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+a:hover {
+  color: var(--inline-links--hover);
+  text-decoration: underline;
+}
+
+a:visited {
+  color: var(--inline-links--visited);
+}
+
+/* Blockquotes */
+blockquote {
+  border-left: 4px solid var(--primary);
+  background-color: var(--primary--extra-light);
+  padding: var(--s-4) var(--s-5);
+  margin: var(--s-5) 0;
+  border-radius: 0 8px 8px 0;
+}
+
+blockquote p {
+  margin-bottom: 0;
+}
+
+/* Lists */
+ul, ol {
+  margin-bottom: var(--s-4);
+  padding-left: var(--s-5);
+}
+
+li {
+  margin-bottom: var(--s-2);
+  line-height: 1.6;
+}
+
+/* Nested lists */
+ul ul, ol ol, ul ol, ol ul {
+  margin-top: var(--s-2);
+  margin-bottom: 0;
+}
+
+/* Task Lists */
+ul.task-list {
+  list-style: none;
+  padding-left: 0;
+}
+
+ul.task-list li {
+  padding-left: var(--s-1);
+}
+
+/* Inline code */
+code {
+  background-color: var(--neutral--light);
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  font-size: 0.9em;
+  color: var(--tertiary--dark);
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+/* Code blocks */
+pre {
+  background-color: #f8f9fa;
+  color: #333333;
+  border: 1px solid var(--neutral--medium-light);
+  padding: var(--s-4);
+  border-radius: 8px;
+  overflow-x: auto;
+  margin: var(--s-5) 0;
+  font-size: var(--b-xs);
+  line-height: 1.5;
+}
+
+pre code {
+  background-color: transparent;
+  padding: 0;
+  color: inherit;
+}
+
+/* Mermaid diagrams */
+.mermaid {
+  margin: var(--s-5) 0;
+  text-align: center;
+  background-color: var(--neutral--white);
+  padding: var(--s-4);
+  border-radius: 8px;
+  border: 1px solid var(--neutral--medium-light);
+}
+  </style>
+  <!-- ========== Prism.JS Syntax Highlighting ========== -->
+
+  <!-- Prism theme (choose one theme below) -->
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/prismjs/themes/prism.css"
+  />
+
+  <!-- Core Prism library -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/prism.min.js"></script>
+
+  <!-- Add languages you need -->
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-csharp.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-json.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-sql.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-typescript.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/prismjs/components/prism-yaml.js"></script>
+
+  <!-- Automatically highlight code after page load -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.Prism) {
+        Prism.highlightAll();
+      }
+    });
+  </script>
+
+  <!-- ========== Mermaid Rendering ========== -->
+
+  <!-- Use stable UMD build -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      // Find code blocks that came from ```mermaid fences
+      const mermaidCodeBlocks = document.querySelectorAll(
+        'pre.mermaid > code, pre > code.language-mermaid'
+      );
+
+      mermaidCodeBlocks.forEach(code => {
+        const pre = code.parentElement;
+        const parent = pre?.parentElement;
+        if (!pre || !parent) return;
+
+        const text = (code.textContent || '').trim();
+        if (!text) return;
+
+        // Replace <pre><code> with <div class="mermaid">...</div>
+        const div = document.createElement('div');
+        div.className = 'mermaid';
+        div.textContent = text;
+
+        parent.replaceChild(div, pre);
+      });
+
+      mermaid.initialize({
+        startOnLoad: true
+      });
+    });
+  </script>
+</head>
+<body>
+<h1 id="azure-pem-api-design">Azure PEM API Design</h1>
+<p><strong>Version:</strong> 1.1<br />
+<strong>Last Updated:</strong> January 15, 2026<br />
+<strong>Author:</strong> Andy Bratton<br />
+<strong>Status:</strong> Planning Phase<br />
+<strong>Parent Document:</strong> <a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a></p>
+<hr />
+<h2 id="overview">Overview</h2>
+<p>This document defines the API specifications for the Azure PEM
+system. All APIs follow RESTful conventions and are exposed through
+Azure API Management.</p>
+<hr />
+<h2 id="api-architecture">API Architecture</h2>
+<p><strong>API Architecture Overview</strong></p>
+<pre class="mermaid"><code>%%{init: {&#39;theme&#39;: &#39;default&#39;}}%%
+flowchart LR
+    subgraph CLIENTS[&quot;CLIENTS&quot;]
+        CM[&quot;Contract Manager&lt;br/&gt;(via PEM.Client SDK)&quot;]
+        ANG[&quot;PEM Angular Module&quot;]
+    end
+
+    subgraph APIM[&quot;AZURE API MANAGEMENT&quot;]
+        GW[&quot;• API Gateway&lt;br/&gt;• Authentication&lt;br/&gt;• Rate Limiting&lt;br/&gt;• Response Cache&quot;]
+    end
+
+    subgraph BACKEND[&quot;BACKEND APIs (.NET 10)&quot;]
+        APIS[&quot;• Episodes API&lt;br/&gt;• Definitions API&lt;br/&gt;• Modeling API&lt;br/&gt;• Worklist API&lt;br/&gt;• Reporting API&quot;]
+    end
+
+    CLIENTS --&gt; APIM --&gt; BACKEND</code></pre>
+<hr />
+<h2 id="common-standards">Common Standards</h2>
+<h3 id="base-url">Base URL</h3>
+<table>
+<thead>
+<tr>
+<th>Environment</th>
+<th>Base URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>dev</td>
+<td><code>https://api-pem-dev.azurewebsites.net</code></td>
+</tr>
+<tr>
+<td>qae</td>
+<td><code>https://api-pem-qae.azurewebsites.net</code></td>
+</tr>
+<tr>
+<td>uat</td>
+<td><code>https://api-pem-uat.finthrive.com</code></td>
+</tr>
+<tr>
+<td>prod</td>
+<td><code>https://api-pem.finthrive.com</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="authentication">Authentication</h3>
+<p>All endpoints require OAuth 2.0 Bearer token authentication via Azure
+AD.</p>
+<pre class="http"><code>Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIs...</code></pre>
+<h3 id="common-headers">Common Headers</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 32%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Header</th>
+<th>Required</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>Authorization</code></td>
+<td>Yes</td>
+<td>Bearer token</td>
+</tr>
+<tr>
+<td><code>X-Tenant-Id</code></td>
+<td>Yes</td>
+<td>Tenant identifier</td>
+</tr>
+<tr>
+<td><code>X-Correlation-Id</code></td>
+<td>No</td>
+<td>Request correlation ID (auto-generated if missing)</td>
+</tr>
+<tr>
+<td><code>Accept</code></td>
+<td>No</td>
+<td><code>application/json</code> (default)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="pagination">Pagination</h3>
+<p>List endpoints support pagination:</p>
+<pre class="http"><code>GET /api/episodes?page=1&amp;pageSize=50&amp;sortBy=triggerDate&amp;sortOrder=desc</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pagination&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;page&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pageSize&quot;</span><span class="fu">:</span> <span class="dv">50</span><span class="fu">,</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalItems&quot;</span><span class="fu">:</span> <span class="dv">1234</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalPages&quot;</span><span class="fu">:</span> <span class="dv">25</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;hasNextPage&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;hasPreviousPage&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="error-responses">Error Responses</h3>
+<p>All errors follow RFC 7807 Problem Details format:</p>
+<div class="sourceCode" id="cb5"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;type&quot;</span><span class="fu">:</span> <span class="st">&quot;https://api.pem.finthrive.com/errors/validation&quot;</span><span class="fu">,</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;title&quot;</span><span class="fu">:</span> <span class="st">&quot;Validation Error&quot;</span><span class="fu">,</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="dv">400</span><span class="fu">,</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;detail&quot;</span><span class="fu">:</span> <span class="st">&quot;One or more validation errors occurred.&quot;</span><span class="fu">,</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;instance&quot;</span><span class="fu">:</span> <span class="st">&quot;/api/episodes&quot;</span><span class="fu">,</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;traceId&quot;</span><span class="fu">:</span> <span class="st">&quot;00-abc123...&quot;</span><span class="fu">,</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;errors&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Patient ID is required&quot;</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;triggerDate&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="st">&quot;Trigger date cannot be in the future&quot;</span><span class="ot">]</span></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Status Code</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>200</code></td>
+<td>Success</td>
+</tr>
+<tr>
+<td><code>201</code></td>
+<td>Created</td>
+</tr>
+<tr>
+<td><code>204</code></td>
+<td>No Content (successful delete)</td>
+</tr>
+<tr>
+<td><code>400</code></td>
+<td>Bad Request (validation error)</td>
+</tr>
+<tr>
+<td><code>401</code></td>
+<td>Unauthorized</td>
+</tr>
+<tr>
+<td><code>403</code></td>
+<td>Forbidden</td>
+</tr>
+<tr>
+<td><code>404</code></td>
+<td>Not Found</td>
+</tr>
+<tr>
+<td><code>409</code></td>
+<td>Conflict (concurrency error)</td>
+</tr>
+<tr>
+<td><code>422</code></td>
+<td>Unprocessable Entity</td>
+</tr>
+<tr>
+<td><code>500</code></td>
+<td>Internal Server Error</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="api-versioning-strategy">API Versioning Strategy</h2>
+<h3 id="versioning-approach">Versioning Approach</h3>
+<p>PEM APIs use <strong>URL path versioning</strong> with the format
+<code>/api/v{major}/</code>. This approach was chosen for: - Clear
+visibility in logs and debugging - Easy routing in API Management -
+Client compatibility with SDK version binding</p>
+<pre><code>https://api-pem.finthrive.com/api/v1/episodes
+https://api-pem.finthrive.com/api/v2/episodes  (future)</code></pre>
+<h3 id="version-lifecycle">Version Lifecycle</h3>
+<p><strong>API Version Lifecycle</strong></p>
+<pre><code>Preview (v2-preview) ──► Current (v2) ──► Supported (v1) ──► Deprecated (v1) ──► Retired</code></pre>
+<table>
+<colgroup>
+<col style="width: 23%" />
+<col style="width: 33%" />
+<col style="width: 43%" />
+</colgroup>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Duration</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Preview</strong></td>
+<td>1-3 sprints</td>
+<td>New version in development, may change without notice</td>
+</tr>
+<tr>
+<td><strong>Current</strong></td>
+<td>Indefinite</td>
+<td>Latest stable version, receives all new features</td>
+</tr>
+<tr>
+<td><strong>Supported</strong></td>
+<td>12 months minimum</td>
+<td>Previous version, receives security patches only</td>
+</tr>
+<tr>
+<td><strong>Deprecated</strong></td>
+<td>6 months</td>
+<td>Announced end-of-life, no updates, migration required</td>
+</tr>
+<tr>
+<td><strong>Retired</strong></td>
+<td>N/A</td>
+<td>No longer available, requests return 410 Gone</td>
+</tr>
+</tbody>
+</table>
+<h3 id="when-to-create-a-new-version">When to Create a New Version</h3>
+<p>A new major API version (v1 → v2) is created <strong>only</strong>
+for breaking changes:</p>
+<table>
+<thead>
+<tr>
+<th>Change Type</th>
+<th>Breaking?</th>
+<th>New Version Required?</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Add new endpoint</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Add optional field to request</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Add field to response</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Remove endpoint</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Remove required field</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Change field type</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Change validation rules (stricter)</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Rename field</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Change endpoint URL structure</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Change error response format</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+<tr>
+<td>Change authentication mechanism</td>
+<td><strong>Yes</strong></td>
+<td><strong>Yes</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Non-breaking changes</strong> are added to the current
+version immediately: - New optional query parameters - New optional
+request body fields - New response fields (additive) - New endpoints -
+New enum values (when clients handle unknown values gracefully) - Bug
+fixes - Performance improvements</p>
+<h3 id="backward-compatibility-guarantees">Backward Compatibility
+Guarantees</h3>
+<h4 id="within-a-major-version-v1.x">Within a Major Version (v1.x)</h4>
+<table>
+<colgroup>
+<col style="width: 45%" />
+<col style="width: 54%" />
+</colgroup>
+<thead>
+<tr>
+<th>Guarantee</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Endpoint Stability</strong></td>
+<td>Existing endpoints will not be removed or renamed</td>
+</tr>
+<tr>
+<td><strong>Field Preservation</strong></td>
+<td>Existing response fields will not be removed or renamed</td>
+</tr>
+<tr>
+<td><strong>Type Consistency</strong></td>
+<td>Field types will not change</td>
+</tr>
+<tr>
+<td><strong>Validation Consistency</strong></td>
+<td>Validation rules will not become stricter</td>
+</tr>
+<tr>
+<td><strong>Default Behavior</strong></td>
+<td>Default values and behaviors will not change</td>
+</tr>
+</tbody>
+</table>
+<h4 id="additive-changes-allowed">Additive Changes Allowed</h4>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">v1.</span><span class="dv">0</span> <span class="er">Response</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;abc-123&quot;</span><span class="fu">,</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;P001&quot;</span><span class="fu">,</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Open&quot;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="er">//</span> <span class="er">v1.</span><span class="dv">5</span> <span class="er">Response</span> <span class="er">(additive</span> <span class="er">-</span> <span class="er">NOT</span> <span class="er">breaking)</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;abc-123&quot;</span><span class="fu">,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;P001&quot;</span><span class="fu">,</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Open&quot;</span><span class="fu">,</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;statusReason&quot;</span><span class="fu">:</span> <span class="st">&quot;Awaiting Claims&quot;</span><span class="fu">,</span>  <span class="er">//</span> <span class="er">New</span> <span class="er">field</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;lastModifiedAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15T10:30:00Z&quot;</span>  <span class="er">//</span> <span class="er">New</span> <span class="er">field</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h4 id="response-envelope-stability">Response Envelope Stability</h4>
+<p>The pagination envelope structure is guaranteed stable within a
+version:</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span><span class="er">...</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pagination&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;page&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pageSize&quot;</span><span class="fu">:</span> <span class="dv">50</span><span class="fu">,</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalItems&quot;</span><span class="fu">:</span> <span class="dv">1234</span><span class="fu">,</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalPages&quot;</span><span class="fu">:</span> <span class="dv">25</span><span class="fu">,</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;hasNextPage&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;hasPreviousPage&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="deprecation-policy">Deprecation Policy</h3>
+<h4 id="deprecation-announcement">Deprecation Announcement</h4>
+<p>When a version is deprecated:</p>
+<ol type="1">
+<li><p><strong>API Response Header</strong>: All responses include
+deprecation warning</p>
+<pre class="http"><code>Deprecation: true
+Sunset: Sat, 15 Jul 2027 00:00:00 GMT
+Link: &lt;https://docs.pem.finthrive.com/migration/v1-to-v2&gt;; rel=&quot;deprecation&quot;</code></pre></li>
+<li><p><strong>API Management Policy</strong>: Logs deprecation warnings
+for monitoring</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode xml"><code class="sourceCode xml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">set-header</span> <span class="ot">name=</span><span class="st">&quot;Deprecation&quot;</span> <span class="ot">exists-action=</span><span class="st">&quot;override&quot;</span>&gt;</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">value</span>&gt;true&lt;/<span class="kw">value</span>&gt;</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">set-header</span>&gt;</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>&lt;<span class="kw">set-header</span> <span class="ot">name=</span><span class="st">&quot;Sunset&quot;</span> <span class="ot">exists-action=</span><span class="st">&quot;override&quot;</span>&gt;</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    &lt;<span class="kw">value</span>&gt;@(DateTime.Parse(&quot;2027-07-15&quot;).ToString(&quot;R&quot;))&lt;/<span class="kw">value</span>&gt;</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>&lt;/<span class="kw">set-header</span>&gt;</span></code></pre></div></li>
+<li><p><strong>Documentation</strong>: Updated with migration
+guide</p></li>
+<li><p><strong>Release Notes</strong>: Deprecation announced in release
+notes</p></li>
+<li><p><strong>Email Notification</strong>: Integration contacts
+notified</p></li>
+</ol>
+<h4 id="deprecation-timeline">Deprecation Timeline</h4>
+<p><strong>API v1 Deprecation Timeline (Example)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th>Date</th>
+<th>Duration</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v2 Preview</td>
+<td>Jan 1, 2027</td>
+<td>60 days</td>
+</tr>
+<tr>
+<td>v2 GA</td>
+<td>Mar 1, 2027</td>
+<td>Milestone</td>
+</tr>
+<tr>
+<td>v1 Deprecated</td>
+<td>Mar 1, 2027</td>
+<td>180 days</td>
+</tr>
+<tr>
+<td>v1 Retired</td>
+<td>Sep 1, 2027</td>
+<td>Milestone</td>
+</tr>
+</tbody>
+</table>
+<table style="width:100%;">
+<colgroup>
+<col style="width: 31%" />
+<col style="width: 45%" />
+<col style="width: 22%" />
+</colgroup>
+<thead>
+<tr>
+<th>Milestone</th>
+<th>Date (Example)</th>
+<th>Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v2 Preview</td>
+<td>T+0</td>
+<td>v2 available for testing, v1 still current</td>
+</tr>
+<tr>
+<td>v2 GA</td>
+<td>T+60 days</td>
+<td>v2 becomes current, v1 moves to deprecated</td>
+</tr>
+<tr>
+<td>v1 Warning</td>
+<td>T+120 days</td>
+<td>Increased logging, weekly reports on v1 usage</td>
+</tr>
+<tr>
+<td>v1 Retired</td>
+<td>T+180 days</td>
+<td>v1 returns 410 Gone</td>
+</tr>
+</tbody>
+</table>
+<h4 id="post-retirement-behavior">Post-Retirement Behavior</h4>
+<pre class="http"><code>GET /api/v1/episodes HTTP/1.1
+Host: api-pem.finthrive.com
+
+HTTP/1.1 410 Gone
+Content-Type: application/problem+json
+
+{
+  &quot;type&quot;: &quot;https://api.pem.finthrive.com/errors/api-version-retired&quot;,
+  &quot;title&quot;: &quot;API Version Retired&quot;,
+  &quot;status&quot;: 410,
+  &quot;detail&quot;: &quot;API version v1 was retired on 2027-09-01. Please migrate to v2.&quot;,
+  &quot;instance&quot;: &quot;/api/v1/episodes&quot;,
+  &quot;migrationGuide&quot;: &quot;https://docs.pem.finthrive.com/migration/v1-to-v2&quot;
+}</code></pre>
+<h3 id="pem.client-sdk-version-handling">PEM.Client SDK Version
+Handling</h3>
+<h4 id="sdk-version-binding">SDK Version Binding</h4>
+<p>Each SDK major version is bound to a specific API version:</p>
+<table>
+<thead>
+<tr>
+<th>SDK Version</th>
+<th>API Version</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PEM.Client 1.x</td>
+<td>API v1</td>
+<td>Current</td>
+</tr>
+<tr>
+<td>PEM.Client 2.x</td>
+<td>API v2</td>
+<td>Future</td>
+</tr>
+</tbody>
+</table>
+<h4 id="sdk-configuration">SDK Configuration</h4>
+<div class="sourceCode" id="cb13"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">// Default: Uses API version matching SDK major version</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddPemClient</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">=</span> <span class="st">&quot;https://api-pem.finthrive.com&quot;</span><span class="op">;</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="co">// SDK 1.x automatically uses /api/v1/</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co">// Override: Explicitly specify API version (for testing/migration)</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddPemClient</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">=</span> <span class="st">&quot;https://api-pem.finthrive.com&quot;</span><span class="op">;</span></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">ApiVersion</span> <span class="op">=</span> <span class="st">&quot;v2-preview&quot;</span><span class="op">;</span>  <span class="co">// Override for testing</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="op">});</span></span></code></pre></div>
+<h4 id="sdk-deprecation-handling">SDK Deprecation Handling</h4>
+<p>The SDK detects deprecation headers and raises warnings:</p>
+<div class="sourceCode" id="cb14"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> DeprecationWarningHandler <span class="op">:</span> DelegatingHandler</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">protected</span> <span class="kw">override</span> async Task<span class="op">&lt;</span>HttpResponseMessage<span class="op">&gt;</span> <span class="fu">SendAsync</span><span class="op">(</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>        HttpRequestMessage request<span class="op">,</span> </span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>        CancellationToken cancellationToken<span class="op">)</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>        <span class="dt">var</span> response <span class="op">=</span> await <span class="kw">base</span><span class="op">.</span><span class="fu">SendAsync</span><span class="op">(</span>request<span class="op">,</span> cancellationToken<span class="op">);</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>        <span class="kw">if</span> <span class="op">(</span>response<span class="op">.</span><span class="fu">Headers</span><span class="op">.</span><span class="fu">TryGetValues</span><span class="op">(</span><span class="st">&quot;Deprecation&quot;</span><span class="op">,</span> <span class="kw">out</span> <span class="dt">var</span> values<span class="op">)</span> </span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>            <span class="op">&amp;&amp;</span> values<span class="op">.</span><span class="fu">Contains</span><span class="op">(</span><span class="st">&quot;true&quot;</span><span class="op">))</span></span>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>        <span class="op">{</span></span>
+<span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a>            <span class="dt">var</span> sunset <span class="op">=</span> response<span class="op">.</span><span class="fu">Headers</span><span class="op">.</span><span class="fu">TryGetValues</span><span class="op">(</span><span class="st">&quot;Sunset&quot;</span><span class="op">,</span> <span class="kw">out</span> <span class="dt">var</span> sunsetValues<span class="op">)</span> </span>
+<span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a>                <span class="op">?</span> sunsetValues<span class="op">.</span><span class="fu">FirstOrDefault</span><span class="op">()</span> </span>
+<span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a>                <span class="op">:</span> <span class="st">&quot;unknown&quot;</span><span class="op">;</span></span>
+<span id="cb14-15"><a href="#cb14-15" aria-hidden="true" tabindex="-1"></a>                </span>
+<span id="cb14-16"><a href="#cb14-16" aria-hidden="true" tabindex="-1"></a>            _logger<span class="op">.</span><span class="fu">LogWarning</span><span class="op">(</span></span>
+<span id="cb14-17"><a href="#cb14-17" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;PEM API version is deprecated. Sunset date: {Sunset}. &quot;</span> <span class="op">+</span></span>
+<span id="cb14-18"><a href="#cb14-18" aria-hidden="true" tabindex="-1"></a>                <span class="st">&quot;Please upgrade the PEM.Client SDK.&quot;</span><span class="op">,</span></span>
+<span id="cb14-19"><a href="#cb14-19" aria-hidden="true" tabindex="-1"></a>                sunset<span class="op">);</span></span>
+<span id="cb14-20"><a href="#cb14-20" aria-hidden="true" tabindex="-1"></a>            </span>
+<span id="cb14-21"><a href="#cb14-21" aria-hidden="true" tabindex="-1"></a>            <span class="co">// Emit metric for monitoring</span></span>
+<span id="cb14-22"><a href="#cb14-22" aria-hidden="true" tabindex="-1"></a>            _metrics<span class="op">.</span><span class="fu">IncrementCounter</span><span class="op">(</span><span class="st">&quot;pem.api.deprecation_warning&quot;</span><span class="op">);</span></span>
+<span id="cb14-23"><a href="#cb14-23" aria-hidden="true" tabindex="-1"></a>        <span class="op">}</span></span>
+<span id="cb14-24"><a href="#cb14-24" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb14-25"><a href="#cb14-25" aria-hidden="true" tabindex="-1"></a>        <span class="kw">return</span> response<span class="op">;</span></span>
+<span id="cb14-26"><a href="#cb14-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb14-27"><a href="#cb14-27" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h4 id="multi-version-sdk-support-during-migration">Multi-Version SDK
+Support (During Migration)</h4>
+<p>For large migrations, the SDK supports calling multiple versions:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode csharp"><code class="sourceCode cs"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">// During migration period, both clients can coexist</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddPemClient</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">=</span> <span class="st">&quot;https://api-pem.finthrive.com&quot;</span><span class="op">;</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">ApiVersion</span> <span class="op">=</span> <span class="st">&quot;v1&quot;</span><span class="op">;</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="op">}).</span><span class="fu">Named</span><span class="op">(</span><span class="st">&quot;v1&quot;</span><span class="op">);</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>services<span class="op">.</span><span class="fu">AddPemClient</span><span class="op">(</span>options <span class="op">=&gt;</span></span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">BaseUrl</span> <span class="op">=</span> <span class="st">&quot;https://api-pem.finthrive.com&quot;</span><span class="op">;</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>    options<span class="op">.</span><span class="fu">ApiVersion</span> <span class="op">=</span> <span class="st">&quot;v2&quot;</span><span class="op">;</span></span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="op">}).</span><span class="fu">Named</span><span class="op">(</span><span class="st">&quot;v2&quot;</span><span class="op">);</span></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="co">// Usage in migration code</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a><span class="kw">public</span> <span class="kw">class</span> MigrationService</span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>    <span class="kw">public</span> <span class="fu">MigrationService</span><span class="op">(</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>        <span class="op">[</span><span class="fu">FromKeyedServices</span><span class="op">(</span><span class="st">&quot;v1&quot;</span><span class="op">)]</span> IPemClient v1Client<span class="op">,</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>        <span class="op">[</span><span class="fu">FromKeyedServices</span><span class="op">(</span><span class="st">&quot;v2&quot;</span><span class="op">)]</span> IPemClient v2Client<span class="op">)</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>    <span class="op">{</span></span>
+<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a>        _v1Client <span class="op">=</span> v1Client<span class="op">;</span></span>
+<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a>        _v2Client <span class="op">=</span> v2Client<span class="op">;</span></span>
+<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a>    <span class="op">}</span></span>
+<span id="cb15-24"><a href="#cb15-24" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h3 id="version-discovery">Version Discovery</h3>
+<h4 id="health-endpoint-with-version-info">Health Endpoint with Version
+Info</h4>
+<pre class="http"><code>GET /api/health HTTP/1.1
+
+{
+  &quot;status&quot;: &quot;Healthy&quot;,
+  &quot;version&quot;: {
+    &quot;api&quot;: &quot;1.5.0&quot;,
+    &quot;build&quot;: &quot;20260115.3&quot;
+  },
+  &quot;supportedVersions&quot;: [
+    { &quot;version&quot;: &quot;v1&quot;, &quot;status&quot;: &quot;current&quot;, &quot;sunset&quot;: null },
+    { &quot;version&quot;: &quot;v2-preview&quot;, &quot;status&quot;: &quot;preview&quot;, &quot;sunset&quot;: null }
+  ],
+  &quot;deprecatedVersions&quot;: []
+}</code></pre>
+<h4 id="openapi-specification-per-version">OpenAPI Specification per
+Version</h4>
+<p>Each version has its own OpenAPI spec:</p>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>OpenAPI URL</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>v1</td>
+<td><code>https://api-pem.finthrive.com/api/v1/swagger.json</code></td>
+</tr>
+<tr>
+<td>v2</td>
+<td><code>https://api-pem.finthrive.com/api/v2/swagger.json</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="episodes-api">Episodes API</h2>
+<p><strong>Base Path:</strong> <code>/api/episodes</code></p>
+<h3 id="endpoints">Endpoints</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 32%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/episodes</code></td>
+<td>List episodes with filtering</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/episodes/{id}</code></td>
+<td>Get episode by ID</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/episodes</code></td>
+<td>Create episode manually</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td><code>/api/episodes/{id}</code></td>
+<td>Update episode</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/episodes/{id}</code></td>
+<td>Soft delete episode</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/episodes/{id}/claims</code></td>
+<td>Add claim to episode</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/episodes/{id}/claims/{claimId}</code></td>
+<td>Remove claim from episode</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/episodes/{id}/recalculate</code></td>
+<td>Recalculate bundle</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/episodes/{id}/status</code></td>
+<td>Change episode status</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/episodes/{id}/history</code></td>
+<td>Get status history</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/episodes/{id}/notes</code></td>
+<td>Get episode notes</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/episodes/{id}/notes</code></td>
+<td>Add note</td>
+</tr>
+</tbody>
+</table>
+<h3 id="list-episodes">List Episodes</h3>
+<pre class="http"><code>GET /api/episodes?status=Open&amp;patientId=P12345&amp;fromDate=2026-01-01&amp;toDate=2026-03-31</code></pre>
+<p><strong>Query Parameters:</strong></p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>status</code></td>
+<td>string</td>
+<td>Filter by status (Open, Closed, etc.)</td>
+</tr>
+<tr>
+<td><code>patientId</code></td>
+<td>string</td>
+<td>Filter by patient</td>
+</tr>
+<tr>
+<td><code>definitionId</code></td>
+<td>guid</td>
+<td>Filter by definition</td>
+</tr>
+<tr>
+<td><code>contractProfileId</code></td>
+<td>guid</td>
+<td>Filter by contract</td>
+</tr>
+<tr>
+<td><code>fromDate</code></td>
+<td>date</td>
+<td>Trigger date from</td>
+</tr>
+<tr>
+<td><code>toDate</code></td>
+<td>date</td>
+<td>Trigger date to</td>
+</tr>
+<tr>
+<td><code>facilityId</code></td>
+<td>string</td>
+<td>Filter by facility</td>
+</tr>
+<tr>
+<td><code>page</code></td>
+<td>int</td>
+<td>Page number (default: 1)</td>
+</tr>
+<tr>
+<td><code>pageSize</code></td>
+<td>int</td>
+<td>Items per page (default: 50, max: 200)</td>
+</tr>
+<tr>
+<td><code>sortBy</code></td>
+<td>string</td>
+<td>Sort field</td>
+</tr>
+<tr>
+<td><code>sortOrder</code></td>
+<td>string</td>
+<td>asc or desc</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb18"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;data&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;3fa85f64-5717-4562-b3fc-2c963f66afa6&quot;</span><span class="fu">,</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;episodeNumber&quot;</span><span class="fu">:</span> <span class="st">&quot;EP-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;definitionName&quot;</span><span class="fu">:</span> <span class="st">&quot;Total Hip Replacement&quot;</span><span class="fu">,</span></span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;contractProfileName&quot;</span><span class="fu">:</span> <span class="st">&quot;Anthem Blue Cross&quot;</span><span class="fu">,</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;P12345&quot;</span><span class="fu">,</span></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;patientMRN&quot;</span><span class="fu">:</span> <span class="st">&quot;MRN123456&quot;</span><span class="fu">,</span></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Open&quot;</span><span class="fu">,</span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;triggerDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;startDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-12-16&quot;</span><span class="fu">,</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;endDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-04-15&quot;</span><span class="fu">,</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">45000.00</span><span class="fu">,</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;bundleAmount&quot;</span><span class="fu">:</span> <span class="fl">28000.00</span><span class="fu">,</span></span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;targetPrice&quot;</span><span class="fu">:</span> <span class="fl">25000.00</span><span class="fu">,</span></span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;variance&quot;</span><span class="fu">:</span> <span class="fl">3000.00</span><span class="fu">,</span></span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;variancePercent&quot;</span><span class="fu">:</span> <span class="fl">12.00</span><span class="fu">,</span></span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimCount&quot;</span><span class="fu">:</span> <span class="dv">8</span><span class="fu">,</span></span>
+<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;createdAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-16T10:30:00Z&quot;</span></span>
+<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb18-22"><a href="#cb18-22" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb18-23"><a href="#cb18-23" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;pagination&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb18-24"><a href="#cb18-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;page&quot;</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span></span>
+<span id="cb18-25"><a href="#cb18-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;pageSize&quot;</span><span class="fu">:</span> <span class="dv">50</span><span class="fu">,</span></span>
+<span id="cb18-26"><a href="#cb18-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalItems&quot;</span><span class="fu">:</span> <span class="dv">1234</span><span class="fu">,</span></span>
+<span id="cb18-27"><a href="#cb18-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalPages&quot;</span><span class="fu">:</span> <span class="dv">25</span></span>
+<span id="cb18-28"><a href="#cb18-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb18-29"><a href="#cb18-29" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="get-episode-detail">Get Episode Detail</h3>
+<pre class="http"><code>GET /api/episodes/3fa85f64-5717-4562-b3fc-2c963f66afa6</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb20"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;3fa85f64-5717-4562-b3fc-2c963f66afa6&quot;</span><span class="fu">,</span></span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;episodeNumber&quot;</span><span class="fu">:</span> <span class="st">&quot;EP-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;definition&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;def-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb20-6"><a href="#cb20-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Total Hip Replacement&quot;</span><span class="fu">,</span></span>
+<span id="cb20-7"><a href="#cb20-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;episodeClass&quot;</span><span class="fu">:</span> <span class="st">&quot;Surgical&quot;</span></span>
+<span id="cb20-8"><a href="#cb20-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb20-9"><a href="#cb20-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;contractProfile&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-10"><a href="#cb20-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;cp-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb20-11"><a href="#cb20-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Anthem Blue Cross&quot;</span><span class="fu">,</span></span>
+<span id="cb20-12"><a href="#cb20-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;contractId&quot;</span><span class="fu">:</span> <span class="st">&quot;ANT-2026-001&quot;</span></span>
+<span id="cb20-13"><a href="#cb20-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb20-14"><a href="#cb20-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;patient&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-15"><a href="#cb20-15" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;patientId&quot;</span><span class="fu">:</span> <span class="st">&quot;P12345&quot;</span><span class="fu">,</span></span>
+<span id="cb20-16"><a href="#cb20-16" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;mrn&quot;</span><span class="fu">:</span> <span class="st">&quot;MRN123456&quot;</span></span>
+<span id="cb20-17"><a href="#cb20-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb20-18"><a href="#cb20-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Open&quot;</span><span class="fu">,</span></span>
+<span id="cb20-19"><a href="#cb20-19" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;triggerDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb20-20"><a href="#cb20-20" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;startDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-12-16&quot;</span><span class="fu">,</span></span>
+<span id="cb20-21"><a href="#cb20-21" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;endDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-04-15&quot;</span><span class="fu">,</span></span>
+<span id="cb20-22"><a href="#cb20-22" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;financials&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb20-23"><a href="#cb20-23" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">45000.00</span><span class="fu">,</span></span>
+<span id="cb20-24"><a href="#cb20-24" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;bundleAmount&quot;</span><span class="fu">:</span> <span class="fl">28000.00</span><span class="fu">,</span></span>
+<span id="cb20-25"><a href="#cb20-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;targetPrice&quot;</span><span class="fu">:</span> <span class="fl">25000.00</span><span class="fu">,</span></span>
+<span id="cb20-26"><a href="#cb20-26" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;variance&quot;</span><span class="fu">:</span> <span class="fl">3000.00</span><span class="fu">,</span></span>
+<span id="cb20-27"><a href="#cb20-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;variancePercent&quot;</span><span class="fu">:</span> <span class="fl">12.00</span></span>
+<span id="cb20-28"><a href="#cb20-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb20-29"><a href="#cb20-29" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;phases&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-30"><a href="#cb20-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb20-31"><a href="#cb20-31" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;phase-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb20-32"><a href="#cb20-32" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;name&quot;</span><span class="fu">:</span> <span class="st">&quot;Pre-Op&quot;</span><span class="fu">,</span></span>
+<span id="cb20-33"><a href="#cb20-33" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;startDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2025-12-16&quot;</span><span class="fu">,</span></span>
+<span id="cb20-34"><a href="#cb20-34" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;endDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-14&quot;</span><span class="fu">,</span></span>
+<span id="cb20-35"><a href="#cb20-35" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">5000.00</span><span class="fu">,</span></span>
+<span id="cb20-36"><a href="#cb20-36" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimCount&quot;</span><span class="fu">:</span> <span class="dv">3</span></span>
+<span id="cb20-37"><a href="#cb20-37" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb20-38"><a href="#cb20-38" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-39"><a href="#cb20-39" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;claims&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-40"><a href="#cb20-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb20-41"><a href="#cb20-41" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;claim-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb20-42"><a href="#cb20-42" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimId&quot;</span><span class="fu">:</span> <span class="st">&quot;CLM-001&quot;</span><span class="fu">,</span></span>
+<span id="cb20-43"><a href="#cb20-43" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimNumber&quot;</span><span class="fu">:</span> <span class="st">&quot;2026010012345&quot;</span><span class="fu">,</span></span>
+<span id="cb20-44"><a href="#cb20-44" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;isTriggerClaim&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb20-45"><a href="#cb20-45" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimType&quot;</span><span class="fu">:</span> <span class="st">&quot;H&quot;</span><span class="fu">,</span></span>
+<span id="cb20-46"><a href="#cb20-46" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;claimDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15&quot;</span><span class="fu">,</span></span>
+<span id="cb20-47"><a href="#cb20-47" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;chargeAmount&quot;</span><span class="fu">:</span> <span class="fl">35000.00</span><span class="fu">,</span></span>
+<span id="cb20-48"><a href="#cb20-48" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;phaseName&quot;</span><span class="fu">:</span> <span class="st">&quot;Procedure&quot;</span></span>
+<span id="cb20-49"><a href="#cb20-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb20-50"><a href="#cb20-50" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-51"><a href="#cb20-51" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;providers&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb20-52"><a href="#cb20-52" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb20-53"><a href="#cb20-53" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;prov-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb20-54"><a href="#cb20-54" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;providerId&quot;</span><span class="fu">:</span> <span class="st">&quot;DR-001&quot;</span><span class="fu">,</span></span>
+<span id="cb20-55"><a href="#cb20-55" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;providerName&quot;</span><span class="fu">:</span> <span class="st">&quot;Dr. Smith&quot;</span><span class="fu">,</span></span>
+<span id="cb20-56"><a href="#cb20-56" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;role&quot;</span><span class="fu">:</span> <span class="st">&quot;Surgeon&quot;</span><span class="fu">,</span></span>
+<span id="cb20-57"><a href="#cb20-57" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;isPrimary&quot;</span><span class="fu">:</span> <span class="kw">true</span></span>
+<span id="cb20-58"><a href="#cb20-58" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb20-59"><a href="#cb20-59" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb20-60"><a href="#cb20-60" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;createdAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-16T10:30:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb20-61"><a href="#cb20-61" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;modifiedAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-20T14:45:00Z&quot;</span></span>
+<span id="cb20-62"><a href="#cb20-62" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="create-episode">Create Episode</h3>
+<pre class="http"><code>POST /api/episodes
+Content-Type: application/json
+
+{
+  &quot;definitionVersionId&quot;: &quot;def-version-uuid&quot;,
+  &quot;contractProfileId&quot;: &quot;cp-uuid&quot;,
+  &quot;patientId&quot;: &quot;P12345&quot;,
+  &quot;patientMRN&quot;: &quot;MRN123456&quot;,
+  &quot;triggerDate&quot;: &quot;2026-01-15&quot;,
+  &quot;triggerClaimId&quot;: &quot;CLM-001&quot;,
+  &quot;facilityId&quot;: &quot;FAC-001&quot;
+}</code></pre>
+<p><strong>Response:</strong> <code>201 Created</code></p>
+<div class="sourceCode" id="cb22"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;id&quot;</span><span class="fu">:</span> <span class="st">&quot;3fa85f64-5717-4562-b3fc-2c963f66afa6&quot;</span><span class="fu">,</span></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;episodeNumber&quot;</span><span class="fu">:</span> <span class="st">&quot;EP-2026-001234&quot;</span><span class="fu">,</span></span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Open&quot;</span></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="update-episode-status">Update Episode Status</h3>
+<pre class="http"><code>POST /api/episodes/3fa85f64-5717-4562-b3fc-2c963f66afa6/status
+Content-Type: application/json
+
+{
+  &quot;newStatus&quot;: &quot;Closed&quot;,
+  &quot;reason&quot;: &quot;Episode complete, all claims received&quot;
+}</code></pre>
+<hr />
+<h2 id="definitions-api">Definitions API</h2>
+<p><strong>Base Path:</strong> <code>/api/definitions</code></p>
+<h3 id="endpoints-1">Endpoints</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 32%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/definitions</code></td>
+<td>List definitions</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/definitions/{id}</code></td>
+<td>Get definition</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/definitions</code></td>
+<td>Create definition</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td><code>/api/definitions/{id}</code></td>
+<td>Update definition</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/definitions/{id}</code></td>
+<td>Delete definition</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/definitions/{id}/versions</code></td>
+<td>List versions</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/definitions/{id}/versions</code></td>
+<td>Create new version</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/definitions/{id}/versions/{versionId}/activate</code></td>
+<td>Activate version</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-definition">Create Definition</h3>
+<pre class="http"><code>POST /api/definitions
+Content-Type: application/json
+
+{
+  &quot;contractProfileId&quot;: &quot;cp-uuid&quot;,
+  &quot;name&quot;: &quot;Total Knee Replacement&quot;,
+  &quot;description&quot;: &quot;Episode for total knee arthroplasty&quot;,
+  &quot;episodeClass&quot;: &quot;Surgical&quot;
+}</code></pre>
+<h3 id="create-definition-version">Create Definition Version</h3>
+<pre class="http"><code>POST /api/definitions/def-uuid/versions
+Content-Type: application/json
+
+{
+  &quot;effectiveDate&quot;: &quot;2026-04-01&quot;,
+  &quot;preTriggerDays&quot;: 30,
+  &quot;postTriggerDays&quot;: 90,
+  &quot;triggerRules&quot;: {
+    &quot;procedureCodes&quot;: [
+      { &quot;code&quot;: &quot;27447&quot;, &quot;codeSystem&quot;: &quot;CPT&quot; }
+    ],
+    &quot;claimTypes&quot;: [&quot;H&quot;]
+  },
+  &quot;associationRules&quot;: {
+    &quot;includeRules&quot;: [
+      { &quot;ruleType&quot;: &quot;SamePatient&quot; },
+      { &quot;ruleType&quot;: &quot;DateRange&quot; }
+    ]
+  },
+  &quot;phases&quot;: [
+    { &quot;name&quot;: &quot;Pre-Op&quot;, &quot;daysFromTrigger&quot;: { &quot;start&quot;: -30, &quot;end&quot;: -1 } },
+    { &quot;name&quot;: &quot;Procedure&quot;, &quot;daysFromTrigger&quot;: { &quot;start&quot;: 0, &quot;end&quot;: 3 } },
+    { &quot;name&quot;: &quot;Post-Acute&quot;, &quot;daysFromTrigger&quot;: { &quot;start&quot;: 4, &quot;end&quot;: 90 } }
+  ]
+}</code></pre>
+<hr />
+<h2 id="modeling-api">Modeling API</h2>
+<p><strong>Base Path:</strong> <code>/api/modeling</code></p>
+<h3 id="endpoints-2">Endpoints</h3>
+<table>
+<colgroup>
+<col style="width: 25%" />
+<col style="width: 32%" />
+<col style="width: 41%" />
+</colgroup>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/modeling/scenarios</code></td>
+<td>List scenarios</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/modeling/scenarios/{id}</code></td>
+<td>Get scenario</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/modeling/scenarios</code></td>
+<td>Create scenario</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/modeling/scenarios/{id}</code></td>
+<td>Delete scenario</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/modeling/scenarios/{id}/run</code></td>
+<td>Execute scenario</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/modeling/scenarios/{id}/comparisons</code></td>
+<td>Get comparisons</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/modeling/scenarios/{id}/episodes</code></td>
+<td>Get modeled episodes</td>
+</tr>
+</tbody>
+</table>
+<h3 id="create-modeling-scenario">Create Modeling Scenario</h3>
+<pre class="http"><code>POST /api/modeling/scenarios
+Content-Type: application/json
+
+{
+  &quot;name&quot;: &quot;Q1 2026 Contract Comparison&quot;,
+  &quot;description&quot;: &quot;Compare bundling across three contracts&quot;,
+  &quot;dateRangeStart&quot;: &quot;2026-01-01&quot;,
+  &quot;dateRangeEnd&quot;: &quot;2026-03-31&quot;,
+  &quot;patientId&quot;: null,
+  &quot;contractProfileIds&quot;: [
+    &quot;cp-uuid-1&quot;,
+    &quot;cp-uuid-2&quot;,
+    &quot;cp-uuid-3&quot;
+  ]
+}</code></pre>
+<h3 id="run-scenario">Run Scenario</h3>
+<pre class="http"><code>POST /api/modeling/scenarios/scenario-uuid/run</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb28"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scenarioId&quot;</span><span class="fu">:</span> <span class="st">&quot;scenario-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Processing&quot;</span><span class="fu">,</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;estimatedCompletionTime&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15T10:35:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;message&quot;</span><span class="fu">:</span> <span class="st">&quot;Scenario processing started. You will be notified via SignalR when complete.&quot;</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="get-comparisons">Get Comparisons</h3>
+<pre class="http"><code>GET /api/modeling/scenarios/scenario-uuid/comparisons</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb30"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scenarioId&quot;</span><span class="fu">:</span> <span class="st">&quot;scenario-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;scenarioName&quot;</span><span class="fu">:</span> <span class="st">&quot;Q1 2026 Contract Comparison&quot;</span><span class="fu">,</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;comparisons&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;contractProfileId&quot;</span><span class="fu">:</span> <span class="st">&quot;cp-uuid-1&quot;</span><span class="fu">,</span></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;contractProfileName&quot;</span><span class="fu">:</span> <span class="st">&quot;Contract A&quot;</span><span class="fu">,</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;episodeCount&quot;</span><span class="fu">:</span> <span class="dv">45</span><span class="fu">,</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">1250000.00</span><span class="fu">,</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalBundleAmount&quot;</span><span class="fu">:</span> <span class="fl">980000.00</span><span class="fu">,</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;varianceFromBase&quot;</span><span class="fu">:</span> <span class="dv">0</span><span class="fu">,</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;variancePercent&quot;</span><span class="fu">:</span> <span class="dv">0</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;contractProfileId&quot;</span><span class="fu">:</span> <span class="st">&quot;cp-uuid-2&quot;</span><span class="fu">,</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;contractProfileName&quot;</span><span class="fu">:</span> <span class="st">&quot;Contract B&quot;</span><span class="fu">,</span></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;episodeCount&quot;</span><span class="fu">:</span> <span class="dv">52</span><span class="fu">,</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">1250000.00</span><span class="fu">,</span></span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalBundleAmount&quot;</span><span class="fu">:</span> <span class="fl">1020000.00</span><span class="fu">,</span></span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;varianceFromBase&quot;</span><span class="fu">:</span> <span class="fl">40000.00</span><span class="fu">,</span></span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;variancePercent&quot;</span><span class="fu">:</span> <span class="fl">4.08</span></span>
+<span id="cb30-22"><a href="#cb30-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb30-23"><a href="#cb30-23" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb30-24"><a href="#cb30-24" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="worklist-api">Worklist API</h2>
+<p><strong>Base Path:</strong> <code>/api/worklists</code></p>
+<h3 id="endpoints-3">Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/worklists</code></td>
+<td>List saved worklists</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/worklists/{id}</code></td>
+<td>Get worklist</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/worklists</code></td>
+<td>Save worklist</td>
+</tr>
+<tr>
+<td><code>PUT</code></td>
+<td><code>/api/worklists/{id}</code></td>
+<td>Update worklist</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/worklists/{id}</code></td>
+<td>Delete worklist</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/worklists/{id}/share</code></td>
+<td>Share worklist</td>
+</tr>
+<tr>
+<td><code>DELETE</code></td>
+<td><code>/api/worklists/{id}/share/{shareId}</code></td>
+<td>Unshare</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/worklists/shared</code></td>
+<td>Get worklists shared with me</td>
+</tr>
+</tbody>
+</table>
+<h3 id="save-worklist">Save Worklist</h3>
+<pre class="http"><code>POST /api/worklists
+Content-Type: application/json
+
+{
+  &quot;name&quot;: &quot;My Open Episodes&quot;,
+  &quot;description&quot;: &quot;Episodes requiring attention&quot;,
+  &quot;worklistType&quot;: &quot;Episodes&quot;,
+  &quot;isDefault&quot;: false,
+  &quot;criteria&quot;: {
+    &quot;status&quot;: [&quot;Open&quot;, &quot;InProgress&quot;],
+    &quot;variancePercent&quot;: { &quot;min&quot;: 10 }
+  },
+  &quot;columns&quot;: [
+    { &quot;field&quot;: &quot;episodeNumber&quot;, &quot;visible&quot;: true, &quot;width&quot;: 150 },
+    { &quot;field&quot;: &quot;patientMRN&quot;, &quot;visible&quot;: true, &quot;width&quot;: 120 },
+    { &quot;field&quot;: &quot;status&quot;, &quot;visible&quot;: true, &quot;width&quot;: 100 },
+    { &quot;field&quot;: &quot;variance&quot;, &quot;visible&quot;: true, &quot;width&quot;: 100 }
+  ],
+  &quot;sort&quot;: [
+    { &quot;field&quot;: &quot;variance&quot;, &quot;direction&quot;: &quot;desc&quot; }
+  ]
+}</code></pre>
+<hr />
+<h2 id="reporting-api">Reporting API</h2>
+<p><strong>Base Path:</strong> <code>/api/reports</code></p>
+<h3 id="endpoints-4">Endpoints</h3>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Endpoint</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/reports/episode-summary</code></td>
+<td>Episode summary report</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/reports/bundle-analysis</code></td>
+<td>Bundle analysis</td>
+</tr>
+<tr>
+<td><code>GET</code></td>
+<td><code>/api/reports/variance-report</code></td>
+<td>Variance report</td>
+</tr>
+<tr>
+<td><code>POST</code></td>
+<td><code>/api/reports/export</code></td>
+<td>Export report to file</td>
+</tr>
+</tbody>
+</table>
+<h3 id="episode-summary-report">Episode Summary Report</h3>
+<pre class="http"><code>GET /api/reports/episode-summary?fromDate=2026-01-01&amp;toDate=2026-03-31&amp;groupBy=definitionName</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb33"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;reportDate&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15T10:00:00Z&quot;</span><span class="fu">,</span></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;dateRange&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;from&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-01&quot;</span><span class="fu">,</span></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;to&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-03-31&quot;</span></span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;summary&quot;</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalEpisodes&quot;</span><span class="fu">:</span> <span class="dv">1234</span><span class="fu">,</span></span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;openEpisodes&quot;</span><span class="fu">:</span> <span class="dv">456</span><span class="fu">,</span></span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;closedEpisodes&quot;</span><span class="fu">:</span> <span class="dv">778</span><span class="fu">,</span></span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">45000000.00</span><span class="fu">,</span></span>
+<span id="cb33-12"><a href="#cb33-12" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;totalBundleAmount&quot;</span><span class="fu">:</span> <span class="fl">32000000.00</span><span class="fu">,</span></span>
+<span id="cb33-13"><a href="#cb33-13" aria-hidden="true" tabindex="-1"></a>    <span class="dt">&quot;averageVariance&quot;</span><span class="fu">:</span> <span class="fl">2500.00</span></span>
+<span id="cb33-14"><a href="#cb33-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb33-15"><a href="#cb33-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;byGroup&quot;</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb33-16"><a href="#cb33-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb33-17"><a href="#cb33-17" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;groupKey&quot;</span><span class="fu">:</span> <span class="st">&quot;Total Hip Replacement&quot;</span><span class="fu">,</span></span>
+<span id="cb33-18"><a href="#cb33-18" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;episodeCount&quot;</span><span class="fu">:</span> <span class="dv">234</span><span class="fu">,</span></span>
+<span id="cb33-19"><a href="#cb33-19" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalCharges&quot;</span><span class="fu">:</span> <span class="fl">12000000.00</span><span class="fu">,</span></span>
+<span id="cb33-20"><a href="#cb33-20" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;totalBundleAmount&quot;</span><span class="fu">:</span> <span class="fl">8500000.00</span><span class="fu">,</span></span>
+<span id="cb33-21"><a href="#cb33-21" aria-hidden="true" tabindex="-1"></a>      <span class="dt">&quot;averageVariance&quot;</span><span class="fu">:</span> <span class="fl">1200.00</span></span>
+<span id="cb33-22"><a href="#cb33-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb33-23"><a href="#cb33-23" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb33-24"><a href="#cb33-24" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<h3 id="export-report">Export Report</h3>
+<pre class="http"><code>POST /api/reports/export
+Content-Type: application/json
+
+{
+  &quot;reportType&quot;: &quot;episode-summary&quot;,
+  &quot;format&quot;: &quot;xlsx&quot;,
+  &quot;parameters&quot;: {
+    &quot;fromDate&quot;: &quot;2026-01-01&quot;,
+    &quot;toDate&quot;: &quot;2026-03-31&quot;
+  }
+}</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb35"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;exportId&quot;</span><span class="fu">:</span> <span class="st">&quot;export-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Processing&quot;</span><span class="fu">,</span></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;downloadUrl&quot;</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;expiresAt&quot;</span><span class="fu">:</span> <span class="kw">null</span></span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<p>When complete (via SignalR notification):</p>
+<div class="sourceCode" id="cb36"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;exportId&quot;</span><span class="fu">:</span> <span class="st">&quot;export-uuid&quot;</span><span class="fu">,</span></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;status&quot;</span><span class="fu">:</span> <span class="st">&quot;Complete&quot;</span><span class="fu">,</span></span>
+<span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;downloadUrl&quot;</span><span class="fu">:</span> <span class="st">&quot;https://storage.../exports/export-uuid.xlsx&quot;</span><span class="fu">,</span></span>
+<span id="cb36-5"><a href="#cb36-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;expiresAt&quot;</span><span class="fu">:</span> <span class="st">&quot;2026-01-15T22:00:00Z&quot;</span></span>
+<span id="cb36-6"><a href="#cb36-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="feature-flags-api">Feature Flags API</h2>
+<p><strong>Base Path:</strong> <code>/api/features</code></p>
+<h3 id="get-feature-flags">Get Feature Flags</h3>
+<pre class="http"><code>GET /api/features</code></pre>
+<p><strong>Response:</strong></p>
+<div class="sourceCode" id="cb38"><pre
+class="sourceCode json"><code class="sourceCode json"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;PEM.Modeling.Enabled&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;PEM.Modeling.ContractComparison&quot;</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;PEM.Worklist.AdvancedFilters&quot;</span><span class="fu">:</span> <span class="kw">false</span><span class="fu">,</span></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">&quot;PEM.Reporting.CustomReports&quot;</span><span class="fu">:</span> <span class="kw">false</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div>
+<hr />
+<h2 id="signalr-hubs">SignalR Hubs</h2>
+<h3 id="episode-hub">Episode Hub</h3>
+<p><strong>URL:</strong> <code>/hubs/episodes</code></p>
+<p><strong>Events (Server → Client):</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 44%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Event</th>
+<th>Description</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EpisodeCreated</code></td>
+<td>New episode created</td>
+<td><code>{ episodeId, episodeNumber }</code></td>
+</tr>
+<tr>
+<td><code>EpisodeUpdated</code></td>
+<td>Episode modified</td>
+<td><code>{ episodeId, field, oldValue, newValue }</code></td>
+</tr>
+<tr>
+<td><code>EpisodeStatusChanged</code></td>
+<td>Status changed</td>
+<td><code>{ episodeId, fromStatus, toStatus }</code></td>
+</tr>
+<tr>
+<td><code>BundleRecalculated</code></td>
+<td>Bundle updated</td>
+<td><code>{ episodeId, bundleAmount, variance }</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="modeling-hub">Modeling Hub</h3>
+<p><strong>URL:</strong> <code>/hubs/modeling</code></p>
+<p><strong>Events (Server → Client):</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 44%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Event</th>
+<th>Description</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ScenarioStarted</code></td>
+<td>Scenario processing started</td>
+<td><code>{ scenarioId }</code></td>
+</tr>
+<tr>
+<td><code>ScenarioProgress</code></td>
+<td>Progress update</td>
+<td><code>{ scenarioId, percentComplete }</code></td>
+</tr>
+<tr>
+<td><code>ScenarioCompleted</code></td>
+<td>Scenario finished</td>
+<td><code>{ scenarioId, comparisonCount }</code></td>
+</tr>
+<tr>
+<td><code>ScenarioFailed</code></td>
+<td>Scenario error</td>
+<td><code>{ scenarioId, error }</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="export-hub">Export Hub</h3>
+<p><strong>URL:</strong> <code>/hubs/exports</code></p>
+<p><strong>Events (Server → Client):</strong></p>
+<table>
+<colgroup>
+<col style="width: 24%" />
+<col style="width: 44%" />
+<col style="width: 31%" />
+</colgroup>
+<thead>
+<tr>
+<th>Event</th>
+<th>Description</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ExportCompleted</code></td>
+<td>Export ready</td>
+<td><code>{ exportId, downloadUrl, expiresAt }</code></td>
+</tr>
+<tr>
+<td><code>ExportFailed</code></td>
+<td>Export error</td>
+<td><code>{ exportId, error }</code></td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="rate-limits">Rate Limits</h2>
+<table>
+<thead>
+<tr>
+<th>Endpoint Category</th>
+<th>Rate Limit</th>
+<th>Window</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Read operations</td>
+<td>1000 requests</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>Write operations</td>
+<td>100 requests</td>
+<td>1 minute</td>
+</tr>
+<tr>
+<td>Report exports</td>
+<td>10 requests</td>
+<td>1 hour</td>
+</tr>
+<tr>
+<td>Modeling scenarios</td>
+<td>20 requests</td>
+<td>1 hour</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<h2 id="openapi-specification">OpenAPI Specification</h2>
+<p>Full OpenAPI 3.0 specification available at: - <strong>Swagger
+UI:</strong>
+<code>https://api-pem-{env}.azurewebsites.net/swagger</code> -
+<strong>OpenAPI JSON:</strong>
+<code>https://api-pem-{env}.azurewebsites.net/swagger/v1/swagger.json</code></p>
+<hr />
+<h2 id="related-documents">Related Documents</h2>
+<ul>
+<li><a
+href="01-AZURE-PEM-MASTER-PLAN.html">01-AZURE-PEM-MASTER-PLAN.md</a> -
+Project overview</li>
+<li><a href="04-DATA-MODEL.html">04-DATA-MODEL.md</a> - Data model
+definitions</li>
+<li><a href="02-AZURE-ARCHITECTURE.html">02-AZURE-ARCHITECTURE.md</a> -
+Architecture details</li>
+</ul>
+<hr />
+<p><strong>Document Status:</strong> ✅ Complete<br />
+<strong>Next Steps:</strong> Generate OpenAPI specification, implement
+endpoints</p>
+</body>
+</html>
