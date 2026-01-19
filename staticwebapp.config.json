@@ -7,6 +7,10 @@
       "route": "/",
       "redirect": "/00-README.html",
       "statusCode": 301
+    },
+    {
+      "route": "/*",
+      "allowedRoles": ["authenticated"]
     }
   ],
   "auth": {
