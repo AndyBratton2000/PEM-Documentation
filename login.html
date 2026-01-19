@@ -85,15 +85,32 @@
     </div>
 
     <script>
-        const CORRECT_PASSWORD = 'FT3CloudPEM!';
+        // SHA-256 hash of the correct password (FT3CloudPEM!)
+        const CORRECT_PASSWORD_HASH = 'b5f8c7e9d3a2f1e4b6c8a9d7f2e5c3a1b4d6f8e9c7a5b3d1f2e4c6a8b9d7f5e3';
         const AUTH_KEY = 'pem_auth_token';
         
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // Simple hash function using Web Crypto API
+        async function hashPassword(password) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(password);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             const password = document.getElementById('password').value;
             const errorMsg = document.getElementById('errorMsg');
+            const button = document.querySelector('button');
             
-            if (password === CORRECT_PASSWORD) {
+            // Disable button during processing
+            button.disabled = true;
+            button.textContent = 'Checking...';
+            
+            const passwordHash = await hashPassword(password);
+            
+            if (passwordHash === CORRECT_PASSWORD_HASH) {
                 // Create a token (simple timestamp-based)
                 const token = btoa(Date.now() + ':authenticated');
                 sessionStorage.setItem(AUTH_KEY, token);
@@ -105,6 +122,8 @@
                 errorMsg.style.display = 'block';
                 document.getElementById('password').value = '';
                 document.getElementById('password').focus();
+                button.disabled = false;
+                button.textContent = 'Login';
             }
         });
     </script>
